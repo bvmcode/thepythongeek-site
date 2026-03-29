@@ -29,8 +29,8 @@ RUN apt-get update && \
 RUN curl -O https://www.python.org/ftp/python/3.14.0/Python-3.14.0a7.tgz && \
     tar -xzf Python-3.14.0a7.tgz && \
     cd Python-3.14.0a7 && \
-    ./configure --enable-optimizations --with-ensurepip=install && \
-    make -j$(nproc) && \
+    ./configure --with-ensurepip=install && \
+    make -s -j$(nproc) && \
     make altinstall && \
     cd .. && \
     rm -rf Python-3.14.0a7 Python-3.14.0a7.tgz
