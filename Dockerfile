@@ -1,16 +1,18 @@
 FROM python:3.14-slim
 
-RUN apt-get update \
-  && apt-get install -y python3-pip python3-dev libpq-dev unixodbc-dev libsasl2-dev\
-  && cd /usr/local/bin \
-  && ln -s /usr/bin/python3 python \
-  && pip3 install --upgrade pip 
-
 WORKDIR /app
 
-COPY ./client/ /app/
-COPY ./requirements.txt /app/
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libpq-dev \
+        unixodbc-dev \
+        libsasl2-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install -r requirements.txt
+COPY ./requirements.txt /app/
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    python -m pip install --no-cache-dir -r requirements.txt
+
+COPY ./client/ /app/
 
 CMD ["uwsgi", "app.ini"]
