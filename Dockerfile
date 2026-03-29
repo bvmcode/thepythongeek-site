@@ -1,8 +1,9 @@
-FROM python:3.14-slim-bookworm
+FROM python:3.14-slim
 
 WORKDIR /app
 
-RUN apt-get update && \
+RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         libpq-dev \
         unixodbc-dev \
