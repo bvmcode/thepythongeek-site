@@ -5,7 +5,7 @@ WORKDIR /app
 COPY ./pyproject.toml /app/
 COPY ./uv.lock /app/
 
-RUN pip install --upgrade pip && pip install uv
+RUN pip install uv
 RUN uv pip install --system .
 
 CMD ["uwsgi", "app.ini"]
