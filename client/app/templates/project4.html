@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container mb-5" style="max-width: 960px;">
+
+    <div class="alert-warning-soft">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+        Predictions are temporarily down due to a change of physical address of my weather station and a government
+        shutdown affecting data availability.
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- About card -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h4><i class="fa-solid fa-robot me-2 text-primary"></i>About the Model</h4>
+                <p class="text-start" style="font-size: 0.9rem;">
+                    I developed a machine learning model to predict the daily high temperature (°F) for my location
+                    in Atco, NJ. This page displays the comparison between the model's prediction and the observed
+                    high temperature from my
+                    <a href="{{ url_for('project.project3') }}">weather station</a>.
+                    The model input is derived from surrounding NWS 12Z sounding data as well as 12Z observations
+                    from my station.
+                </p>
+                <p class="text-start mb-0" style="font-size: 0.9rem;">
+                    <a href="https://medium.com/@weatherpy/machine-learning-for-hyperlocal-temperature-prediction-24388e34b8cd">
+                        Read the blog post
+                    </a> for technical details.
+                </p>
+            </div>
+        </div>
+
+        <!-- Previous day card -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h4><i class="fa-solid fa-calendar-day me-2 text-primary"></i>Previous Day <small class="text-muted">{{ prev_day }}</small></h4>
+                {% if message_prev_day %}
+                    <p class="text-danger fw-semibold">{{ message_prev_day }}</p>
+                {% else %}
+                    <p class="text-muted" style="font-size:0.8rem;">Updated {{ last_updated_prev_day }}</p>
+                    <div class="stat-row">
+                        <span class="stat-label">Prediction</span>
+                        <span class="stat-value">
+                            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %}
+                                {{ prediction_prev_day }} °F
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Actual</span>
+                        <span class="stat-value">
+                            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %}
+                                {{ actual_prev_day }} °F
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Difference</span>
+                        <span class="stat-value">
+                            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %}
+                                {{ difference }} °F
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Today card -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h4><i class="fa-solid fa-sun me-2 text-primary"></i>Today <small class="text-muted">{{ today }}</small></h4>
+                {% if message %}
+                    <p class="text-danger fw-semibold">{{ message }}</p>
+                {% else %}
+                    <p class="text-muted" style="font-size:0.8rem;">Updated {{ last_updated }}</p>
+                    <div class="stat-row">
+                        <span class="stat-label">Prediction</span>
+                        <span class="stat-value">
+                            {% if prediction is not none %}
+                                {{ prediction }} °F
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">High Temp</span>
+                        <span class="stat-value">{{ current_temp_max }} °F</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Current</span>
+                        <span class="stat-value">{{ current_temperature }} °F</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card p-4">
+        <h4 class="mb-1">Two Week Daily High Temperatures ˚F</h4>
+        <p class="text-muted mb-3" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+            Predicted vs Observed
+        </p>
+        <canvas id="myChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+    async function plot() {
+        var url = "{{ url_for('project.prediction_api') }}";
+        const response = await fetch(url);
+        var data = await response.json();
+        const config = {
+            type: 'line',
+            data: {
+                labels: data['dates'],
+                datasets: [
+                    { label: 'Predicted', data: data['predictions'] },
+                    { label: 'Observed', data: data['actuals'] }
+                ]
+            },
+            options: { responsive: true }
+        };
+        new Chart("myChart", config);
+    }
+
+    window.addEventListener("load", function () {
+        plot();
+    }, false);
+</script>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 860px;">
+    <div id="home-bio">
+        <p>
+            <span class="drop-cap">H</span>ello, my name is Barry Martin. I live in south Jersey with my wonderful wife
+            and two boys. I am a data and software geek and have a passion for the science of meteorology. I find it
+            extremely rewarding to use technology to capture weather data, visualize, analyze and predict. I have many
+            years of experience in the data analytics space performing complex analysis, automation development, and
+            software/data engineering.
+        </p>
+        <p>
+            If you'd like to reach out, feel free to email me at
+            <a href="mailto:bvmcode@thepythongeek.com?subject=Hello from your website!">bvmcode@thepythongeek.com</a>.
+        </p>
+    </div>
+
+    <div class="mt-4 mb-2" id="home-photo">
+        <img src="{{ url_for('static', filename='images/me2.png') }}" alt="Barry Martin" class="img-fluid">
+    </div>
+</div>
+{% endblock %}
