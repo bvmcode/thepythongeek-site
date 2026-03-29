@@ -2,7 +2,9 @@ FROM python:3.14-slim-bookworm
 
 WORKDIR /app
 
-RUN apt-get update && \
+RUN apt-get update --allow-insecure-repositories || true && \
+    apt-get install -y --no-install-recommends debian-keyring debian-archive-keyring && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         libpq-dev \
         unixodbc-dev \
