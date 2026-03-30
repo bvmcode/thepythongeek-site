@@ -1,10 +1,12 @@
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update \
-  && apt-get install -y curl python3-pip python3-dev libpq-dev unixodbc-dev libsasl2-dev\
+  && apt-get install -y curl python3-pip python3-dev libpq-dev unixodbc-dev libsasl2-dev software-properties-common \
   && add-apt-repository ppa:deadsnakes/ppa \
   && apt-get update \
-  && apt-get install -y python3.14 \
+  && apt-get install -y python3.14 python3.14-distutils \
   && ln -s /usr/bin/python3.14 /usr/bin/python
 
 COPY ./requirements.txt /app/
