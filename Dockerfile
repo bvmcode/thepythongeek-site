@@ -12,7 +12,7 @@ COPY ./client/ /app/
 WORKDIR /app
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN uv python install 3.14
+RUN /root/.local/bin/uv python install 3.14
 RUN python3.14 -m pip install --upgrade pip
 RUN python3.14 -m pip install -r requirements.txt
 
