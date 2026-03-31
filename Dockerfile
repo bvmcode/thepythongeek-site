@@ -1,8 +1,9 @@
 FROM --platform=linux/arm64 python:3.13-slim
 
-RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+RUN dpkg --configure -a \
+  && apt-get clean \
   && apt-get update \
-  && apt-get install -y curl libpq-dev unixodbc-dev libsasl2-dev \
+  && apt-get install -y --no-install-recommends build-essential curl \
   && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /app/
