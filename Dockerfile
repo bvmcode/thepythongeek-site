@@ -1,6 +1,7 @@
 FROM python:3.13-slim
 
-RUN apt-get update \
+RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+  && apt-get update \
   && apt-get install -y curl libpq-dev unixodbc-dev libsasl2-dev \
   && rm -rf /var/lib/apt/lists/*
 
