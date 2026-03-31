@@ -1,6 +1,7 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bullseye
 
-RUN apt-get update \
+RUN mkdir -p /var/cache/apt/archives/partial \
+  && apt-get update \
   && apt-get install -y --no-install-recommends \
      gcc \
      unixodbc-dev \
