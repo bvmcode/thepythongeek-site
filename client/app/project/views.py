@@ -80,7 +80,9 @@ class Database:
             """
     df = pd.read_sql(query, con=engine)
     df["api_datetime"] = df["api_datetime"].dt.tz_localize('UTC').dt.tz_convert('America/New_York')
-    df = df.sort_values('api_datetime').reset_index(drop=True)
+    df["date"] = df["api_datetime"].dt.date
+    df["time"] = df["api_datetime"].dt.time
+    df = df.sort_values("api_datetime").reset_index(drop=True)
     engine.close()
     return df
   
@@ -138,7 +140,7 @@ def get_plot(df, field, unit):
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 def get_current_weather(df):
-    df = df.head(1)
+    df = df[df["api_datetime"] == df["api_datetime"].max()]
     wind_dir = get_wind_direction_string(df.wind_dir.values[0])
     return {
         "Timestamp": df.api_datetime.dt.strftime('%Y-%m-%d %I:%M %p EST').values[0],
