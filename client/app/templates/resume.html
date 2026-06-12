@@ -14,93 +14,185 @@
         </a>
     </div>
 
+    <!-- Header -->
+    <div class="resume-hero card mb-4">
+        <div class="card-body py-4 px-4">
+            <p class="resume-hero-name mb-1">Barry V. Martin</p>
+            <p class="resume-hero-title mb-3">Lead Data Engineer &nbsp;|&nbsp; MLOps &amp; Generative AI</p>
+            <div class="resume-contact">
+                <span><i class="fa-solid fa-location-dot me-1"></i>Atco, NJ</span>
+                <span><i class="fa-solid fa-phone me-1"></i>848.304.0787</span>
+                <a href="mailto:bvmcode@thepythongeek.com"><i class="fa-solid fa-envelope me-1"></i>bvmcode@thepythongeek.com</a>
+                <a href="https://www.linkedin.com/in/martbar" target="_blank"><i class="fa-brands fa-linkedin me-1"></i>LinkedIn</a>
+                <a href="https://thepythongeek.com" target="_blank"><i class="fa-solid fa-globe me-1"></i>thepythongeek.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Profile -->
+    <div class="resume-section card">
+        <h5 class="resume-section-header card-header">
+            <i class="fa-solid fa-user me-2"></i>Professional Profile
+        </h5>
+        <div class="card-body py-4">
+            <p class="resume-profile-text mb-0">
+                Lead Data and MLOps Engineer specializing in production-grade generative AI, machine learning,
+                and data platforms. Designs secure evaluation, monitoring, inference, and analytics solutions
+                across AWS, Snowflake, and Apache Airflow, with a strong record of partnering with data
+                scientists and business stakeholders to operationalize reliable, governed AI systems.
+            </p>
+        </div>
+    </div>
+
+    <!-- Focus Areas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="resume-highlight">
+                <i class="fa-solid fa-robot resume-highlight-icon"></i>
+                <span class="resume-highlight-title">Generative AI</span>
+                <span class="resume-highlight-desc">Evaluation, agents, enterprise analytics</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="resume-highlight">
+                <i class="fa-solid fa-chart-line resume-highlight-icon"></i>
+                <span class="resume-highlight-title">MLOps Platforms</span>
+                <span class="resume-highlight-desc">Monitoring, inference, model operations</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="resume-highlight">
+                <i class="fa-solid fa-cloud resume-highlight-icon"></i>
+                <span class="resume-highlight-title">Cloud &amp; Data</span>
+                <span class="resume-highlight-desc">AWS, Snowflake, Airflow, Terraform</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Experience -->
     <div class="resume-section card">
         <h5 class="resume-section-header card-header">
-            <i class="fa-solid fa-briefcase me-2"></i>Experience
+            <i class="fa-solid fa-briefcase me-2"></i>Professional Experience
         </h5>
         <div class="card-body py-4">
-            <div class="row align-items-start g-4">
 
-                <div class="col-md-6">
-                    <h5 class="resume-company card-title">
-                        Lead Data Engineer (MLOps) at <a href="https://www.zelis.com/">Zelis</a>
-                    </h5>
-                    <p class="resume-dates"><i class="fa-regular fa-calendar me-1"></i>August 2021 – Present</p>
+            <div class="resume-role mb-5">
+                <h5 class="resume-company card-title">
+                    Lead Data Engineer (MLOps) at <a href="https://www.zelis.com/">Zelis</a>
+                </h5>
+                <p class="resume-dates mb-3">
+                    <i class="fa-regular fa-calendar me-1"></i>Aug 2021 – Present
+                    <span class="resume-meta-sep">&middot;</span>
+                    <i class="fa-solid fa-house-laptop me-1"></i>Remote
+                </p>
+                <p class="resume-role-summary">
+                    Lead MLOps and data engineering initiatives that operationalize generative AI and traditional
+                    machine learning solutions across AWS, Snowflake, and Apache Airflow.
+                </p>
+
+                <div class="resume-exp-subsection">
+                    <h6 class="resume-exp-subtitle">Selected AI/ML Platforms</h6>
                     <ul>
-                        <li>Lead MLOps and data engineering initiatives to operationalize AI/ML solutions using Snowflake, AWS, and Airflow.</li>
-                        <li>Designed and deployed end-to-end ML pipelines leveraging AWS SageMaker, Docker, and Airflow.</li>
-                        <li>Developed model monitoring dashboards using Streamlit and integrated metrics collection workflows.</li>
-                        <li>Automated AWS infrastructure with Terraform, enabling scalable and reproducible deployments.</li>
-                        <li>Built and containerized inference workflows, managing deployments via ECR, ECS, and Lambda.</li>
-                        <li>Collaborated with data scientists to productionize ML models and deploy scalable, maintainable systems.</li>
-                        <li>Designed data pipelines integrating Snowflake and orchestrated with Apache Airflow.</li>
-                        <li>Developed Spark pipelines to support large-scale data processing.</li>
+                        <li><strong>GenAI Evaluation Platform:</strong> Developed an enterprise platform for evaluating company GenAI applications and custom GPTs, including a reusable Python metrics library, AWS Step Functions ETL workflows, and an AWS-hosted Streamlit dashboard with SSO and role-based access control.</li>
+                        <li><strong>Model Monitoring Platform:</strong> Designed daily data drift and model performance monitoring with Airflow, AWS Lambda, Amazon ECS, a custom Snowflake data model, Streamlit reporting, and automated email alerts for critical model issues.</li>
+                        <li><strong>Batch Inference Pipelines:</strong> Built Airflow-orchestrated SageMaker and SageMaker Pipelines workflows for traditional ML inference, persisting prediction outputs to Snowflake for reporting and downstream analysis.</li>
+                        <li><strong>Agentic Jira Assistant:</strong> Created a Streamlit application powered by a custom AI agent that uses project context and brief user requests to generate structured Jira descriptions, acceptance criteria, and implementation details.</li>
+                        <li><strong>ChatGPT Logging &amp; Secure Explorer:</strong> Implemented daily Amazon ECS jobs using the OpenAI Compliance API to retrieve Enterprise conversations, store standardized JSON in Amazon S3, generate custom GPT datasets, and provide authorized users an authenticated search, view, and download interface.</li>
                     </ul>
                 </div>
 
-                <div class="col-md-6">
-                    <h5 class="resume-company card-title">
-                        Sr. Data Analyst at <a href="https://chrobinson.com/">CH Robinson</a>
-                    </h5>
-                    <p class="resume-dates"><i class="fa-regular fa-calendar me-1"></i>January 2014 – August 2021</p>
+                <div class="resume-exp-subsection">
+                    <h6 class="resume-exp-subtitle">Engineering Enablement &amp; Internal Platforms</h6>
                     <ul>
-                        <li>Conducted exploratory data analysis in Jupyter to derive actionable insights.</li>
-                        <li>Built interactive dashboards with Plotly, Streamlit, Power BI, and R Shiny.</li>
-                        <li>Optimized SQL queries across SQL Server, Postgres, and Hive databases.</li>
-                        <li>Developed Python-based ETL and reporting solutions.</li>
-                        <li>Ensured data integrity through integration of disparate data sources.</li>
-                        <li>Worked cross-functionally to translate business needs into data-driven outcomes.</li>
+                        <li><strong>Private PyPI Repository:</strong> Established an AWS-hosted package index for distributing internal Python source and wheel packages through pip within the corporate network.</li>
+                        <li><strong>ChatGPT Usage Dashboard:</strong> Built an AWS-hosted Streamlit application that reports OpenAI Enterprise adoption, usage patterns, and business-purpose metrics.</li>
+                        <li><strong>Team Deployment Portal:</strong> Developed a Flask application integrated with GitHub Enterprise and GitHub Actions to trigger environment-specific deployments, persist user and workflow metadata, and display asynchronous deployment status.</li>
+                        <li><strong>Team Documentation Portal:</strong> Created a Flask knowledge hub for applications, processes, databases, and SOPs, with executive-friendly technical content, interactive Mermaid diagrams, and cross-category tag filtering.</li>
                     </ul>
                 </div>
 
+                <div class="resume-exp-subsection mb-0">
+                    <h6 class="resume-exp-subtitle">Platform Engineering, Governance &amp; Delivery</h6>
+                    <ul class="mb-0">
+                        <li><strong>Security &amp; Access Governance:</strong> Implemented SSO, role-based access control, and restrictive AWS permissions to protect sensitive enterprise AI data and internal applications.</li>
+                        <li><strong>Cloud Infrastructure &amp; Delivery:</strong> Automated repeatable application and platform deployments with Terraform, Docker, Amazon ECR, ECS, Lambda, IAM, SSO, and CI/CD workflows.</li>
+                        <li><strong>Large-Scale Data Processing:</strong> Developed Spark and Amazon EMR pipelines to process high-volume datasets and support scalable analytics and machine learning workflows.</li>
+                        <li><strong>Snowflake &amp; Airflow Engineering:</strong> Designed database structures and production data pipelines that integrate Snowflake with Apache Airflow for dependable, repeatable processing.</li>
+                        <li><strong>Cross-Functional Delivery:</strong> Partnered with data scientists, engineers, and business stakeholders to productionize models and deliver secure, maintainable AI/ML systems.</li>
+                    </ul>
+                </div>
             </div>
+
+            <div class="resume-role mb-0">
+                <h5 class="resume-company card-title">
+                    Senior Data Analyst at <a href="https://chrobinson.com/">C.H. Robinson</a>
+                </h5>
+                <p class="resume-dates mb-3">
+                    <i class="fa-regular fa-calendar me-1"></i>Jan 2014 – Aug 2021
+                    <span class="resume-meta-sep">&middot;</span>
+                    <i class="fa-solid fa-house-laptop me-1"></i>Remote
+                </p>
+                <ul class="mb-0">
+                    <li>Conducted exploratory analysis in Jupyter to identify trends and deliver actionable business insights.</li>
+                    <li>Built interactive analytics applications and dashboards with Plotly, Streamlit, Power BI, and R Shiny.</li>
+                    <li>Optimized SQL queries and data workflows across SQL Server, PostgreSQL, and Hive environments.</li>
+                    <li>Developed Python-based ETL, data integration, and automated reporting solutions.</li>
+                    <li>Improved data quality by integrating and validating disparate data sources and translating stakeholder requirements into scalable solutions.</li>
+                </ul>
+            </div>
+
         </div>
     </div>
 
     <!-- Skills -->
     <div class="resume-section card">
         <h5 class="resume-section-header card-header">
-            <i class="fa-solid fa-code me-2"></i>Skills
+            <i class="fa-solid fa-code me-2"></i>Technical Skills
         </h5>
         <div class="card-body py-4">
             <div class="row g-3">
 
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-4">
                     <div class="skill-category">
-                        <span class="skill-category-title">Programming</span>
+                        <span class="skill-category-title">Programming &amp; Data Engineering</span>
                         <div>
                             <span class="skill-badge">Python</span>
                             <span class="skill-badge">SQL</span>
+                            <span class="skill-badge">Apache Airflow</span>
+                            <span class="skill-badge">Spark</span>
                             <span class="skill-badge">Docker</span>
                             <span class="skill-badge">Bash</span>
-                            <span class="skill-badge">GitHub Actions</span>
-                            <span class="skill-badge">Terraform</span>
+                            <span class="skill-badge">ETL/ELT</span>
+                            <span class="skill-badge">API Integration</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-4">
                     <div class="skill-category">
-                        <span class="skill-category-title">Data Engineering</span>
+                        <span class="skill-category-title">Generative AI &amp; MLOps</span>
                         <div>
-                            <span class="skill-badge">Snowflake</span>
-                            <span class="skill-badge">Airflow</span>
-                            <span class="skill-badge">Spark</span>
-                            <span class="skill-badge">Postgres</span>
-                            <span class="skill-badge">SQL Server</span>
-                            <span class="skill-badge">Database Design</span>
+                            <span class="skill-badge">GenAI Evaluation</span>
+                            <span class="skill-badge">AI Agents</span>
+                            <span class="skill-badge">Model Monitoring</span>
+                            <span class="skill-badge">Data Drift</span>
+                            <span class="skill-badge">Batch Inference</span>
+                            <span class="skill-badge">Usage Analytics</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-4">
                     <div class="skill-category">
-                        <span class="skill-category-title">AWS Services</span>
+                        <span class="skill-category-title">AWS</span>
                         <div>
                             <span class="skill-badge">SageMaker</span>
-                            <span class="skill-badge">ECR / ECS</span>
+                            <span class="skill-badge">Step Functions</span>
+                            <span class="skill-badge">ECS</span>
+                            <span class="skill-badge">ECR</span>
                             <span class="skill-badge">Lambda</span>
+                            <span class="skill-badge">S3</span>
+                            <span class="skill-badge">IAM</span>
                             <span class="skill-badge">RDS</span>
                             <span class="skill-badge">Glue</span>
                             <span class="skill-badge">EMR</span>
@@ -108,15 +200,44 @@
                     </div>
                 </div>
 
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-4">
                     <div class="skill-category">
-                        <span class="skill-category-title">Analytics & MLOps</span>
+                        <span class="skill-category-title">Data Platforms</span>
+                        <div>
+                            <span class="skill-badge">Snowflake</span>
+                            <span class="skill-badge">PostgreSQL</span>
+                            <span class="skill-badge">SQL Server</span>
+                            <span class="skill-badge">Hive</span>
+                            <span class="skill-badge">Database Design</span>
+                            <span class="skill-badge">Data Modeling</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="skill-category">
+                        <span class="skill-category-title">Applications &amp; Visualization</span>
                         <div>
                             <span class="skill-badge">Streamlit</span>
+                            <span class="skill-badge">Flask</span>
                             <span class="skill-badge">Jupyter</span>
                             <span class="skill-badge">Plotly</span>
-                            <span class="skill-badge">Model Monitoring</span>
-                            <span class="skill-badge">Inference Workflows</span>
+                            <span class="skill-badge">Power BI</span>
+                            <span class="skill-badge">R Shiny</span>
+                            <span class="skill-badge">Mermaid</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="skill-category">
+                        <span class="skill-category-title">Infrastructure &amp; CI/CD</span>
+                        <div>
+                            <span class="skill-badge">Terraform</span>
+                            <span class="skill-badge">GitHub Actions</span>
+                            <span class="skill-badge">GitHub Enterprise</span>
+                            <span class="skill-badge">SSO</span>
+                            <span class="skill-badge">Role-Based Access Control</span>
                         </div>
                     </div>
                 </div>
@@ -137,9 +258,9 @@
                     <h5 class="resume-company card-title">
                         <a href="https://umassl.edu/">University of Massachusetts Lowell</a>
                     </h5>
-                    <p class="resume-dates"><i class="fa-solid fa-book me-1"></i>Information Technology – B.S.</p>
-                    <ul>
-                        <li>Programming and relational databases focused coursework</li>
+                    <p class="resume-dates"><i class="fa-solid fa-book me-1"></i>B.S. Information Technology</p>
+                    <ul class="mb-0">
+                        <li>Focus: programming and relational databases</li>
                     </ul>
                 </div>
 
@@ -147,9 +268,10 @@
                     <h5 class="resume-company card-title">
                         <a href="https://ou.edu/">University of Oklahoma</a>
                     </h5>
-                    <p class="resume-dates"><i class="fa-solid fa-book me-1"></i>Atmospheric Science – B.S.</p>
-                    <ul>
-                        <li>Research student at NSSL; minor in Mathematics</li>
+                    <p class="resume-dates"><i class="fa-solid fa-book me-1"></i>Programming and relational database coursework</p>
+                    <ul class="mb-0">
+                        <li>Research assistant, NSSL</li>
+                        <li>Minor in Mathematics</li>
                     </ul>
                 </div>
 

@@ -379,6 +379,138 @@ main {
     text-decoration: none;
 }
 
+.resume-hero {
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.resume-hero-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+}
+
+.resume-hero-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.resume-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.25rem;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.resume-contact a {
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.resume-contact a:hover {
+    color: var(--accent);
+}
+
+.resume-profile-text {
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--text);
+}
+
+.resume-highlight {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.35rem;
+    height: 100%;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.resume-highlight:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.resume-highlight-icon {
+    display: block;
+    font-size: 1.35rem;
+    color: var(--primary);
+    margin-bottom: 0.65rem;
+}
+
+.resume-highlight-title {
+    display: block;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--primary);
+    margin-bottom: 0.35rem;
+}
+
+.resume-highlight-desc {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.resume-role-summary {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+}
+
+.resume-meta-sep {
+    margin: 0 0.35rem;
+    color: var(--text-muted);
+}
+
+.resume-exp-subsection {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent);
+}
+
+.resume-exp-subtitle {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+}
+
+.resume-section .card-body ul {
+    padding-left: 1.25rem;
+    margin-bottom: 0;
+}
+
+.resume-section .card-body li {
+    margin-bottom: 0.55rem;
+    font-size: 0.93rem;
+    line-height: 1.6;
+}
+
+.resume-section .card-body li:last-child {
+    margin-bottom: 0;
+}
+
 /* =============================================
    Project Pages — Shared
    ============================================= */
