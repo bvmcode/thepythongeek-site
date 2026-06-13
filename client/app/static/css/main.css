@@ -141,8 +141,8 @@ a:hover {
 }
 
 #page-header-inner img {
-    width: 155px;
-    height: 155px;
+    width: 180px;
+    height: 180px;
     object-fit: cover;
     border-radius: 50%;
     border: 4px solid var(--accent);
@@ -928,8 +928,8 @@ main {
     }
 
     #page-header-inner img {
-        width: 115px;
-        height: 115px;
+        width: 130px;
+        height: 130px;
     }
 
     #page-header-inner h1 {
