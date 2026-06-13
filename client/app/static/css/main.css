@@ -191,6 +191,23 @@ main {
 /* =============================================
    Home Page
    ============================================= */
+#home-bio,
+.home-bio-text {
+    padding: 2.25rem 2.5rem;
+    border-left: 5px solid var(--primary);
+    height: 100%;
+}
+
+#home-bio {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    overflow: hidden;
+}
+
 .home-container {
     max-width: 960px;
 }
@@ -203,12 +220,7 @@ main {
     overflow: hidden;
 }
 
-.home-bio-text {
-    padding: 2.25rem 2.5rem;
-    border-left: 5px solid var(--primary);
-    height: 100%;
-}
-
+#home-bio p,
 .home-bio-text p {
     margin-bottom: 1.15rem;
     font-size: 1.05rem;
@@ -216,10 +228,12 @@ main {
     color: var(--text);
 }
 
+#home-bio p:last-child,
 .home-bio-text p:last-child {
     margin-bottom: 0;
 }
 
+#home-bio .drop-cap,
 .home-bio-text .drop-cap {
     font-size: 3.5rem;
     font-weight: 700;
@@ -229,6 +243,10 @@ main {
     margin-top: 0.1em;
     color: var(--primary);
     font-family: 'Orbitron', sans-serif;
+}
+
+#home-bio a {
+    font-weight: 500;
 }
 
 .home-contact {
@@ -248,11 +266,18 @@ main {
     color: var(--primary-dark);
 }
 
+#home-photo,
+.home-photo-wrap {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
 .home-photo-wrap {
     background: linear-gradient(
         160deg,
-        var(--surface-2) 0%,
-        rgba(48, 105, 152, 0.08) 100%
+        var(--primary) 0%,
+        var(--primary-dark) 50%,
+        var(--accent) 100%
     );
     display: flex;
     align-items: center;
@@ -263,6 +288,11 @@ main {
     min-height: 280px;
 }
 
+#home-photo {
+    box-shadow: var(--shadow-md);
+}
+
+#home-photo img,
 .home-photo-img {
     width: 100%;
     max-width: 300px;
@@ -274,6 +304,12 @@ main {
     transition: transform var(--transition-slow), box-shadow var(--transition-slow);
 }
 
+#home-photo img {
+    max-width: none;
+    border: none;
+}
+
+#home-photo img:hover,
 .home-photo-img:hover {
     transform: translateY(-3px);
     box-shadow: 0 14px 36px rgba(30, 77, 115, 0.18);
@@ -900,10 +936,12 @@ main {
         font-size: 1.1rem;
     }
 
+    #home-bio,
     .home-bio-text {
         padding: 1.5rem;
     }
 
+    #home-bio .drop-cap,
     .home-bio-text .drop-cap {
         font-size: 2.5rem;
     }
@@ -913,6 +951,7 @@ main {
         min-height: 0;
     }
 
+    #home-photo img,
     .home-photo-img {
         max-width: 100%;
     }
