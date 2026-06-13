@@ -5,19 +5,30 @@
 {% block title_img %}{{ title_img }}{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 860px;">
-    <div id="home-bio">
-        <p>
-            <span class="drop-cap">H</span>ello, my name is Barry Martin. I live in South Jersey with my wonderful wife and two boys. I am a data, software, and AI enthusiast with a passion for building practical technology solutions that solve real problems. My work focuses on data engineering, MLOps, generative AI, automation, and application development. I enjoy using modern AI tools and cloud technologies to build intelligent systems, streamline workflows, evaluate model performance, and turn complex data into useful insights. I also have a lifelong love of weather, especially thunderstorms, and enjoy exploring how data and technology can help us better understand the atmosphere. I have many years of experience in the data analytics and engineering space, including complex analysis, automation development, machine learning operations, and scalable software and data pipeline design.
-        </p>
-        <p>
-            If you'd like to reach out, feel free to email me at
-            <a href="mailto:bvmcode@thepythongeek.com?subject=Hello from your website!">bvmcode@thepythongeek.com</a>.
-        </p>
-    </div>
-
-    <div class="mt-4 mb-2" id="home-photo">
-        <img src="{{ url_for('static', filename='images/me2.png') }}" alt="Barry Martin" class="img-fluid">
+<div class="container home-container">
+    <div class="home-intro">
+        <div class="row g-0 align-items-stretch">
+            <div class="col-lg-7">
+                <div class="home-bio-text">
+                    <p>
+                        <span class="drop-cap">H</span>ello, my name is Barry Martin. I live in South Jersey with my wonderful wife and two boys. I am a data, software, and AI enthusiast with a passion for building practical technology solutions that solve real problems. My work focuses on data engineering, MLOps, generative AI, automation, and application development.
+                    </p>
+                    <p>
+                        I enjoy using modern AI tools and cloud technologies to build intelligent systems, streamline workflows, evaluate model performance, and turn complex data into useful insights. I also have a lifelong love of weather, especially thunderstorms, and enjoy exploring how data and technology can help us better understand the atmosphere. I have many years of experience in the data analytics and engineering space, including complex analysis, automation development, machine learning operations, and scalable software and data pipeline design.
+                    </p>
+                    <p class="home-contact">
+                        <i class="fa-solid fa-envelope me-2"></i>If you'd like to reach out, email me at
+                        <a href="mailto:bvmcode@thepythongeek.com?subject=Hello from your website!">bvmcode@thepythongeek.com</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <figure class="home-photo-wrap">
+                    <img src="{{ url_for('static', filename='images/me2.png') }}"
+                         alt="Barry Martin outdoors" class="home-photo-img">
+                </figure>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
