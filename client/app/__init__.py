@@ -22,10 +22,12 @@ def create_app():
     from app.home.views import home_bp
     from app.project.views import project_bp
     from app.resume.views import resume_bp
+    from app.stormy_ai.views import stormy_ai_bp
 
     app.register_blueprint(home_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(resume_bp)
+    app.register_blueprint(stormy_ai_bp)
 
     @app.errorhandler(404)
     def page_not_found(e):

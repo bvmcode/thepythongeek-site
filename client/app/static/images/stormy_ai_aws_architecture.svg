@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 980" role="img" aria-labelledby="title desc">
+  <title id="title">Stormy AI AWS architecture</title>
+  <desc id="desc">Traditional layered AWS architecture diagram. Public NOAA and model data and Hugging Face feed an ECS Fargate task. EventBridge Scheduler starts the task through a scheduler role, ECR supplies its image, Secrets Manager supplies its token, execution and task roles authorize it, CloudWatch stores logs, and S3 stores briefing Markdown and plots consumed by a separately deployed Flask website. Labels distinguish Terraform-provisioned resources from existing dependencies.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#7b8b97" flood-opacity=".28"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10Z" fill="#7c919f"/>
+    </marker>
+    <style>
+      .group{fill:#eaf7fd;stroke:#a9c7d7;stroke-width:1.6}.compute{fill:#f4f8e9;stroke:#b9c99b;stroke-width:1.6}.output{fill:#eef7ea;stroke:#b1c8a6;stroke-width:1.6}.security{fill:#fff0f0;stroke:#e0b6b6;stroke-width:1.6}.external{fill:#f4f0fc;stroke:#c6b9dc;stroke-width:1.6}.monitor{fill:#fff3f8;stroke:#dfb8ca;stroke-width:1.6}.title{font:700 18px Arial,sans-serif;fill:#283943}.label{font:700 16px Arial,sans-serif;fill:#344854;text-anchor:middle}.small{font:13px Arial,sans-serif;fill:#526872;text-anchor:middle}.group-label{font:700 16px Arial,sans-serif;fill:#3f535d}.line{fill:none;stroke:#7c919f;stroke-width:2.2;marker-end:url(#arrow)}.dash{fill:none;stroke:#8a9da8;stroke-width:1.8;stroke-dasharray:5 5;marker-end:url(#arrow)}.flow-label{font:12px Arial,sans-serif;fill:#5d717c;text-anchor:middle}.tile{filter:url(#shadow)}.glyph{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.tile-text{font:700 14px Arial,sans-serif;fill:#fff;text-anchor:middle}.note{font:12px Arial,sans-serif;fill:#687b84}
+    </style>
+  </defs>
+
+  <rect width="1460" height="980" fill="#fff"/>
+  <text x="52" y="45" class="title" font-size="24">Stormy AI — AWS deployment and data flow</text>
+  <text x="52" y="70" class="note">Solid lines: runtime/data flow · Dotted lines: image, secret, and IAM relationships</text>
+
+  <!-- External data layer -->
+  <rect x="35" y="105" width="245" height="705" rx="12" class="external"/>
+  <text x="52" y="132" class="group-label">External Data Sources</text>
+  <text x="52" y="152" class="note">Open-Meteo geocoding · public NOAA and model archives</text>
+
+  <g class="tile">
+    <rect x="78" y="170" width="92" height="92" rx="14" fill="#2878bd"/>
+    <path d="M105 218c0-14 11-25 25-25 11 0 21 7 24 17 10 1 18 9 18 19 0 11-9 20-20 20h-43c-11 0-20-9-20-20 0-9 7-17 16-19" class="glyph"/>
+  </g>
+  <text x="124" y="286" class="label">NWS API</text>
+  <text x="124" y="307" class="small">alerts · observations</text>
+  <text x="124" y="325" class="small">forecast · AFD</text>
+
+  <g class="tile">
+    <rect x="78" y="362" width="92" height="92" rx="14" fill="#3b83c5"/>
+    <path d="M98 419h52M104 405h40M112 391h24" class="glyph"/>
+    <path d="M111 433c8 8 18 8 26 0" class="glyph"/>
+  </g>
+  <text x="124" y="478" class="label">NOAA Open Data</text>
+  <text x="124" y="499" class="small">MRMS · NEXRAD</text>
+  <text x="124" y="517" class="small">GOES GLM</text>
+
+  <g class="tile">
+    <rect x="78" y="554" width="92" height="92" rx="14" fill="#496fc1"/>
+    <path d="M95 625l18-32 15 18 11-28 17 42" class="glyph"/>
+    <path d="M97 625h58" class="glyph"/>
+  </g>
+  <text x="124" y="670" class="label">Model Archives</text>
+  <text x="124" y="691" class="small">HRRR · GFS</text>
+  <text x="124" y="709" class="small">Herbie mirrors</text>
+
+  <g class="tile">
+    <rect x="78" y="738" width="92" height="54" rx="12" fill="#6656b6"/>
+    <text x="124" y="770" class="tile-text">HF</text>
+  </g>
+  <text x="124" y="829" class="label">HF Inference</text>
+  <text x="124" y="850" class="small">GLM-5.3-Flash</text>
+  <text x="124" y="868" class="small">via Baseten</text>
+
+  <!-- AWS cloud -->
+  <rect x="315" y="105" width="1110" height="860" rx="14" class="group"/>
+  <text x="335" y="133" class="group-label">AWS services · us-east-1</text>
+
+  <!-- Orchestration -->
+  <rect x="345" y="160" width="280" height="222" rx="12" fill="#f7fbfe" stroke="#b8ceda" stroke-width="1.5"/>
+  <text x="360" y="186" class="group-label">Scheduling Layer</text>
+  <text x="360" y="206" class="note">Terraform-provisioned</text>
+  <g class="tile">
+    <rect x="438" y="216" width="94" height="94" rx="14" fill="#c72c74"/>
+    <rect x="458" y="238" width="54" height="50" rx="5" class="glyph"/>
+    <path d="M458 252h54M471 231v13M499 231v13M472 268h8M490 268h8" class="glyph"/>
+  </g>
+  <text x="485" y="335" class="label">EventBridge</text>
+  <text x="485" y="355" class="label">Scheduler</text>
+  <text x="485" y="374" class="small">00 · 06 · 12 · 18 ET</text>
+
+  <!-- Compute -->
+  <rect x="661" y="160" width="455" height="480" rx="12" class="compute"/>
+  <text x="677" y="186" class="group-label">Compute Layer</text>
+  <text x="677" y="206" class="note">Terraform-provisioned ECS task and security group</text>
+
+  <g class="tile">
+    <rect x="721" y="220" width="108" height="108" rx="16" fill="#ed7100"/>
+    <rect x="744" y="244" width="62" height="57" rx="6" class="glyph"/>
+    <path d="M754 257h13v13h-13zM779 257h13v13h-13zM754 279h13v13h-13zM779 279h13v13h-13z" class="glyph"/>
+  </g>
+  <text x="775" y="354" class="label">ECS Fargate Task</text>
+  <text x="775" y="375" class="small">ARM64 · 16 vCPU</text>
+  <text x="775" y="393" class="small">120 GiB memory</text>
+
+  <rect x="698" y="425" width="380" height="180" rx="10" fill="#fff" stroke="#c4d3ae" stroke-width="1.5"/>
+  <text x="718" y="451" class="group-label">wx-briefing-agent container</text>
+  <rect x="720" y="474" width="154" height="52" rx="8" fill="#eaf4fb" stroke="#9dbdce"/>
+  <text x="797" y="496" class="label" font-size="14">LangGraph loop</text>
+  <text x="797" y="514" class="small">agent ⇄ tools</text>
+  <rect x="898" y="474" width="154" height="52" rx="8" fill="#eaf4fb" stroke="#9dbdce"/>
+  <text x="975" y="496" class="label" font-size="14">12 tools</text>
+  <text x="975" y="514" class="small">download + analyze</text>
+  <rect x="720" y="541" width="154" height="46" rx="8" fill="#fff4df" stroke="#dab976"/>
+  <text x="797" y="569" class="label" font-size="14">Diagnostics</text>
+  <rect x="898" y="541" width="154" height="46" rx="8" fill="#fff4df" stroke="#dab976"/>
+  <text x="975" y="569" class="label" font-size="14">Publisher</text>
+  <path d="M874 500h24" class="line"/>
+  <path d="M975 526v15" class="line"/>
+  <path d="M898 564h-24" class="line"/>
+  <path d="M797 526v15" class="line"/>
+
+  <!-- Storage -->
+  <rect x="1152" y="160" width="240" height="480" rx="12" class="output"/>
+  <text x="1168" y="186" class="group-label">Storage Layer</text>
+  <text x="1168" y="206" class="note">Existing dependency</text>
+  <g class="tile">
+    <rect x="1225" y="227" width="94" height="94" rx="14" fill="#3f8624"/>
+    <path d="M1246 247c0-8 52-8 52 0v47c0 9-52 9-52 0z" class="glyph"/>
+    <path d="M1246 247c0 9 52 9 52 0M1246 270c0 9 52 9 52 0" class="glyph"/>
+  </g>
+  <text x="1272" y="347" class="label">Amazon S3</text>
+  <text x="1272" y="369" class="small">briefing Markdown</text>
+  <text x="1272" y="387" class="small">radar + GFS plots</text>
+  <text x="1272" y="405" class="small">latest.txt pointer</text>
+
+  <rect x="1180" y="453" width="184" height="145" rx="9" fill="#fff" stroke="#bdd0b3"/>
+  <text x="1272" y="480" class="label" font-size="14">Object layout</text>
+  <text x="1194" y="508" class="note">briefings/YYYY-MM-DD/zip/HH_MM.md</text>
+  <text x="1194" y="532" class="note">radar/YYYY-MM-DD/HH_MM.png</text>
+  <text x="1194" y="556" class="note">models/gfs/date/type/forecast_hour.png</text>
+  <text x="1194" y="580" class="note">latest.txt → s3://...md</text>
+
+  <!-- Security -->
+  <rect x="345" y="416" width="280" height="224" rx="12" class="security"/>
+  <text x="360" y="442" class="group-label">Security Layer</text>
+  <text x="360" y="461" class="note">IAM roles: Terraform · secret: existing</text>
+  <g class="tile">
+    <rect x="382" y="476" width="82" height="82" rx="13" fill="#dd344c"/>
+    <rect x="400" y="500" width="46" height="35" rx="4" class="glyph"/>
+    <path d="M409 500v-8c0-16 28-16 28 0v8M413 516h20" class="glyph"/>
+  </g>
+  <text x="423" y="581" class="label">IAM Roles</text>
+  <text x="423" y="601" class="small">scheduler · execution</text>
+  <text x="423" y="619" class="small">task</text>
+
+  <g class="tile">
+    <rect x="495" y="476" width="82" height="82" rx="13" fill="#c72c74"/>
+    <path d="M517 526l25-25M538 497l8 8M511 532l8 8M517 526l-10 10" class="glyph"/>
+    <circle cx="537" cy="506" r="10" class="glyph"/>
+  </g>
+  <text x="536" y="581" class="label">Secrets Manager</text>
+  <text x="536" y="601" class="small">HF_TOKEN</text>
+
+  <!-- Monitoring -->
+  <rect x="345" y="681" width="408" height="195" rx="12" class="monitor"/>
+  <text x="360" y="707" class="group-label">Monitoring Layer</text>
+  <text x="360" y="727" class="note">Terraform-provisioned log group</text>
+  <g class="tile">
+    <rect x="390" y="741" width="90" height="90" rx="14" fill="#c72c74"/>
+    <path d="M409 800c8-29 17 13 26-22s17 26 27-10" class="glyph"/>
+    <path d="M408 814h54" class="glyph"/>
+  </g>
+  <text x="435" y="855" class="label">CloudWatch Logs</text>
+  <text x="435" y="875" class="small">14-day retention</text>
+
+  <rect x="522" y="741" width="197" height="90" rx="9" fill="#fff" stroke="#ddb9c9"/>
+  <text x="620" y="769" class="label" font-size="14">Container Insights</text>
+  <text x="620" y="792" class="small">task stdout / stderr</text>
+  <text x="620" y="811" class="small">run status and failures</text>
+
+  <!-- Presentation -->
+  <rect x="804" y="681" width="588" height="195" rx="12" fill="#edf4ff" stroke="#b6c8df" stroke-width="1.6"/>
+  <text x="820" y="707" class="group-label">Presentation Consumer</text>
+  <text x="820" y="727" class="note">Separate pygeek_site deployment · outside stormy_ai Terraform</text>
+  <g class="tile">
+    <rect x="875" y="741" width="90" height="90" rx="14" fill="#6b46c1"/>
+    <rect x="894" y="761" width="52" height="43" rx="4" class="glyph"/>
+    <path d="M894 772h52M911 816h18M920 804v12" class="glyph"/>
+  </g>
+  <text x="920" y="855" class="label">Flask Website</text>
+  <text x="920" y="875" class="small">the_python_geek</text>
+
+  <rect x="1020" y="741" width="330" height="90" rx="9" fill="#fff" stroke="#b8c9dd"/>
+  <text x="1185" y="769" class="label" font-size="14">/stormy-ai/ request</text>
+  <text x="1185" y="793" class="small">read latest.txt → validate S3 URI</text>
+  <text x="1185" y="812" class="small">fetch Markdown → render HTML</text>
+
+  <!-- Runtime arrows -->
+  <path d="M625 270h36" class="line"/>
+  <text x="643" y="257" class="flow-label">launches</text>
+  <path d="M280 225h360q21 0 21 21v30" class="line"/>
+  <path d="M280 417h350q31 0 31-31v-75" class="line"/>
+  <path d="M280 609h350q31 0 31-31v-267" class="line"/>
+  <path d="M280 765h320q61 0 61-61V328" class="line"/>
+
+  <path d="M1116 290h109" class="line"/>
+  <text x="1170" y="276" class="flow-label">writes</text>
+  <path d="M775 640v77q0 22-22 22h-273" class="line"/>
+  <text x="650" y="724" class="flow-label">logs</text>
+  <path d="M1225 405v246q0 30-30 30H965v60" class="line"/>
+  <text x="1108" y="667" class="flow-label">reads pointer + Markdown</text>
+
+  <!-- Relationship arrows -->
+  <path d="M423 476V418q0-30 30-30h208" class="dash"/>
+  <path d="M485 382v16q0 18-18 18h-44v60" class="dash"/>
+  <text x="428" y="405" class="flow-label">assumes scheduler role</text>
+  <path d="M536 476V404q0-18 18-18h127" class="dash"/>
+  <text x="602" y="370" class="flow-label">reads secret</text>
+  <path d="M423 558v72q0 32 32 32h707q36 0 36-36V405" class="dash"/>
+  <text x="830" y="652" class="flow-label">task-role S3 permissions</text>
+
+  <!-- ECR outside compute but in AWS -->
+  <g class="tile">
+    <rect x="784" y="918" width="74" height="50" rx="10" fill="#ed7100"/>
+    <path d="M803 939l18-10 18 10-18 10zM803 939v12l18 10 18-10v-12" class="glyph" stroke-width="3"/>
+  </g>
+  <text x="920" y="940" class="label" text-anchor="start">Amazon ECR</text>
+  <text x="920" y="958" class="small" text-anchor="start">existing dependency · wx_briefing_agent:latest</text>
+  <path d="M821 918V885q0-21 21-21h32q21 0 21-21V640" class="dash"/>
+  <text x="850" y="895" class="flow-label">pulls image</text>
+</svg>

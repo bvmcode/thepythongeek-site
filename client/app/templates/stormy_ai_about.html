@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<article class="technical-blog">
+    <div class="container technical-blog-container">
+        <header class="technical-intro">
+            <p class="technical-label">Project deep dive</p>
+            <h2>How Stormy AI turns raw weather data into a scheduled briefing</h2>
+            <p class="technical-summary">
+                Hello, my name is Barry Martin, Lead Data Engineer at Zelis and creator of Stormy AI.
+                Stormy AI is a Python and LangGraph weather agent. It geocodes a place (for now hardcoded as Atco, NJ for this site) through Open-Meteo, executes twelve
+                specialized tools against public NOAA and model archives (no weather API keys), combines observations and
+                numerical guidance in a deterministic diagnostic layer, asks a configurable language model to write the report,
+                and publishes the Markdown and supporting graphics to Amazon S3.
+            </p>
+            <p>
+                The maps and plots in the briefing are not screenshots copied from NOAA. Stormy AI's deterministic Python tools
+                download numerical grids and radar volumes from public NOAA and model archives, subset the data around the briefing
+                location, calculate derived fields, and render original figures with Matplotlib, Cartopy, MetPy, Py-ART, and xarray.
+                The language model can decide when to call those tools, but it does not draw the graphics.
+            </p>
+            <p>
+                The narrative is written by the configured language model after the tools return observations, forecasts, model
+                fields, and deterministic diagnostic summaries. The current deployment uses
+                <code>zai-org/GLM-5.3-Flash:baseten</code> through Hugging Face Inference Providers and its OpenAI-compatible
+                endpoint&mdash;not the OpenAI API. The provider and model are configuration choices, so the same workflow can also
+                run against a local Ollama model or another supported Hugging Face model without changing the agent graph.
+            </p>
+            <p>
+                I built Stormy AI because a useful weather briefing should do more than repeat a single forecast. It should compare
+                current observations with model guidance, look for disagreements, and explain what matters without hiding the
+                meteorology. This page opens that process up: the graph state, tool contracts, diagnostic calculations, publishing
+                code, model choice, and AWS resources that run the project four times per day. Below describes the project in more detail.
+                Let's get into it!
+            </p>
+            <div class="technical-actions">
+                <a class="technical-btn primary" href="https://github.com/bvmcode/stormy_ai"
+                   target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-github" aria-hidden="true"></i> bvmcode/stormy_ai
+                </a>
+                <a class="technical-btn secondary" href="{{ url_for('stormy_ai.latest') }}">
+                    View the generated briefing <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </header>
+
+        <nav class="article-toc" aria-label="On this page">
+            <strong>On this page</strong>
+            <a href="#architecture">AWS architecture</a>
+            <a href="#code">Code walkthrough</a>
+            <a href="#tools">Weather tools</a>
+            <a href="#diagnostics">Diagnostics</a>
+            <a href="#publishing">Publishing</a>
+            <a href="#models">Model selection</a>
+        </nav>
+
+        <section id="architecture" class="technical-section">
+            <p class="technical-label">Architecture and infrastructure</p>
+            <h2>A scheduled batch job, not a continuously running service</h2>
+            <p>
+                Stormy AI only needs compute while it is building a briefing. EventBridge Scheduler launches one ECS Fargate
+                task at midnight, 6 a.m., noon, and 6 p.m. in the <code>America/New_York</code> timezone. Each run uses the
+                configured default location (<code>Atco, NJ 08004</code> unless overridden). Fargate pulls the ARM64 container
+                from ECR, retrieves the Hugging Face token from Secrets Manager, gathers public weather and geocoding data over
+                an egress-only network path, and exits after the report is written.
+            </p>
+
+            <figure class="traditional-architecture">
+                <a class="architecture-fullsize" href="{{ url_for('static', filename='images/stormy_ai_aws_architecture.svg') }}"
+                   target="_blank" rel="noopener noreferrer" title="Open the architecture diagram at full size">
+                    <img src="{{ url_for('static', filename='images/stormy_ai_aws_architecture.svg') }}"
+                         alt="Traditional AWS architecture diagram for Stormy AI showing external weather sources, EventBridge Scheduler, ECS Fargate, ECR, IAM, Secrets Manager, S3, CloudWatch, and the Flask website">
+                </a>
+                <figcaption>
+                    The diagram distinguishes resources provisioned by <code>stormy_ai/infra</code> from existing AWS dependencies
+                    and the separately deployed Flask consumer. Solid arrows show runtime data flow; dotted arrows show image,
+                    secret, or IAM relationships. Select the diagram to open the full-size version.
+                </figcaption>
+            </figure>
+
+            <div class="infrastructure-grid">
+                <div>
+                    <h3>ECS Fargate</h3>
+                    <p>
+                        The task definition uses Linux on ARM64 with 16 vCPU and 120 GiB of memory. That is intentionally larger
+                        than a typical API container: GRIB2, NetCDF, radar volumes, xarray datasets, Py-ART, MetPy, and Cartopy can
+                        all hold substantial arrays during one run.
+                    </p>
+                </div>
+                <div>
+                    <h3>IAM and secrets</h3>
+                    <p>
+                        EventBridge Scheduler assumes a dedicated role that can run the ECS task and pass its runtime roles. The
+                        execution role pulls the ECR image, writes logs, and reads <code>stormy-ai/hf-token</code>; the task role can
+                        list and modify objects under <code>stormy-ai-files</code>. No static AWS credentials are baked into the image.
+                    </p>
+                </div>
+                <div>
+                    <h3>Networking and logs</h3>
+                    <p>
+                        The task runs in public subnets with a public IP and a security group that defines outbound traffic only.
+                        CloudWatch receives container logs under <code>/ecs/wx-briefing-agent</code> with fourteen-day retention.
+                    </p>
+                </div>
+                <div>
+                    <h3>S3 as the handoff</h3>
+                    <p>
+                        Briefings, radar plots, and GFS charts are durable objects. A tiny root-level <code>latest.txt</code> object
+                        points to the newest Markdown file, decoupling the agent from this Flask website.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="code" class="technical-section">
+            <p class="technical-label">Code walkthrough</p>
+            <h2>The LangGraph state machine</h2>
+            <p>
+                The entry point in <code>main.py</code> passes a location to <code>run_briefing()</code>. That function constructs a
+                strict request requiring every tool, invokes the compiled graph, collects plot metadata from the resulting tool
+                messages, normalizes image markup, and writes the finished report.
+            </p>
+
+            <div class="code-path" aria-label="Stormy AI runtime path">
+                <span><code>main.py</code></span><i class="fa-solid fa-arrow-right"></i>
+                <span><code>briefing.run_briefing()</code></span><i class="fa-solid fa-arrow-right"></i>
+                <span><code>graph.invoke()</code></span><i class="fa-solid fa-arrow-right"></i>
+                <span><code>ensure_* markdown</code></span><i class="fa-solid fa-arrow-right"></i>
+                <span><code>write_briefing_markdown()</code></span>
+            </div>
+
+            <h3>1. Structured state beside the conversation</h3>
+            <p>
+                <code>WeatherState</code> extends LangGraph's <code>MessagesState</code>. The message list contains the conversation
+                and tool responses, while five explicit fields hold only the meteorological data needed for deterministic fusion.
+                This distinction keeps the diagnostic code from scraping values back out of arbitrary prose.
+            </p>
+<pre class="technical-code"><code>class WeatherState(MessagesState):
+    mrms: NotRequired[dict | None]
+    nexrad: NotRequired[dict | None]
+    hrrr: NotRequired[dict | None]
+    lightning: NotRequired[dict | None]
+    diagnosis: NotRequired[dict | None]</code></pre>
+
+            <h3>2. Four graph nodes and one loop</h3>
+            <p>
+                The graph is small on purpose. <code>reset_weather</code> prevents stale data from crossing runs. The
+                <code>agent</code> node calls the configured chat model with all tools bound. The <code>tools</code> node wraps
+                LangGraph's <code>ToolNode</code> and calls <code>gc.collect()</code> after each batch to release large GRIB and
+                radar allocations. <code>collect_weather</code> copies selected results into structured state before returning
+                control to the model.
+            </p>
+<pre class="technical-code"><code>START → reset_weather → agent
+                         │
+                 tool calls present?
+                    yes  │  no
+                         ▼   └────────────→ END
+                       tools
+                         ▼
+                  collect_weather
+                         └───────────────→ agent</code></pre>
+            <p>
+                There is no separate planner model and no persistent checkpointer. The same model chooses tools and writes the
+                final report. The conditional edge ends only when the last AI message contains no tool calls. The system prompt
+                requires every tool exactly once per briefing, in a sensible order: geocode, alerts, current conditions, MRMS,
+                HRRR, NEXRAD analysis and plot, lightning, skew-T, GFS, forecast, Area Forecast Discussion, then the write-up.
+            </p>
+
+            <h3>3. Tool messages become typed weather inputs</h3>
+            <p>
+                <code>collect_weather_results()</code> scans only messages since the most recent <code>HumanMessage</code>. It maps
+                four tool names to state fields, parses JSON-like content with <code>parse_tool_content()</code>, and keeps the newest
+                result if a tool was called more than once.
+            </p>
+<pre class="technical-code"><code>WEATHER_TOOL_STATE_MAP = {
+    "get_mrms_precipitation": "mrms",
+    "analyze_nexrad_level2": "nexrad",
+    "get_hrrr_environment": "hrrr",
+    "get_lightning": "lightning",
+}</code></pre>
+            <p>
+                The radar plotting tool is deliberately absent from this map. A PNG path belongs in the finished report, but it is
+                not meteorological evidence. When both MRMS and HRRR are present, the collector calls
+                <code>diagnose_precipitation()</code> and stores its returned dictionary under <code>diagnosis</code>.
+            </p>
+
+            <h3>4. The diagnosis is injected back into the prompt</h3>
+            <p>
+                On the next pass through <code>call_model()</code>, <code>build_system_prompt()</code> serializes the diagnosis as
+                JSON inside a <code>&lt;weather_diagnosis&gt;</code> block. The prompt tells the model that this block takes precedence
+                over its own interpretation of raw fields. If only one of the minimum inputs has arrived, the prompt instead tells
+                the model to continue gathering data.
+            </p>
+
+            <div class="source-map">
+                <h3>Where the important code lives</h3>
+                <div class="source-map-row"><code>src/stormy_ai/agent.py</code><span>State definition, graph nodes, routing, result collection, diagnosis injection</span></div>
+                <div class="source-map-row"><code>src/stormy_ai/diagnostics.py</code><span>Deterministic precipitation, convection, hail-signal, and virga rules</span></div>
+                <div class="source-map-row"><code>src/stormy_ai/briefing.py</code><span>Run orchestration, image post-processing, scheduling metadata, local and S3 output</span></div>
+                <div class="source-map-row"><code>src/stormy_ai/tools/</code><span>LangChain tools, Pydantic input schemas, downloads, calculations, and plots</span></div>
+                <div class="source-map-row"><code>src/stormy_ai/llm.py</code><span>Ollama and Hugging Face model factory</span></div>
+                <div class="source-map-row"><code>infra/</code><span>Terraform for ECS, EventBridge Scheduler, IAM, networking, logging, and secrets</span></div>
+            </div>
+        </section>
+
+        <section id="tools" class="technical-section">
+            <p class="technical-label">Tool implementation</p>
+            <h2>The twelve tools and what their code actually does</h2>
+            <p>
+                The tools are not thin wrappers around one commercial weather endpoint. They acquire several public datasets,
+                handle their coordinate systems and file formats, perform spatial and thermodynamic calculations, and return either
+                structured dictionaries or official NWS text. Pydantic schemas constrain the arguments the model can send.
+            </p>
+
+            <div class="tool-detail">
+                <div class="tool-number">01</div>
+                <div>
+                    <h3><code>geocode_location</code></h3>
+                    <p>
+                        Calls Open-Meteo's geocoding API and returns the top match with latitude and longitude. The helper
+                        <code>_search_names()</code> retries without a trailing ZIP code when a string such as
+                        “Atco, NJ 08004” does not resolve on the first attempt. Geocoding first prevents the LLM from inventing
+                        coordinates for every downstream tool.
+                    </p>
+                    <span class="tool-meta">tools/geocode.py · requests · plain-text result</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">02–05</div>
+                <div>
+                    <h3>NWS: <code>current_conditions</code>, <code>get_alerts</code>, <code>get_forecast</code>, <code>forecast_discussion</code></h3>
+                    <p>
+                        <code>NwsApi</code> begins with the NWS points endpoint, which supplies the local forecast office, forecast
+                        URLs, and nearby stations. Current conditions try up to five stations until a usable latest observation is
+                        found. Forecast output combines approximately eight 12-hour periods with about 72 hourly rows. Alerts retain
+                        event, severity, times, descriptions, and instructions; the Area Forecast Discussion preserves the local
+                        forecast office's reasoning.
+                    </p>
+                    <p>
+                        These tools return human-readable text because their source products are already official public
+                        communication. The prompt treats alerts and forecasts as authoritative and does not permit radar or model
+                        fields to manufacture warning language.
+                    </p>
+                    <span class="tool-meta">tools/nws.py · api.weather.gov · shared User-Agent and conversion helpers</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">06</div>
+                <div>
+                    <h3><code>get_mrms_precipitation</code></h3>
+                    <p>
+                        Reads the newest Multi-Radar/Multi-Sensor precipitation-rate and composite-reflectivity GRIB2 files from
+                        NOAA's public S3 bucket. <code>get_mrms_data()</code> searches today and yesterday, decompresses the selected
+                        <code>.grib2.gz</code> object into a temporary file, opens it with xarray/cfgrib, and removes the temporary file.
+                    </p>
+                    <p>
+                        MRMS uses 0–360° longitude, so the module normalizes coordinates before nearest-grid sampling. Haversine
+                        distance grids turn a rectangular subset into a true circular analysis radius. The result includes point and
+                        area rates, precipitation coverage, reflectivity, and distances to the nearest surface precipitation and
+                        meaningful radar echo. In this code, precipitation begins at 0.1 mm/hr and a meaningful echo at 10 dBZ.
+                    </p>
+                    <span class="tool-meta">tools/mrms.py · s3fs · xarray · cfgrib · NumPy</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">07</div>
+                <div>
+                    <h3><code>get_hrrr_environment</code></h3>
+                    <p>
+                        Uses Herbie to select a current HRRR surface file and a pressure-level file from the same cycle. The code
+                        samples the nearest curvilinear grid cell and extracts 2 m temperature and dewpoint, surface pressure,
+                        precipitation rate, categorical rain/snow/freezing-rain/ice-pellet flags, freezing-level height, CAPE, and CIN.
+                    </p>
+                    <p>
+                        A 1000–500 hPa profile is assembled from temperature and relative humidity. Helpers detect a warm nose,
+                        count freezing-level crossings, determine whether the entire sampled column is below freezing, and collapse
+                        the categorical flags into one model precipitation type. HRRR is guidance, so the diagnostic layer uses MRMS
+                        to confirm whether precipitation is actually reaching the point.
+                    </p>
+                    <span class="tool-meta">tools/hrrr.py · Herbie · xarray · pandas · Pydantic</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">08–09</div>
+                <div>
+                    <h3>NEXRAD: <code>analyze_nexrad_level2</code> and <code>plot_nexrad_level2</code></h3>
+                    <p>
+                        The radar module selects the nearest WSR-88D site from Py-ART's station table, downloads the newest Level II
+                        volume from the Unidata public S3 archive, and analyzes the lowest sweep. It calculates beam height and field
+                        statistics for reflectivity, radial velocity, differential reflectivity, correlation coefficient, PhiDP, and
+                        KDP where it can be derived.
+                    </p>
+                    <p>
+                        <code>strong_echo_diagnostics()</code> isolates gates at or above 50 dBZ and summarizes their dual-pol
+                        values for the conservative hail-signal rules. The companion plotting tool renders a geographic PNG with
+                        Cartopy and uploads it to S3. Only the analysis dictionary enters diagnostic state; the plot is presentation.
+                    </p>
+                    <span class="tool-meta">tools/radar.py · arm-pyart · Cartopy · Matplotlib · Unidata S3</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">10</div>
+                <div>
+                    <h3><code>get_lightning</code></h3>
+                    <p>
+                        Selects GOES-19 East or GOES-18 West according to longitude, finds GLM Level 2 LCFA NetCDF files covering a
+                        recent time window, and reads flash centroids near the requested point. Haversine distance and bearing helpers
+                        report the nearest activity, while a split-window comparison describes whether flash counts are increasing,
+                        decreasing, or steady.
+                    </p>
+                    <p>
+                        GLM observes total lightning rather than verified ground strikes. The tool therefore supplies electrical
+                        context to the convective score; it never claims that lightning struck a particular address.
+                    </p>
+                    <span class="tool-meta">tools/lightning.py · NOAA GOES S3 · h5netcdf · xarray</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">11</div>
+                <div>
+                    <h3><code>analyze_current_skewt</code></h3>
+                    <p>
+                        Builds a model sounding from HRRR surface fields and isobaric temperature, humidity, height, and wind data
+                        extending toward 100 hPa. MetPy derives dewpoint aloft and calculates surface-based and mixed-layer CAPE/CIN,
+                        LCL, LFC, EL, precipitable water, DCAPE, 0–1/0–3/0–6 km shear, lapse rates, classic indices, and the freezing level.
+                    </p>
+                    <p>
+                        The minimum valid-profile check and returned limitations are important: this is an HRRR-derived model
+                        sounding, not a nearby radiosonde observation. It provides vertical context without pretending the model
+                        profile was measured by a balloon.
+                    </p>
+                    <span class="tool-meta">tools/skewt.py · MetPy · HRRR sounding loader · NumPy/pandas</span>
+                </div>
+            </div>
+
+            <div class="tool-detail">
+                <div class="tool-number">12</div>
+                <div>
+                    <h3><code>get_gfs_guidance</code></h3>
+                    <p>
+                        Finds the newest GFS cycle for which the longest requested forecast lead is available, then forces every
+                        requested lead to use that same cycle. This prevents a three-day briefing from silently mixing new short-range
+                        guidance with an older long-range run.
+                    </p>
+                    <p>
+                        For F024, F048, and F072, the code extracts point guidance and renders four fixed-domain regional maps:
+                        surface pressure/thickness/precipitation/wind, 500 hPa height/vorticity/wind, 850 hPa humidity/wind, and
+                        300 hPa height/jet-level wind. Fixed map extents and thresholds make the days visually comparable. Every
+                        image returns a local path, S3 URI, public HTTPS URL, cycle, and valid time.
+                    </p>
+                    <span class="tool-meta">tools/models.py · Herbie · xarray · Cartopy · Matplotlib · 1,000+ lines of plotting and data handling</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="diagnostics" class="technical-section">
+            <p class="technical-label">Deterministic meteorology</p>
+            <h2>Why some conclusions stay outside the language model</h2>
+            <p>
+                Radar reflectivity alone cannot establish surface precipitation type. A model flag alone cannot prove anything is
+                falling. Stormy AI resolves that problem in <code>diagnostics.py</code>, where explicit functions interpret each
+                source and combine them into a single auditable dictionary.
+            </p>
+
+            <div class="diagnostic-pipeline">
+                <div><strong>Interpret</strong><span>Normalize MRMS, HRRR, NEXRAD, and GLM</span></div>
+                <i class="fa-solid fa-arrow-right"></i>
+                <div><strong>Classify</strong><span>Presence, intensity, type, convection</span></div>
+                <i class="fa-solid fa-arrow-right"></i>
+                <div><strong>Explain</strong><span>Confidence, evidence, limitations</span></div>
+                <i class="fa-solid fa-arrow-right"></i>
+                <div><strong>Inject</strong><span>Authoritative JSON for the LLM</span></div>
+            </div>
+
+            <div class="diagnostic-rules">
+                <div>
+                    <h3>Precipitation type</h3>
+                    <p>
+                        Snow requires an entirely subfreezing sampled column plus the HRRR snow flag. Freezing rain requires a
+                        subfreezing surface, a warm layer aloft, and the freezing-rain flag. Conflicting evidence falls back to mixed
+                        or unknown instead of forcing certainty.
+                    </p>
+                </div>
+                <div>
+                    <h3>Convective character</h3>
+                    <p>
+                        Active GLM lightning adds three score points; reflectivity of at least 45 dBZ adds two (with an extra point
+                        at 55 dBZ or above); MRMS rates of at least 25 mm/hr and HRRR CAPE of at least 500 J/kg add supporting
+                        points. A score of three marks the environment as convective.
+                    </p>
+                </div>
+                <div>
+                    <h3>Possible hail signal</h3>
+                    <p>
+                        The conservative check combines at least 55 dBZ reflectivity, 50+ dBZ gates, low differential reflectivity,
+                        and reduced correlation coefficient. Three indicators are needed, and the output is still labeled a possible
+                        radar signal rather than a surface hail report.
+                    </p>
+                </div>
+                <div>
+                    <h3>Possible virga</h3>
+                    <p>
+                        Nearby radar echoes without MRMS surface precipitation, combined with a modeled surface dewpoint depression
+                        of at least 10&nbsp;°C, produce a possible evaporation clue. The code describes consistency with virga; it
+                        does not claim virga was directly observed.
+                    </p>
+                </div>
+            </div>
+
+            <aside class="technical-note">
+                <strong>Official hazards remain separate.</strong>
+                Diagnostics influence the briefing's language, but watches, warnings, and advisories come from
+                <code>get_alerts</code>. A high CAPE value or strong radar core is not converted into an invented NWS warning.
+            </aside>
+        </section>
+
+        <section id="publishing" class="technical-section">
+            <p class="technical-label">Briefing assembly and publishing</p>
+            <h2>The LLM output is not written directly to disk</h2>
+            <p>
+                The final AI message first passes through deterministic post-processing in <code>briefing.py</code>.
+                <code>ensure_radar_image_markdown()</code> inserts the public radar image if the model omitted it.
+                <code>ensure_gfs_guidance_markdown()</code> does the same for all required day-one through day-three charts.
+                <code>normalize_briefing_images()</code> converts Markdown or bare S3 image references into sized HTTPS
+                <code>&lt;img&gt;</code> elements.
+            </p>
+
+            <div class="publish-flow">
+                <div><code>Final AIMessage</code></div>
+                <span>→</span><div>Normalize and guarantee plots</div>
+                <span>→</span><div>Add update metadata</div>
+                <span>→</span><div>Write local Markdown</div>
+                <span>→</span><div>Upload report + update pointer</div>
+            </div>
+
+<pre class="technical-code"><code>s3://stormy-ai-files/briefings/&lt;YYYY-MM-DD&gt;/&lt;zip&gt;/&lt;HH_MM&gt;.md  (UTC keys)
+s3://stormy-ai-files/radar/&lt;YYYY-MM-DD&gt;/&lt;HH_MM&gt;.png
+s3://stormy-ai-files/models/gfs/&lt;YYYY-MM-DD&gt;/&lt;type&gt;/&lt;forecast_hour&gt;.png
+s3://stormy-ai-files/latest.txt  →  newest briefing S3 URI</code></pre>
+            <p>
+                This site's <code>/stormy-ai/</code> route reads <code>latest.txt</code>, validates the returned S3 URI, fetches that
+                object, renders the Markdown, and returns a friendly 503 state when S3 is unavailable. This page lives at
+                <code>/stormy-ai/about/</code>. The agent repository and the website can therefore be deployed independently.
+            </p>
+        </section>
+
+        <section id="models" class="technical-section">
+            <p class="technical-label">Language-model selection</p>
+            <h2>Choosing the model for a long, tool-heavy weather run</h2>
+            <p>
+                Model selection for Stormy AI is less about finding the model with the most creative prose and more about finding
+                one that can reliably finish a long agent run. A briefing can contain several rounds of tool calls, large NWS text
+                products, structured radar and model results, and metadata for many generated images. The model has to retain that
+                context, call every required tool, preserve units and timestamps, and stop calling tools when it is finally ready
+                to write.
+            </p>
+
+            <div class="selection-criteria">
+                <div><strong>Tool calling</strong><span>Correct names and valid Pydantic arguments across twelve tools</span></div>
+                <div><strong>Context handling</strong><span>Room for NWS prose, profiles, radar statistics, and GFS metadata</span></div>
+                <div><strong>Instruction fidelity</strong><span>Uses every source and respects the deterministic diagnosis</span></div>
+                <div><strong>Operational fit</strong><span>Predictable latency and availability during scheduled Fargate runs</span></div>
+                <div><strong>Output discipline</strong><span>Stable Markdown structure without altered values or invented hazards</span></div>
+                <div><strong>Replaceability</strong><span>A model can change without rewriting tools or meteorological rules</span></div>
+            </div>
+
+            <h3>The current cloud selection</h3>
+            <p>
+                The checked-in deployment configuration selects <code>zai-org/GLM-5.3-Flash</code>, routed through the Hugging Face
+                Inference API to Baseten. This is a pragmatic cloud choice: the ECS task can reach a hosted, tool-capable chat model
+                without running a second model-serving stack, and the provider is available through the same OpenAI-compatible
+                interface already used by LangChain. It is the current deployment choice, not a claim that one model will remain
+                best forever.
+            </p>
+
+            <div class="model-selection-table-wrap">
+                <table class="model-selection-table">
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Where it fits</th>
+                            <th>Tradeoff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GLM-5.3-Flash via Baseten</strong><br><span>Current cloud configuration</span></td>
+                            <td>Scheduled ECS runs that need a remotely accessible model and no persistent inference server.</td>
+                            <td>Requires <code>HF_TOKEN</code>, outbound network access, and an available inference provider.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ollama model</strong><br><span>Local development option</span></td>
+                            <td>Private experimentation, prompt development, and testing without sending requests to a hosted model.</td>
+                            <td>The developer must provide enough local compute and keep the Ollama server running.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Another HF provider/model</strong><br><span>Configuration change</span></td>
+                            <td>Comparing cost, latency, context limits, or tool-calling behavior without changing graph code.</td>
+                            <td>Must be rechecked against the full twelve-tool briefing, not only a single chat response.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Why temperature is zero</h3>
+            <p>
+                The configured temperature is <code>0</code> because the desired variability comes from the atmosphere, not from
+                the wording engine. Lower sampling variability helps keep section order, tool behavior, units, and phrasing more
+                repeatable between scheduled runs. It does not make the report deterministic—the source data, provider behavior,
+                and tool-call sequence can still vary—but it removes unnecessary creativity from a factual briefing workflow.
+            </p>
+
+<pre class="technical-code"><code>llm:
+  provider: huggingface
+  model: zai-org/GLM-5.3-Flash:baseten
+  temperature: 0
+  huggingface:
+    base_url: https://router.huggingface.co/v1
+    inference_provider: baseten</code></pre>
+
+            <h3>How the code keeps the choice replaceable</h3>
+            <p>
+                <code>create_chat_model()</code> is a small factory. It returns <code>ChatOllama</code> for local execution or an
+                OpenAI-compatible <code>ChatOpenAI</code> client for Hugging Face Inference Providers. Environment variables can
+                override the provider, model, inference provider, Ollama base URL, and temperature. Everything after that factory receives
+                the same LangChain chat-model contract, so <code>agent.py</code>, the tool schemas, and the graph edges do not know
+                which backend was selected.
+            </p>
+            <p>
+                A replacement model should be evaluated with the complete workflow: whether it geocodes first, calls all twelve
+                tools with valid arguments, waits for the diagnostic state, preserves source values, includes the required report
+                sections, and finishes without entering a tool loop. A good standalone answer is not enough. The test that matters
+                is a complete, meteorologically faithful briefing.
+            </p>
+
+            <aside class="technical-note">
+                <strong>The model remains the communicator, not the calculator.</strong>
+                Changing the model does not move GRIB decoding, radar geometry, CAPE calculations, precipitation thresholds, or
+                hazard authority into the LLM. Those responsibilities stay in the tools, deterministic diagnostics, and NWS products.
+            </aside>
+        </section>
+
+        <footer class="technical-footer">
+            <h2>Read the implementation</h2>
+            <p>
+                The repository includes the complete Python package, Terraform, tool-level documentation, tests, Docker image,
+                example output, and generated weather graphics.
+            </p>
+            <a class="technical-btn primary" href="https://github.com/bvmcode/stormy_ai"
+               target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-github" aria-hidden="true"></i> Visit bvmcode/stormy_ai
+            </a>
+        </footer>
+    </div>
+</article>
+{% endblock %}

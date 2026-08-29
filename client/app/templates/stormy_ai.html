@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container stormy-ai-container">
+    <section class="briefing-intro" aria-labelledby="briefing-intro-title">
+        <p class="briefing-intro-label">Agentic weather briefing</p>
+        <h2 id="briefing-intro-title">What you are reading</h2>
+        <p>
+            Though vibe coding is taking over the world, I still like to write my own code. I use Cursor and Codex as
+            assistants, but I know every inch of the code that ships with my name on it. The
+            <a href="{{ url_for('stormy_ai.about') }}">How Stormy AI Works</a> page takes you through the code, tools, model
+            selection, and AWS infrastructure behind the briefing.
+        </p>
+        <p>
+            This briefing is a scheduled (4 times per day), AI-written weather analysis for my hometown of Atco, NJ. The briefing is built from current observations, National Weather Service
+            products, radar, lightning data, and numerical model guidance. Stormy AI gathers those sources, runs deterministic
+            meteorological diagnostics, and asks a language model to turn the evidence into the report below.
+        </p>
+    </section>
+
+    {% if load_error %}
+    <div class="alert alert-warning" role="alert">
+        {{ load_error }}
+    </div>
+    {% else %}
+    <article class="markdown-content">
+        {{ rendered_markdown }}
+    </article>
+    {% endif %}
+</div>
+{% endblock %}
