@@ -6,22 +6,41 @@
 
 {% block content %}
 <div class="container stormy-ai-container">
-    <section class="briefing-intro" aria-labelledby="briefing-intro-title">
-        <p class="briefing-intro-label">Agentic weather briefing</p>
-        <h2 id="briefing-intro-title">What you are reading</h2>
+    <aside class="briefing-schedule" aria-label="Briefing schedule">
+        <span class="briefing-schedule-label">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+            Update schedule
+        </span>
         <p>
-            Though vibe coding is taking over the world, I still like to write my own code. I use Cursor and Codex as
-            assistants, but I know every inch of the code that ships with my name on it. The
-            <a href="{{ url_for('stormy_ai.about') }}">How Stormy AI Works</a> page takes you through the code, tools, model
-            selection, and AWS infrastructure behind the briefing.
+            Runs <strong>hourly from 8&nbsp;a.m. to 8&nbsp;p.m.</strong>, plus
+            <strong>midnight</strong> and <strong>2&nbsp;a.m.</strong>
+            (Eastern Time).
         </p>
-        <p>
-            This briefing is an AI-written weather analysis for my hometown of Atco, NJ. The briefing is built from current observations, National Weather Service
-            products, radar, lightning data, and numerical model guidance. Stormy AI gathers those sources, runs deterministic
-            meteorological diagnostics, and asks a language model to turn the evidence into the report below.
-        </p>
-        <p>This briefing is scheduled to run every hour between 8am and 8pm and then midnight and 2am.</p>
-    </section>
+    </aside>
+
+    <details class="briefing-intro">
+        <summary class="briefing-intro-summary">
+            <span class="briefing-intro-label">Agentic weather briefing</span>
+            <span class="briefing-intro-title-row">
+                <h2 id="briefing-intro-title">What you are reading</h2>
+                <i class="fa-solid fa-chevron-down briefing-intro-chevron" aria-hidden="true"></i>
+            </span>
+        </summary>
+        <div class="briefing-intro-body">
+            <p>
+                Though vibe coding is taking over the world, I still like to write my own code. I use Cursor and Codex as
+                assistants, but I know every inch of the code that ships with my name on it. The
+                <a href="{{ url_for('stormy_ai.about') }}">How Stormy AI Works</a> page takes you through the code, tools, model
+                selection, and AWS infrastructure behind the briefing.
+            </p>
+            <p>
+                This briefing is an AI-written weather analysis for my hometown of Atco, NJ. The briefing is built from current
+                observations, National Weather Service products, radar, lightning data, and numerical model guidance. Stormy AI
+                gathers those sources, runs deterministic meteorological diagnostics, and asks a language model to turn the
+                evidence into the report below.
+            </p>
+        </div>
+    </details>
 
     {% if load_error %}
     <div class="alert alert-warning" role="alert">

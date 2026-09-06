@@ -180,6 +180,45 @@ main {
     max-width: 960px;
 }
 
+.briefing-schedule {
+    align-items: flex-start;
+    background: linear-gradient(120deg, #1e3a5f 0%, #2a5f8f 100%);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    color: #f4f8fc;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.25rem;
+    margin-bottom: 1rem;
+    padding: 0.95rem 1.25rem;
+}
+
+.briefing-schedule-label {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    gap: 0.4rem;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.75rem;
+    text-transform: uppercase;
+}
+
+.briefing-schedule p {
+    flex: 1 1 14rem;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.briefing-schedule strong {
+    color: #ffe08a;
+    font-weight: 700;
+}
+
 .briefing-intro {
     background: linear-gradient(135deg, #fff9d6 0%, #ffeb8a 100%);
     border: 1px solid #e3bd18;
@@ -187,30 +226,65 @@ main {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     margin-bottom: 1.5rem;
-    padding: clamp(1.25rem, 3vw, 2rem);
+    padding: 0;
+}
+
+.briefing-intro-summary {
+    cursor: pointer;
+    list-style: none;
+    padding: clamp(1rem, 2.5vw, 1.35rem) clamp(1.15rem, 3vw, 1.75rem);
+}
+
+.briefing-intro-summary::-webkit-details-marker {
+    display: none;
 }
 
 .briefing-intro-label {
     color: #705900;
+    display: block;
     font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0.08em;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.35rem;
     text-transform: uppercase;
 }
 
-.briefing-intro h2 {
+.briefing-intro-title-row {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+}
+
+.briefing-intro-summary h2 {
     color: var(--primary-dark);
-    font-size: clamp(1.45rem, 3vw, 1.9rem);
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
     font-weight: 700;
-    margin-bottom: 0.8rem;
+    margin: 0;
 }
 
-.briefing-intro p {
+.briefing-intro-chevron {
+    color: #705900;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease;
+}
+
+.briefing-intro[open] .briefing-intro-chevron {
+    transform: rotate(180deg);
+}
+
+.briefing-intro-body {
+    border-top: 1px solid rgba(227, 189, 24, 0.55);
+    padding: 0 clamp(1.15rem, 3vw, 1.75rem) clamp(1.15rem, 3vw, 1.75rem);
+}
+
+.briefing-intro-body p {
     line-height: 1.7;
+    margin-top: 1rem;
 }
 
-.briefing-intro p:last-child {
+.briefing-intro-body p:last-child {
     margin-bottom: 0;
 }
 
