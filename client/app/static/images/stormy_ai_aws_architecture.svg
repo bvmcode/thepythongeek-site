@@ -71,7 +71,7 @@
   </g>
   <text x="485" y="335" class="label">EventBridge</text>
   <text x="485" y="355" class="label">Scheduler</text>
-  <text x="485" y="374" class="small">00 · 06 · 12 · 18 ET</text>
+  <text x="485" y="374" class="small">04 · hourly 08–20 ET</text>
 
   <!-- Compute -->
   <rect x="661" y="160" width="455" height="480" rx="12" class="compute"/>
@@ -93,7 +93,7 @@
   <text x="797" y="496" class="label" font-size="14">LangGraph loop</text>
   <text x="797" y="514" class="small">agent ⇄ tools</text>
   <rect x="898" y="474" width="154" height="52" rx="8" fill="#eaf4fb" stroke="#9dbdce"/>
-  <text x="975" y="496" class="label" font-size="14">12 tools</text>
+  <text x="975" y="496" class="label" font-size="14">13 tools</text>
   <text x="975" y="514" class="small">download + analyze</text>
   <rect x="720" y="541" width="154" height="46" rx="8" fill="#fff4df" stroke="#dab976"/>
   <text x="797" y="569" class="label" font-size="14">Diagnostics</text>
@@ -115,15 +115,17 @@
   </g>
   <text x="1272" y="347" class="label">Amazon S3</text>
   <text x="1272" y="369" class="small">briefing Markdown</text>
-  <text x="1272" y="387" class="small">radar + GFS plots</text>
+  <text x="1272" y="387" class="small">zone · radar · METAR · GFS plots</text>
   <text x="1272" y="405" class="small">latest.txt pointer</text>
 
-  <rect x="1180" y="453" width="184" height="145" rx="9" fill="#fff" stroke="#bdd0b3"/>
+  <rect x="1180" y="453" width="184" height="160" rx="9" fill="#fff" stroke="#bdd0b3"/>
   <text x="1272" y="480" class="label" font-size="14">Object layout</text>
   <text x="1194" y="508" class="note">briefings/YYYY-MM-DD/zip/HH_MM.md</text>
-  <text x="1194" y="532" class="note">radar/YYYY-MM-DD/HH_MM.png</text>
-  <text x="1194" y="556" class="note">models/gfs/date/type/forecast_hour.png</text>
-  <text x="1194" y="580" class="note">latest.txt → s3://...md</text>
+  <text x="1194" y="526" class="note">radar/YYYY-MM-DD/HH_MM.png</text>
+  <text x="1194" y="544" class="note">metar/YYYY-MM-DD/HH_MM.png</text>
+  <text x="1194" y="562" class="note">forecast_zones/zone-id.png</text>
+  <text x="1194" y="580" class="note">models/gfs/date/type/forecast_hour.png</text>
+  <text x="1194" y="598" class="note">latest.txt → s3://...md</text>
 
   <!-- Security -->
   <rect x="345" y="416" width="280" height="224" rx="12" class="security"/>

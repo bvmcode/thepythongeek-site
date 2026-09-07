@@ -59,7 +59,7 @@ def test_stormy_ai_page_renders_latest_markdown(client, monkeypatch):
     assert response.status_code == 200
     assert b"<h1>Today's report</h1>" in response.data
     assert b"<strong>Storms expected.</strong>" in response.data
-    assert b"This briefing is a scheduled, AI-written weather analysis" in response.data
+    assert b"This briefing is an AI-written weather analysis" in response.data
     assert b"How Stormy AI Works" in response.data
     assert b'href="/stormy-ai/about/"' in response.data
     assert b'href="/stormy-ai/"' in response.data
@@ -90,11 +90,16 @@ def test_stormy_ai_about_page(client):
     assert response.status_code == 200
     assert b"How Stormy AI turns raw weather data into a scheduled briefing" in response.data
     assert b"get_mrms_precipitation" in response.data
+    assert b"plot_metar_observations" in response.data
     assert b"diagnose_precipitation" in response.data
     assert b"The language model can decide when to call those tools" in response.data
     assert b"not the OpenAI API" in response.data
     assert b"Choosing the model for a long, tool-heavy weather run" in response.data
     assert b"zai-org/GLM-5.3-Flash:baseten" in response.data
     assert b"stormy_ai_aws_architecture.svg" in response.data
+    assert b"Continuous integration and delivery" in response.data
+    assert b".github/workflows/tests.yml" in response.data
+    assert b".github/workflows/deploy.yml" in response.data
+    assert b"make infra-apply" in response.data
     assert b"https://github.com/bvmcode/stormy_ai" in response.data
     assert b'href="/stormy-ai/about/"' in response.data
