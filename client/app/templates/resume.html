@@ -18,10 +18,13 @@
     <div class="resume-hero card mb-4">
         <div class="card-body py-4 px-4">
             <p class="resume-hero-name mb-1">Barry V. Martin</p>
-            <p class="resume-hero-title mb-3">Lead Data Engineer &nbsp;|&nbsp; MLOps &amp; Generative AI</p>
+            <p class="resume-hero-title mb-3">Lead Data Engineer &nbsp;|&nbsp; AIOps, MLOps &amp; Generative AI</p>
             <div class="resume-contact">
+                <span><i class="fa-solid fa-location-dot me-1"></i>Atco, NJ</span>
+                <a href="tel:+18483040787"><i class="fa-solid fa-phone me-1"></i>848.304.0787</a>
                 <a href="mailto:bvmcode@thepythongeek.com"><i class="fa-solid fa-envelope me-1"></i>bvmcode@thepythongeek.com</a>
                 <a href="https://www.linkedin.com/in/martbar" target="_blank"><i class="fa-brands fa-linkedin me-1"></i>LinkedIn</a>
+                <a href="{{ url_for('home.home') }}"><i class="fa-solid fa-globe me-1"></i>thepythongeek.com</a>
             </div>
         </div>
     </div>
@@ -33,10 +36,11 @@
         </h5>
         <div class="card-body py-4">
             <p class="resume-profile-text mb-0">
-                Lead Data and MLOps Engineer specializing in production-grade generative AI, machine learning,
-                and data platforms. Designs secure evaluation, monitoring, inference, and analytics solutions
-                across AWS, Snowflake, and Apache Airflow, with a strong record of partnering with data
-                scientists and business stakeholders to operationalize reliable, governed AI systems.
+                Lead Data Engineer specializing in AIOps, MLOps, and production-grade generative AI.
+                Builds reliable AI operations through evaluation, model monitoring, automated alerts,
+                and governed inference workflows across AWS, Snowflake, and Apache Airflow. Partners
+                with data scientists, engineers, and business stakeholders to turn AI and machine
+                learning use cases into secure, maintainable production systems.
             </p>
         </div>
     </div>
@@ -53,8 +57,8 @@
         <div class="col-md-4">
             <div class="resume-highlight">
                 <i class="fa-solid fa-chart-line resume-highlight-icon"></i>
-                <span class="resume-highlight-title">MLOps Platforms</span>
-                <span class="resume-highlight-desc">Monitoring, inference, model operations</span>
+                <span class="resume-highlight-title">AIOps &amp; MLOps</span>
+                <span class="resume-highlight-desc">Monitoring, alerts, inference operations</span>
             </div>
         </div>
         <div class="col-md-4">
@@ -82,10 +86,6 @@
                     <span class="resume-meta-sep">&middot;</span>
                     <i class="fa-solid fa-house-laptop me-1"></i>Remote
                 </p>
-                <p class="resume-role-summary">
-                    Lead MLOps and data engineering initiatives that operationalize generative AI and traditional
-                    machine learning solutions across AWS, Snowflake, and Apache Airflow.
-                </p>
 
                 <div class="resume-exp-subsection">
                     <h6 class="resume-exp-subtitle">Selected AI/ML Platforms</h6>
@@ -95,16 +95,6 @@
                         <li><strong>Batch Inference Pipelines:</strong> Built Airflow-orchestrated SageMaker and SageMaker Pipelines workflows for traditional ML inference, persisting prediction outputs to Snowflake for reporting and downstream analysis.</li>
                         <li><strong>Agentic Jira Assistant:</strong> Created a Streamlit application powered by a custom AI agent that uses project context and brief user requests to generate structured Jira descriptions, acceptance criteria, and implementation details.</li>
                         <li><strong>ChatGPT Logging &amp; Secure Explorer:</strong> Implemented daily Amazon ECS jobs using the OpenAI Compliance API to retrieve Enterprise conversations, store standardized JSON in Amazon S3, generate custom GPT datasets, and provide authorized users an authenticated search, view, and download interface.</li>
-                    </ul>
-                </div>
-
-                <div class="resume-exp-subsection">
-                    <h6 class="resume-exp-subtitle">Engineering Enablement &amp; Internal Platforms</h6>
-                    <ul>
-                        <li><strong>Private PyPI Repository:</strong> Established an AWS-hosted package index for distributing internal Python source and wheel packages through pip within the corporate network.</li>
-                        <li><strong>ChatGPT Usage Dashboard:</strong> Built an AWS-hosted Streamlit application that reports OpenAI Enterprise adoption, usage patterns, and business-purpose metrics.</li>
-                        <li><strong>Team Deployment Portal:</strong> Developed a Flask application integrated with GitHub Enterprise and GitHub Actions to trigger environment-specific deployments, persist user and workflow metadata, and display asynchronous deployment status.</li>
-                        <li><strong>Team Documentation Portal:</strong> Created a Flask knowledge hub for applications, processes, databases, and SOPs, with executive-friendly technical content, interactive Mermaid diagrams, and cross-category tag filtering.</li>
                     </ul>
                 </div>
 
@@ -167,12 +157,13 @@
 
                 <div class="col-sm-6 col-lg-4">
                     <div class="skill-category">
-                        <span class="skill-category-title">Generative AI &amp; MLOps</span>
+                        <span class="skill-category-title">Generative AI, AIOps &amp; MLOps</span>
                         <div>
                             <span class="skill-badge">GenAI Evaluation</span>
                             <span class="skill-badge">AI Agents</span>
                             <span class="skill-badge">Model Monitoring</span>
                             <span class="skill-badge">Data Drift</span>
+                            <span class="skill-badge">Automated Alerts</span>
                             <span class="skill-badge">Batch Inference</span>
                             <span class="skill-badge">Usage Analytics</span>
                         </div>
@@ -286,6 +277,25 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- Personal Portfolio -->
+    <div class="resume-section card">
+        <h5 class="resume-section-header card-header">
+            <i class="fa-solid fa-folder-open me-2"></i>Personal Portfolio
+        </h5>
+        <div class="card-body py-4">
+            <h5 class="resume-company card-title">
+                Stormy AI | Agentic weather intelligence
+            </h5>
+            <p class="resume-dates mb-3">
+                <a href="{{ url_for('stormy_ai.about') }}">thepythongeek.com/stormy-ai/about/</a>
+            </p>
+            <ul class="mb-0">
+                <li>Created a Python and LangGraph weather agent that combines 13 tools, public NOAA data, and deterministic diagnostics to produce AI-written briefings with original weather maps and plots.</li>
+                <li>Deployed scheduled runs on AWS ECS Fargate with EventBridge Scheduler, S3 publishing, Terraform infrastructure, and GitHub Actions delivery. Separates scientific calculations from language-model narration.</li>
+            </ul>
         </div>
     </div>
 
