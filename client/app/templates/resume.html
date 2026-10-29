@@ -279,25 +279,5 @@
             </div>
         </div>
     </div>
-
-    <!-- Personal Portfolio -->
-    <div class="resume-section card">
-        <h5 class="resume-section-header card-header">
-            <i class="fa-solid fa-folder-open me-2"></i>Personal Portfolio
-        </h5>
-        <div class="card-body py-4">
-            <h5 class="resume-company card-title">
-                Stormy AI | Agentic weather intelligence
-            </h5>
-            <p class="resume-dates mb-3">
-                <a href="{{ url_for('stormy_ai.about') }}">thepythongeek.com/stormy-ai/about/</a>
-            </p>
-            <ul class="mb-0">
-                <li>Created a Python and LangGraph weather agent that combines 13 tools, public NOAA data, and deterministic diagnostics to produce AI-written briefings with original weather maps and plots.</li>
-                <li>Deployed scheduled runs on AWS ECS Fargate with EventBridge Scheduler, S3 publishing, Terraform infrastructure, and GitHub Actions delivery. Separates scientific calculations from language-model narration.</li>
-            </ul>
-        </div>
-    </div>
-
 </div>
 {% endblock %}
