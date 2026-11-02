@@ -62,7 +62,7 @@ def test_stormy_ai_page_renders_latest_markdown(client, monkeypatch):
     assert b"This briefing is an AI-written weather analysis" in response.data
     assert b"How Stormy AI Works" in response.data
     assert b'href="/stormy-ai/about/"' in response.data
-    assert b'href="/stormy-ai/"' in response.data
+    assert b'href="/ai-news/"' in response.data
 
 
 def test_render_markdown_removes_executable_html():
