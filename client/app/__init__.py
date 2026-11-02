@@ -19,6 +19,7 @@ def create_app():
     CORS(app)
     # cache.init_app(app)
 
+    from app.hermes.views import ai_news_bp, hermes_bp
     from app.home.views import home_bp
     from app.project.views import project_bp
     from app.resume.views import resume_bp
@@ -28,6 +29,8 @@ def create_app():
     app.register_blueprint(project_bp)
     app.register_blueprint(resume_bp)
     app.register_blueprint(stormy_ai_bp)
+    app.register_blueprint(ai_news_bp)
+    app.register_blueprint(hermes_bp)
 
     @app.errorhandler(404)
     def page_not_found(e):

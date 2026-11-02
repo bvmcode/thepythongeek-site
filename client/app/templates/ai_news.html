@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container ai-news-container">
+    <aside class="briefing-schedule" aria-label="Update schedule">
+        <span class="briefing-schedule-label">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+            Daily update
+        </span>
+        <p>
+            This page updates at <strong>7pm</strong> each day, written by my Hermes agent.
+        </p>
+    </aside>
+    {% if load_error %}
+    <div class="alert alert-warning" role="alert">
+        {{ load_error }}
+    </div>
+    {% else %}
+    <article class="markdown-content">
+        {{ rendered_markdown }}
+    </article>
+    {% endif %}
+</div>
+{% endblock %}
