@@ -16,7 +16,7 @@ def test_project_view(client):
 def test_hermes_blog_view(client):
     response = client.get("/hermes/")
     assert response.status_code == 200
-    assert b"Chief of Staff on a Tailnet" in response.data
+    assert b"How AI News gets onto the site." in response.data
     assert b'href="/hermes/"' in response.data
 
 
