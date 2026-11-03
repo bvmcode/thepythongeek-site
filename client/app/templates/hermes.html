@@ -1,544 +1,298 @@
 {% extends "base.html" %}
-
-{% block title %}Hermes · An agent in everyday use | The Python Geek{% endblock %}
+{% block title %}Building a personal AI agent with Hermes | The Python Geek{% endblock %}
 {% block title_h1 %}Hermes{% endblock %}
 {% block title_img %}{{ title_img }}{% endblock %}
-
 {% block content %}
-{# All page styles travel with this template. No changes to base.html or main.css needed. #}
+{# Page-local layout; colors and typography inherit the site's existing theme. #}
 <style>
-    /* Keep the shared site palette and navigation; only adjust page spacing. */
     #page-header { display: none; }
-    main.py-4 { padding-top: 0 !important; padding-bottom: 0 !important; }
-    main.px-2 { padding-left: 0 !important; padding-right: 0 !important; }
+    main.py-4 { padding-top: 30px !important; }
     .navbar .navbar-toggler-icon { filter: none; }
-    .site-footer { margin-top: 0; }
-
-    .hm-page {
-        --hm-ink: var(--text);
-        --hm-muted: color-mix(in srgb, var(--text-muted) 90%, var(--text));
-        --hm-paper: var(--bg);
-        --hm-line: var(--border);
-        --hm-accent: var(--primary);
-        --hm-blue: var(--primary);
-        color: var(--hm-ink);
-        font-family: 'Roboto', system-ui, -apple-system, sans-serif;
-        font-size: 16px;
-        line-height: 1.75;
-        -webkit-font-smoothing: antialiased;
-        scroll-margin-top: 75px;
+    .hb-article {
+        --hb-muted: color-mix(in srgb, var(--text-muted) 90%, var(--text));
+        max-width: 1080px; margin: 0 auto 32px; background: var(--surface);
+        border: 1px solid var(--border); border-top: 4px solid var(--accent);
+        border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+        color: var(--text); font-family: 'Roboto', system-ui, sans-serif;
+        font-size: 16.5px; line-height: 1.85; scroll-margin-top: 90px;
     }
-    .hm-page *, .hm-page *::before, .hm-page *::after { box-sizing: border-box; }
-    .hm-page ::selection { background: var(--accent); color: var(--primary-dark); }
-    .hm-page :where(h1, h2, h3, h4, p, figure, ol, ul, dl) { margin: 0; }
-    .hm-page h1, .hm-page h2 {
-        font-family: 'Chakra Petch', 'Roboto', sans-serif;
-        font-weight: 600;
-        color: var(--primary-dark);
-        letter-spacing: -0.025em;
-        text-wrap: balance;
-    }
-    .hm-page h2 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.16; }
-    .hm-page h3 { font-size: 1.22rem; font-weight: 650; line-height: 1.4; letter-spacing: -0.02em; }
-    .hm-page a { color: var(--hm-blue); text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
-    .hm-page a:hover { color: var(--primary-dark); }
-    .hm-page a:focus-visible, .hm-page summary:focus-visible {
-        outline: 3px solid var(--hm-accent); outline-offset: 5px; border-radius: 2px;
-    }
-    .hm-page code, .hm-page pre, .hm-mono {
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-    }
-    .hm-page code { font-size: 0.84em; color: inherit; overflow-wrap: anywhere; }
-    .hm-page p code, .hm-page dd code { background: var(--surface-2); padding: 0.12em 0.35em; border-radius: 3px; }
-    .hm-wrap { width: min(1160px, calc(100% - 96px)); margin-inline: auto; }
-    .hm-eyebrow {
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-        text-transform: uppercase; letter-spacing: 0.13em; font-size: 0.7rem;
-        line-height: 1.6; font-weight: 600; color: var(--hm-accent);
-    }
-    .hm-hero { padding-block: 76px 62px; }
-    .hm-hero-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 72px; align-items: center; }
-    .hm-hero h1 { font-size: clamp(2.8rem, 4.9vw, 4.4rem); line-height: 1.04; margin: 22px 0 26px; }
-    .hm-hero h1 em { color: var(--primary); font-style: normal; font-weight: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 0.09em; text-underline-offset: 0.12em; }
-    .hm-intro { font-size: 1.12rem; max-width: 54ch; color: var(--text); }
-    .hm-byline { display: flex; gap: 12px; align-items: center; margin-top: 28px; font-size: 0.78rem; color: var(--hm-muted); }
-    .hm-byline::before { content: ""; width: 28px; height: 1px; background: var(--hm-accent); }
-    .hm-feature { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--surface); padding: 30px; position: relative; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
-    .hm-feature::before { content: ""; height: 4px; background: var(--accent); position: absolute; inset: 0 0 auto; }
-    .hm-feature .hm-eyebrow { color: var(--accent); }
-    .hm-feature-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-    .hm-feature-time { color: var(--border); font-size: 0.75rem; }
-    .hm-feature h2 { font-size: 2.8rem; margin: 26px 0 12px; color: var(--surface); }
-    .hm-feature > p { color: var(--border); font-size: 0.95rem; }
-    .hm-feature-path { list-style: none; padding: 25px 0 !important; margin-top: 24px !important; border-block: 1px solid rgba(255, 255, 255, 0.25); }
-    .hm-feature-path li { display: flex; align-items: baseline; gap: 16px; font-size: 0.86rem; }
-    .hm-feature-path li + li { margin-top: 12px; }
-    .hm-feature-path span { color: var(--accent); font: 0.72rem "SFMono-Regular", Consolas, monospace; }
-    .hm-feature a { display: inline-block; margin-top: 20px; color: var(--accent); font-size: 0.88rem; }
-    .hm-feature a:hover { color: var(--surface); }
-    .hm-jump { border-block: 1px solid var(--hm-line); }
-    .hm-jump ol { display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; padding: 0; }
-    .hm-jump li + li { border-left: 1px solid var(--hm-line); }
-    .hm-jump a { display: flex; gap: 14px; padding: 20px 22px; text-decoration: none; font-size: 0.82rem; color: var(--hm-ink); }
-    .hm-jump a:hover { background: var(--surface-2); }
-    .hm-jump span { color: var(--hm-accent); font-size: 0.72rem; padding-top: 2px; }
-    .hm-section { padding-block: 72px; border-bottom: 1px solid var(--hm-line); scroll-margin-top: 85px; }
-    .hm-section-heading { display: grid; grid-template-columns: 210px minmax(0, 1fr); column-gap: 54px; margin-bottom: 38px; }
-    .hm-section-heading > .hm-eyebrow { padding-top: 8px; }
-    .hm-section-heading p:not(.hm-eyebrow) { margin-top: 20px; max-width: 68ch; color: var(--text); font-size: 1.04rem; }
-    .hm-deploy-top { display: flex; gap: 16px; justify-content: space-between; align-items: baseline; padding: 17px 22px; background: var(--primary-dark); color: var(--accent); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-    .hm-deploy-top strong { font-size: 0.82rem; font-weight: 600; }
-    .hm-deploy-top a { font-size: 0.78rem; white-space: nowrap; color: var(--surface); }
-    .hm-deploy-top a:hover { color: var(--accent); }
-    .hm-feature a:focus-visible, .hm-deploy-top a:focus-visible { outline-color: var(--accent); }
-    .hm-pipeline { list-style: none; padding: 0 !important; border: 1px solid var(--hm-line); border-top: 0; background: var(--surface); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
-    .hm-pipeline li { display: grid; grid-template-columns: 48px 180px minmax(0, 1fr) 230px; gap: 20px; padding: 26px 24px; border-bottom: 1px solid var(--hm-line); align-items: start; }
-    .hm-step-num { font: 0.8rem "SFMono-Regular", Consolas, monospace; color: var(--hm-accent); padding-top: 4px; }
-    .hm-pipeline h3 { font-size: 1rem; }
-    .hm-pipeline p { color: var(--text); font-size: 0.9rem; line-height: 1.65; }
-    .hm-artifact { border-left: 2px solid var(--accent); padding-left: 16px; font-size: 0.79rem; line-height: 1.6; color: var(--text); overflow-wrap: anywhere; }
-    .hm-artifact small { display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--hm-muted); margin-bottom: 6px; }
-    .hm-pipeline li:last-child { background: var(--surface-2); border-bottom: 0; }
-    .hm-caption { font-size: 0.78rem; color: var(--hm-muted); margin-top: 14px !important; max-width: 90ch; }
-    .hm-deploy-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; margin-top: 38px; }
-    .hm-deploy-notes p { font-size: 0.92rem; color: var(--text); margin-top: 12px; }
-    .hm-detail { border-block: 1px solid var(--hm-line); margin-top: 32px; }
-    .hm-detail summary { padding: 20px 4px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
-    .hm-detail summary:hover { color: var(--hm-accent); }
-    .hm-detail[open] summary { padding-bottom: 15px; }
-    .hm-page pre { background: var(--primary-dark); color: var(--surface-2); padding: 26px; border-radius: var(--radius); margin: 0 0 24px; font-size: 0.8rem; line-height: 1.8; overflow-x: auto; tab-size: 2; }
-    .hm-page pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
-    .hm-code-comment { color: var(--border); }
-    .hm-detail > p { margin-bottom: 20px; font-size: 0.88rem; color: var(--hm-muted); }
-    .hm-inset { margin-left: 264px; }
-    .hm-inset > p + p { margin-top: 20px; }
-    .hm-architecture { margin-top: 30px !important; border: 1px solid var(--hm-line); background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
-    .hm-architecture-top { display: grid; grid-template-columns: 1fr 1fr; padding: 24px 28px; gap: 24px; border-bottom: 1px solid var(--hm-line); }
-    .hm-architecture-top p { margin-top: 6px; font-size: 0.84rem; color: var(--hm-muted); }
-    .hm-architecture-core { padding: 30px 28px; border-left: 4px solid var(--hm-blue); }
-    .hm-architecture-core h3 { margin-top: 8px; }
-    .hm-architecture-core p { margin-top: 8px; font-size: 0.92rem; color: var(--text); }
-    .hm-architecture-targets { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; padding: 24px 28px; background: var(--surface-2); }
-    .hm-architecture-targets p { font-size: 0.83rem; margin-top: 7px; color: var(--text); }
-    .hm-architecture strong { font-size: 0.92rem; }
-    .hm-specs { margin-top: 26px !important; }
-    .hm-specs > div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; border-bottom: 1px solid var(--hm-line); padding: 14px 0; font-size: 0.87rem; }
-    .hm-specs dt { font-weight: 600; }
-    .hm-specs dd { margin: 0; color: var(--text); }
-    .hm-use { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 54px; padding-block: 28px; border-top: 1px solid var(--hm-line); }
-    .hm-use h3 { font-size: 1.05rem; }
-    .hm-use-tag { font-size: 0.72rem; color: var(--hm-accent); margin-top: 6px !important; }
-    .hm-use p { color: var(--text); font-size: 0.94rem; }
-    .hm-use p + p { margin-top: 14px; }
-    .hm-small-note { font-size: 0.82rem !important; color: var(--hm-muted) !important; }
-    .hm-lessons { padding: 0 !important; list-style: none; }
-    .hm-lessons li { padding: 26px 0; border-top: 1px solid var(--hm-line); }
-    .hm-lessons h3 { font-size: 1.05rem; }
-    .hm-lessons p { color: var(--text); font-size: 0.94rem; margin-top: 9px; }
-    .hm-next { margin-top: 20px; padding: 26px 28px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; }
-    .hm-next p { font-size: 0.92rem; margin-top: 10px; color: var(--text); }
-    .hm-end { padding-block: 38px 48px; display: flex; justify-content: space-between; align-items: start; gap: 32px; }
-    .hm-end p { color: var(--hm-muted); font-size: 0.8rem; max-width: 48ch; }
-    .hm-end-links { display: flex; gap: 28px; font-size: 0.82rem; flex-wrap: wrap; }
-    .hm-back { white-space: nowrap; }
-
-    @media (max-width: 1050px) {
-        .hm-wrap { width: calc(100% - 64px); }
-        .hm-hero-grid { gap: 38px; }
-        .hm-pipeline li { grid-template-columns: 34px 150px minmax(0, 1fr); }
-        .hm-artifact { grid-column: 3; }
-        .hm-section-heading, .hm-use { grid-template-columns: 160px minmax(0, 1fr); gap: 32px; }
-        .hm-inset { margin-left: 192px; }
+    .hb-article *, .hb-article *::before, .hb-article *::after { box-sizing: border-box; }
+    .hb-article :where(h1,h2,h3,p,figure,ol,ul) { margin: 0; }
+    .hb-article :where(h1,h2,h3) { color: var(--primary-dark); font-family: 'Chakra Petch', 'Roboto', sans-serif; font-weight: 600; text-wrap: balance; }
+    .hb-article a { color: var(--primary); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+    .hb-article a:hover { color: var(--primary-dark); }
+    .hb-article a:focus-visible, .hb-article summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; border-radius: 2px; }
+    .hb-article ::selection { background: var(--accent); color: var(--primary-dark); }
+    .hb-article code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.84em; color: var(--primary-dark); background: var(--surface-2); padding: 0.1em 0.25em; border: 1px solid var(--border); border-radius: 3px; overflow-wrap: anywhere; }
+    .hb-hero { padding: 44px 56px 30px; }
+    .hb-eyebrow, .hb-body .section-kicker, .hb-body .section-label { color: var(--primary); font: 600 0.72rem/1.5 'Chakra Petch', sans-serif; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 12px; }
+    .hb-hero h1 { font-size: clamp(2.25rem, 4.1vw, 3.4rem); line-height: 1.14; letter-spacing: -0.025em; max-width: 900px; }
+    .hb-deck { max-width: 790px; margin-top: 20px !important; color: var(--text); font-size: 1.13rem; line-height: 1.75; }
+    .hb-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--hb-muted); font-size: 0.78rem; margin-top: 20px !important; }
+    .hb-cover { margin: 0 56px 36px; }
+    .hb-cover img { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--primary-dark); }
+    .hb-article figcaption { color: var(--hb-muted); font-size: 0.78rem; line-height: 1.6; margin-top: 10px; }
+    .hb-layout { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 40px; padding: 0 56px 48px; }
+    .hb-toc { align-self: start; position: sticky; top: 88px; font-size: 0.8rem; line-height: 1.5; padding: 6px 20px 0 0; border-right: 1px solid var(--border); }
+    .hb-toc-title { font-family: 'Chakra Petch',sans-serif; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.68rem; font-weight: 600; color: var(--hb-muted); margin-bottom: 16px !important; }
+    .hb-toc ol { list-style: none; padding: 0; }
+    .hb-toc li + li { margin-top: 14px; }
+    .hb-toc a { text-decoration: none; display: inline-block; }
+    .hb-toc a:hover { text-decoration: underline; }
+    .hb-toc-extra { margin-top: 24px !important; padding-top: 20px; border-top: 1px solid var(--border); }
+    .hb-toc-extra a + a { margin-top: 10px; }
+    .hb-body { min-width: 0; }
+    .hb-body section { scroll-margin-top: 90px; }
+    .hb-body section + section { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .hb-body h2 { font-size: clamp(1.8rem, 2.6vw, 2.15rem); line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 22px; }
+    .hb-body h3 { font-size: 1.35rem; line-height: 1.35; margin: 34px 0 16px; scroll-margin-top: 90px; }
+    .hb-body p + p { margin-top: 20px; }
+    .hb-body p + ul, .hb-body p + ol { margin-top: 16px; }
+    .hb-body ul, .hb-body ol { padding-left: 24px; }
+    .hb-body li + li { margin-top: 10px; }
+    .hb-body pre { background: var(--primary-dark); color: var(--surface-2); font: 0.78rem/1.8 'SFMono-Regular', Consolas, monospace; padding: 22px; border-radius: var(--radius); overflow-x: auto; margin: 24px 0; tab-size: 2; }
+    .hb-body pre code { font: inherit; padding: 0; border: 0; background: none; color: inherit; overflow-wrap: normal; white-space: pre; }
+    .hb-body figure { margin: 28px 0; }
+    .hb-diagram-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+    .hb-diagram-scroll img { display: block; width: 100%; min-width: 650px; height: auto; }
+    .hb-body .hb-note { background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 18px 22px; margin: 24px 0; font-size: 0.92rem; }
+    .hb-flow { margin: 24px 0; padding: 18px 20px; border-block: 1px solid var(--border); color: var(--primary-dark); font-size: 0.9rem; line-height: 2; }
+    .hb-flow strong { display: block; font: 600 0.68rem/1.5 'Chakra Petch', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hb-muted); margin-bottom: 7px; }
+    .hb-flow span { display: inline-block; }
+    .hb-flow b { font-weight: 400; color: var(--primary); padding-inline: 5px; }
+    .hb-table-scroll { overflow-x: auto; margin: 24px 0; border: 1px solid var(--border); border-radius: var(--radius); }
+    .hb-article table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.86rem; line-height: 1.6; }
+    .hb-article caption { caption-side: top; padding: 14px 18px; background: var(--primary-dark); color: var(--surface); font-weight: 500; }
+    .hb-article th, .hb-article td { text-align: left; vertical-align: top; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .hb-article th { color: var(--primary-dark); background: var(--surface-2); font-weight: 600; }
+    .hb-article tr:last-child td { border-bottom: 0; }
+    .hb-end { display: flex; justify-content: space-between; gap: 24px; border-top: 1px solid var(--border); padding: 25px 56px; color: var(--hb-muted); font-size: 0.8rem; }
+    @media (max-width: 1000px) {
+        .hb-hero { padding: 36px 36px 26px; }
+        .hb-cover { margin-inline: 36px; }
+        .hb-layout { grid-template-columns: 150px minmax(0,1fr); gap: 28px; padding-inline: 36px; }
+        .hb-toc { padding-right: 14px; }
+        .hb-end { padding-inline: 36px; }
     }
     @media (max-width: 760px) {
-        .hm-wrap { width: calc(100% - 40px); }
-        .hm-hero { padding-block: 42px 36px; }
-        .hm-hero-grid { grid-template-columns: 1fr; gap: 32px; }
-        .hm-hero h1 { font-size: clamp(2.9rem, 9vw, 4rem); max-width: 14ch; }
-        .hm-feature { padding: 26px; }
-        .hm-feature h2 { margin-top: 20px; }
-        .hm-feature-path { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .hm-feature-path li + li { margin-top: 0; }
-        .hm-feature-path li:last-child { grid-column: 1 / -1; }
-        .hm-jump ol { grid-template-columns: 1fr 1fr; }
-        .hm-jump li:nth-child(3) { border-left: 0; }
-        .hm-jump li:nth-child(n + 3) { border-top: 1px solid var(--hm-line); }
-        .hm-jump a { padding: 15px 12px; gap: 10px; }
-        .hm-section { padding-block: 44px; }
-        .hm-section-heading { grid-template-columns: 1fr; gap: 16px; margin-bottom: 28px; }
-        .hm-section-heading p:not(.hm-eyebrow) { font-size: 0.98rem; margin-top: 16px; }
-        .hm-inset { margin-left: 0; }
-        .hm-pipeline li { grid-template-columns: 26px minmax(0, 1fr); gap: 10px 14px; padding: 23px 18px; }
-        .hm-pipeline p, .hm-artifact { grid-column: 2; }
-        .hm-artifact { margin-top: 4px; }
-        .hm-deploy-top { padding: 15px 18px; flex-wrap: wrap; gap: 6px 14px; }
-        .hm-deploy-notes { grid-template-columns: 1fr; gap: 26px; margin-top: 28px; }
-        .hm-use { grid-template-columns: 1fr; gap: 15px; padding-block: 24px; }
-        .hm-page pre { padding: 18px; font-size: 0.73rem; }
-        .hm-end { flex-direction: column; padding-block: 30px; gap: 22px; }
+        main.py-4 { padding-top: 16px !important; }
+        .hb-hero { padding: 28px 24px 24px; }
+        .hb-hero h1 { font-size: clamp(2.05rem, 6vw, 2.7rem); }
+        .hb-deck { font-size: 1rem; }
+        .hb-cover { margin: 0 24px 24px; }
+        .hb-layout { display: block; padding: 0 24px 32px; }
+        .hb-toc { position: static; border: 0; border-bottom: 1px solid var(--border); padding: 0 0 24px; margin-bottom: 28px; }
+        .hb-toc ol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+        .hb-toc li + li { margin: 0; }
+        .hb-toc-extra { display: none; }
+        .hb-body section + section { margin-top: 36px; padding-top: 30px; }
+        .hb-body h3 { font-size: 1.24rem; margin-top: 28px; }
+        .hb-body pre { padding: 17px; font-size: 0.72rem; }
+        .hb-body .hb-note { padding: 16px; }
+        .hb-end { padding: 22px 24px; flex-wrap: wrap; }
     }
-    @media (max-width: 420px) {
-        .hm-wrap { width: calc(100% - 32px); }
-        .hm-hero h1 { font-size: 2.9rem; }
-        .hm-intro { font-size: 1rem; }
-        .hm-feature { padding: 24px; }
-        .hm-feature-path { display: block; }
-        .hm-feature-path li + li { margin-top: 12px; }
-        .hm-jump a { font-size: 0.76rem; }
-        .hm-architecture-top, .hm-architecture-targets { grid-template-columns: 1fr; gap: 18px; padding: 22px; }
-        .hm-architecture-core { padding: 24px 22px; }
-        .hm-specs > div { grid-template-columns: 1fr; gap: 3px; }
-        .hm-byline { display: block; font-size: 0.72rem; line-height: 1.9; }
-        .hm-byline::before { display: inline-block; width: 18px; margin-right: 8px; vertical-align: middle; }
-        .hm-byline > span { margin-inline: 6px; }
+    @media (max-width: 400px) {
+        .hb-hero { padding-inline: 18px; }
+        .hb-cover { margin-inline: 18px; }
+        .hb-layout, .hb-end { padding-inline: 18px; }
+        .hb-article { font-size: 15.5px; }
+        .hb-toc ol { gap: 12px; }
     }
     @media print {
-        .navbar, #page-header, .site-footer, .hm-jump, .hm-back { display: none !important; }
-        body, .hm-page { background: var(--surface); }
-        .hm-wrap { width: 100%; }
-        .hm-hero { padding-top: 0; }
-        .hm-hero-grid { grid-template-columns: 1fr; }
-        .hm-feature { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-        .hm-feature h2, .hm-feature p, .hm-feature a, .hm-feature span { color: var(--text); }
-        .hm-section { padding-block: 28px; }
-        .hm-pipeline li, .hm-use, .hm-lessons li { break-inside: avoid; }
-        .hm-detail { display: none; }
+        .navbar, #page-header, .site-footer, .hb-toc, .hb-end a { display: none !important; }
+        .hb-article { box-shadow: none; border: 0; margin: 0; }
+        .hb-layout { display: block; }
+        .hb-body pre, .hb-body figure { break-inside: avoid; }
+        .hb-diagram-scroll img { min-width: 0; }
     }
 </style>
-
-<article class="hm-page" id="hermes-top" aria-labelledby="hermes-title">
-    <header class="hm-hero hm-wrap">
-        <div class="hm-hero-grid">
-            <div>
-                <p class="hm-eyebrow">Build notes / Hermes Agent</p>
-                <h1 id="hermes-title">An agent with<br>something to <em>do.</em></h1>
-                <p class="hm-intro">
-                    I set up Hermes on an EC2 instance to handle a few things I kept doing by hand.
-                    It logs my health readings, sends the morning messages, looks for work,
-                    and publishes the AI News briefing on this site.
-                </p>
-                <p class="hm-byline">By Barry <span aria-hidden="true">/</span> Python, infrastructure &amp; everyday automation</p>
-            </div>
-            <aside class="hm-feature" aria-labelledby="hm-feature-title">
-                <div class="hm-feature-head">
-                    <p class="hm-eyebrow">The daily publishing job</p>
-                    <span class="hm-feature-time hm-mono">7pm</span>
-                </div>
-                <h2 id="hm-feature-title">AI News</h2>
-                <p>A briefing written by the agent and published through this site's deployment process.</p>
-                <ol class="hm-feature-path">
-                    <li><span>01</span> Write the Markdown</li>
-                    <li><span>02</span> Commit, push &amp; merge</li>
-                    <li><span>03</span> Rebuild &amp; check the site</li>
-                </ol>
-                <a href="#deploy">Follow the deployment pipeline <span aria-hidden="true">↘</span></a>
-            </aside>
-        </div>
+<article class="hb-article" id="hermes-top" aria-labelledby="hermes-title">
+    <header class="hb-hero">
+        <p class="hb-eyebrow">Hermes / Architecture &amp; implementation</p>
+        <h1 id="hermes-title">Building a personal AI agent<br> with Hermes</h1>
+        <p class="hb-deck">The infrastructure behind my everyday agent, with a closer look at how AI News moves from a Markdown file through Git, deployment, and a production Flask application.</p>
+        <p class="hb-meta"><span>By Barry Martin</span><span>Terraform · Tailscale · Python · Docker</span><span>About 16 min read</span></p>
     </header>
+    <figure class="hb-cover">
+        <img src="{{ url_for('static', filename='images/hermes-infrastructure-illustration.png') }}" width="1774" height="887" fetchpriority="high" alt="An isometric blue-and-yellow illustration of a laptop and phone connected through a central agent server to a separate publishing server.">
+        <figcaption>A visual interpretation of the setup: personal devices, an agent host, and the server that publishes this site. The architecture diagram below shows the actual connections.</figcaption>
+    </figure>
+    <div class="hb-layout">
+        <nav class="hb-toc" aria-label="Article contents">
+            <p class="hb-toc-title">In this build</p>
+            <ol>
+                <li><a href="#overview">01 · What runs where</a></li>
+                <li><a href="#deploy">02 · AI News, end to end</a></li>
+                <li><a href="#infrastructure">03 · Provisioning &amp; access</a></li>
+                <li><a href="#personal-automation">04 · Everyday workflows</a></li>
+                <li><a href="#operations">05 · Operating the system</a></li>
+            </ol>
+            <p class="hb-toc-extra"><a href="{{ url_for('ai_news.index') }}">Read AI News ↗</a><br><a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">Infrastructure repo ↗</a></p>
+        </nav>
+        <div class="hb-body">
 
-    <nav class="hm-jump" aria-label="Article sections">
-        <ol class="hm-wrap">
-            <li><a href="#deploy"><span class="hm-mono">01</span> AI News pipeline</a></li>
-            <li><a href="#stack"><span class="hm-mono">02</span> The setup</a></li>
-            <li><a href="#everyday"><span class="hm-mono">03</span> Everyday use</a></li>
-            <li><a href="#lessons"><span class="hm-mono">04</span> What I've learned</a></li>
-        </ol>
-    </nav>
+<section id="overview" aria-labelledby="overview-heading">
+    <p class="section-kicker">01 / The system</p>
+    <h2 id="overview-heading">What runs where</h2>
+    <p>I wanted an assistant that could pick up a task after I had closed the conversation. Some of those tasks are personal: record a health reading, send the morning message, or look for new jobs. Others involve the infrastructure behind this website. In all of them, the useful part happens after the agent has worked out what I asked for. It needs a place to save the result, access to the right machine, and a way to tell whether the work finished.</p>
+    <p>I chose <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>, the open-source framework from Nous Research. It brings persistent sessions, tools, scheduling, and reusable skills into one environment. The procedures I use repeatedly can be written down as skills and loaded again, so the next conversation has the same deployment steps or recording rules available. I still have to give those procedures working credentials, sensible permissions, and checks that match the task.</p>
+    <p>The setup has three main machines. Hermes runs on EC2. My Mac supplies the Apple-specific capabilities, including Contacts and Messages, and keeps a CSV copy of my health data. A separate production host runs this site. Tailscale connects the machines privately. Telegram gives me a familiar interface from my phone; the desktop app reaches the agent through the tailnet.</p>
+    <figure>
+        <div class="hb-diagram-scroll" tabindex="0" role="region" aria-label="Scrollable system architecture diagram">
+            <img src="{{ url_for('static', filename='images/hermes-architecture.svg') }}" width="920" height="570" loading="lazy" alt="Hermes on EC2 connects to external Telegram, cloud model, and GitHub services. Inside the Tailscale network it uses SSH to reach the Mac and production host. Public readers reach production over HTTPS, while SSM administers the agent host.">
+        </div>
+        <figcaption>Private administration, external services, and public web traffic have different paths. <a href="{{ url_for('static', filename='images/hermes-architecture.svg') }}" target="_blank" rel="noopener noreferrer">Open the full-size diagram ↗</a></figcaption>
+    </figure>
+    <p>AI News makes a useful walkthrough because it touches nearly every part of that arrangement. The agent writes the briefing, changes a tracked file, works through GitHub, connects to production, and checks the website. The page advertises a daily update at 7pm. That publishing schedule belongs to the agent's automation; Flask's job is to serve the document that reached production.</p>
+    <p>Below, I follow that update through the system first, then explain how the agent host is provisioned and how the same connections support the smaller daily jobs.</p>
+</section>
+<section id="deploy" aria-labelledby="deploy-heading">
+    <p class="section-kicker">02 / The publishing pipeline</p>
+    <h2 id="deploy-heading">How AI News gets onto the site.</h2>
+    <p>AI News is where the pieces of this setup have to agree with one another. Hermes produces a briefing, Git records it, the production host picks it up, and Flask serves it. A good draft can still fail to reach the website. A perfectly healthy website can still be showing yesterday's draft. I find the system much easier to reason about when I treat those as separate problems.</p>
+    <p>The durable output is <code>client/app/hermes/ai_news.md</code>: a dated heading, story summaries, and links to their sources. Publishing means replacing that document through the site's existing repository workflow. When somebody opens <a href="{{ url_for('ai_news.index') }}">AI News</a>, the application reads the deployed file. The reader's request does not start an agent session or wait for a model.</p>
 
-    <div class="hm-wrap">
-        <section class="hm-section" id="deploy" aria-labelledby="hm-deploy-title">
-            <div class="hm-section-heading">
-                <p class="hm-eyebrow">01 / From draft to production</p>
-                <div>
-                    <h2 id="hm-deploy-title">How AI News gets onto the site.</h2>
-                    <p>
-                        AI News is the best example of the whole setup working together. Each day's
-                        briefing becomes a Markdown file in this site's repository. That file goes
-                        through a pull request, a merge, and a deployment before anyone can read it here.
-                        Writing the news is only the first part of the job.
-                    </p>
-                </div>
-            </div>
 
-            <figure aria-labelledby="hm-pipeline-caption">
-                <div class="hm-deploy-top">
-                    <strong>The publishing path · daily update at 7pm</strong>
-                    <a href="{{ url_for('ai_news.index') }}">Read AI News <span aria-hidden="true">↗</span></a>
-                </div>
-                <ol class="hm-pipeline">
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">01</span>
-                        <h3>Write the briefing</h3>
-                        <p>Hermes prepares the day's stories as a dated document, with a short summary and source links for each story.</p>
-                        <div class="hm-artifact"><small>Content</small><code>client/app/hermes/ai_news.md</code></div>
-                    </li>
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">02</span>
-                        <h3>Commit &amp; push</h3>
-                        <p>The update is committed on a branch in the agent's clone, then pushed with a deploy key scoped to this repository.</p>
-                        <div class="hm-artifact"><small>Record</small>A Git diff of the briefing</div>
-                    </li>
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">03</span>
-                        <h3>Merge the PR</h3>
-                        <p>The agent opens a pull request and requests a squash auto-merge. The PR must actually merge before deployment can pick up the update.</p>
-                        <div class="hm-artifact"><small>Handoff</small>Merged change on <code>main</code></div>
-                    </li>
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">04</span>
-                        <h3>Deploy the site</h3>
-                        <p>Over the tailnet, Hermes connects to the production host and runs the deploy script: pull the repository, rebuild the images, and recreate the containers.</p>
-                        <div class="hm-artifact"><small>Agent → production</small><code>ssh mysite 'sh ~/deploy.sh'</code></div>
-                    </li>
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">05</span>
-                        <h3>Serve the page</h3>
-                        <p>Flask reads the deployed Markdown, converts it to HTML, and sanitizes the result. Readers get the published briefing without waiting for a model to generate it.</p>
-                        <div class="hm-artifact"><small>Public route</small><code>/ai-news/</code></div>
-                    </li>
-                    <li>
-                        <span class="hm-step-num" aria-hidden="true">06</span>
-                        <h3>Check the release</h3>
-                        <p>The deployment check looks at the running containers and the public site's HTTP response. That confirms the site is serving after the rebuild.</p>
-                        <div class="hm-artifact"><small>Availability check</small>Containers up · HTTP 200</div>
-                    </li>
-                </ol>
-                <figcaption class="hm-caption" id="hm-pipeline-caption">
-                    The agent runs the publishing steps; Git records the content change, and the production application serves the result.
-                    This diagram describes the workflow, not a live deployment status.
-                </figcaption>
-            </figure>
-
-            <div class="hm-deploy-notes">
-                <div>
-                    <h3>Why keep the news in Git?</h3>
-                    <p>
-                        It makes the update easy to inspect. The November 2 briefing, for example,
-                        landed as PR #4 and changed only <code>ai_news.md</code>. I can see exactly what
-                        was published and compare it with the previous edition. The news uses the same
-                        deployment path as the rest of the site.
-                    </p>
-                </div>
-                <div>
-                    <h3>What does “healthy” tell me?</h3>
-                    <p>
-                        If the briefing file is missing, empty, or unreadable, the news route returns
-                        HTTP 503 with a useful message. A readable old briefing can still return 200,
-                        though. Checking the published date is the next improvement I want to make
-                        to the release check.
-                    </p>
-                </div>
-            </div>
-
-            <details class="hm-detail">
-                <summary>The commands behind the deployment</summary>
-                <p>A walkthrough of the publishing path, including an explicit merge-state check and a check of the news route. The PR number comes from the newly created pull request.</p>
-                <pre><code><span class="hm-code-comment"># In the agent's clone: version the new briefing.</span>
+    <div class="hb-flow" aria-label="Publishing sequence"><strong>One update, from source to reader</strong><span>Markdown</span> <b aria-hidden="true">→</b> <span>Git branch</span> <b aria-hidden="true">→</b> <span>Merged PR</span> <b aria-hidden="true">→</b> <span>Production checkout</span> <b aria-hidden="true">→</b> <span>Flask page</span></div>
+    <h3>1. Give the draft a history</h3>
+    <p>I keep the briefing in Git because the diff answers practical questions. Which stories changed? Did a source link disappear? Was the heading corrected without changing the body? The November 2 update in PR #4 changed only <code>ai_news.md</code>. Later, PR #7 corrected its heading from November 3 to November 2. That small correction is useful evidence: the publication date is part of the content, and it can be wrong even when every infrastructure step succeeds.</p>
+    <p>The agent works in its own clone, creates a branch, commits the document, and pushes it. Git transport and GitHub's pull-request API use different credentials in this setup: a repository-scoped SSH deploy key handles the push, while the authenticated <code>gh</code> CLI creates the PR and requests squash auto-merge. That separation matters when troubleshooting. A successful push says nothing about whether the CLI can open or merge a pull request.</p>
+    <pre><code># Illustrative sequence in the agent's clone; substitute the date and PR number.
 git switch -c content/ai-news-YYYY-MM-DD
 git add client/app/hermes/ai_news.md
 git commit -m "Update AI News for YYYY-MM-DD"
 git push -u origin content/ai-news-YYYY-MM-DD
 
-<span class="hm-code-comment"># Open the PR and request a squash auto-merge.</span>
 gh pr create --base main --title "AI News: YYYY-MM-DD" \
   --body "Update the daily briefing and source links."
 gh pr merge &lt;pr-number&gt; --auto --squash
 
-<span class="hm-code-comment"># Wait for MERGED. An auto-merge request is not a completed merge.</span>
-gh pr view &lt;pr-number&gt; --json state,mergedAt
+# Inspect the result before deployment. The required state is MERGED.
+gh pr view &lt;pr-number&gt; --json state,mergedAt,mergeCommit</code></pre>
+    <p>The pause between requesting auto-merge and deploying is essential. Auto-merge can remain pending while repository rules are unsatisfied. During the original setup, commit attribution held a merge open; using my GitHub noreply identity resolved it. The command returning successfully was not proof that <code>main</code> contained the change. I want the actual merge state before asking production to pull anything.</p>
 
-<span class="hm-code-comment"># Once merged, run the deployment on production.</span>
+    <h3>2. Move the merged content onto the production host</h3>
+    <p>The deployment sequence I set up connects over the tailnet and runs <code>ssh mysite 'sh ~/deploy.sh'</code>. That host-side script pulls the repository and runs <code>docker-compose up -d --build</code>. The script lives outside this website repository, so the application checkout is not a complete record of the deployment machinery. What it does contain is the configuration of the services being deployed.</p>
+    <p>The application image starts from Python 3.11, installs the Python requirements, copies the client directory into <code>/app</code>, and starts uWSGI. Production Compose defines the application, Redis, and nginx services. There is an important detail in the application's volume configuration:</p>
+    <pre><code># Relevant excerpt from docker-compose.yml
+services:
+    app:
+      build: .
+      volumes:
+          - ./client:/app
+      expose:
+        - 8080</code></pre>
+    <p>That bind mount makes the host's <code>client</code> directory the running application's <code>/app</code> directory. It takes precedence over the copy baked into the image. For a news-only update, the checked-out Markdown is therefore the content the application reads; rebuilding an image is not inherently necessary just to replace that file. Rebuilding remains part of the established deployment procedure, which also handles application changes. This makes the production checkout part of the release. The image alone does not capture everything a reader will see.</p>
+    <p>The two network paths also have different jobs. Hermes uses private access to administer the host. Readers arrive at nginx over public HTTPS. The nginx configuration forwards application requests to <code>app:8080</code> using the uWSGI protocol, while static assets have their own nginx location. uWSGI runs four worker processes with two threads each. Redis is present in the wider site's stack, but the AI News route itself reads a file; it does not ask Redis for the briefing.</p>
+
+
+    <p>On the agent, the deployment invocation and the host inspection are separate commands. Running <code>docker ps</code> on the agent would inspect the wrong Docker daemon. The container check needs to run on <code>mysite</code>; the HTTP check needs to use the public address that readers use.</p>
+    <pre><code># From the agent host, after the PR has merged:
 ssh mysite 'sh ~/deploy.sh'
-<span class="hm-code-comment"># The script runs git pull + docker-compose up -d --build.</span>
-
-<span class="hm-code-comment"># Check containers on that host, then check the public news route.</span>
 ssh mysite 'docker ps'
-curl -sS -o /dev/null -w '%{http_code}\n' \
-  https://thepythongeek.com/ai-news/</code></pre>
-            </details>
-        </section>
 
-        <section class="hm-section" id="stack" aria-labelledby="hm-stack-title">
-            <div class="hm-section-heading">
-                <p class="hm-eyebrow">02 / The setup</p>
-                <div>
-                    <h2 id="hm-stack-title">One agent, a few connected machines.</h2>
-                    <p>
-                        I chose <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>,
-                        the open-source framework from Nous Research, because it combines tools,
-                        persistent memory, scheduling, and reusable skills. I wanted to give a job
-                        to the same agent from my phone or my Mac and have it keep the context.
-                    </p>
-                </div>
-            </div>
-            <div class="hm-inset">
-                <p>
-                    Hermes runs on a Terraform-provisioned EC2 instance. Tailscale connects it to my
-                    Mac and the production server. Telegram is a messaging interface to the gateway;
-                    the desktop app reaches it over the private network.
-                </p>
-                <figure class="hm-architecture" aria-labelledby="hm-architecture-caption">
-                    <div class="hm-architecture-top">
-                        <div><strong>Telegram</strong><p>Messages and voice notes through the gateway integration</p></div>
-                        <div><strong>Desktop app</strong><p>Agent access over the Tailscale network</p></div>
-                    </div>
-                    <div class="hm-architecture-core">
-                        <p class="hm-eyebrow">EC2 / Ubuntu 24.04 / t3.medium</p>
-                        <h3>Hermes gateway, memory &amp; scheduler</h3>
-                        <p>Shell, files, Git, and saved procedures. A local Ollama relay connects to a cloud model; inference happens remotely.</p>
-                    </div>
-                    <div class="hm-architecture-targets">
-                        <div><strong>↳ My Mac · via Tailscale</strong><p>iMessage, Contacts, and a CSV copy of the health log.</p></div>
-                        <div><strong>↳ Production · via Tailscale</strong><p>The site repository, deployment script, Docker containers, and nginx.</p></div>
-                    </div>
-                </figure>
-                <p class="hm-caption" id="hm-architecture-caption">The agent's private access to production is separate from the public website readers visit.</p>
+# News-route diagnostic, beyond the original homepage check:
+# Inspect the printed status; this alone does not check freshness.
+curl --fail --silent --show-error --output /dev/null \
+  --write-out '%{http_code}\n' https://thepythongeek.com/ai-news/</code></pre>
+    <h3>3. Render the document within an explicit boundary</h3>
+    <p>The file path is anchored to the Python module with <code>Path(__file__).resolve().parent</code>, so it does not depend on the process's working directory. The loader decodes UTF-8 and rejects a blank document. After that, the route passes the text to a shared renderer used elsewhere in the site.</p>
+    <pre><code># The shared renderer in app/stormy_ai/views.py
+rendered = markdown.markdown(
+    markdown_text,
+    extensions=["extra", "sane_lists"],
+)
+sanitized = bleach.clean(
+    rendered,
+    tags=ALLOWED_MARKDOWN_TAGS,
+    attributes=ALLOWED_MARKDOWN_ATTRIBUTES,
+    protocols=ALLOWED_MARKDOWN_PROTOCOLS,
+    strip=True,
+)
+return Markup(sanitized)</code></pre>
+    <p>Markdown conversion and HTML sanitization solve different problems. The first supplies headings, lists, links, and tables. The second limits which HTML survives. The allowlist admits presentation elements and selected attributes; link protocols are restricted to HTTP, HTTPS, and mailto. Only the sanitized result is marked safe for Jinja. A test exercises this boundary with a script tag, an image event handler, and a JavaScript link. Sanitization controls browser behavior; it does not establish whether a news claim or its source is trustworthy.</p>
+    <p>Although that helper lives in the Stormy AI module, AI News does not use Stormy's storage path. Stormy follows an S3 <code>latest.txt</code> pointer to another object. AI News reads the Markdown beside its own view module on each request. Sharing the renderer saves duplicate code without making the two publishing systems identical.</p>
+    <p>If the file is missing, unreadable, incorrectly encoded, or empty, the news route logs the exception and returns a useful unavailable message with HTTP 503. Its tests cover loading a real document, rendering a supplied Markdown sample, and the missing-file response. Those checks are valuable, but they do not exercise the agent, GitHub, the external deployment script, or the production network.</p>
 
-                <dl class="hm-specs">
-                    <div><dt>Provisioning</dt><dd>Terraform and first-boot setup install the agent. The instance uses an encrypted gp3 volume and requires IMDSv2.</dd></div>
-                    <div><dt>Administration</dt><dd>SSM Session Manager provides shell access to the agent host. Public SSH is disabled.</dd></div>
-                    <div><dt>Dashboard</dt><dd>Initial access is limited by allowed CIDRs. After Tailscale is working, that public allowlist is emptied.</dd></div>
-                    <div><dt>Deployment access</dt><dd>A repository-scoped Git key, GitHub CLI authentication for PRs, and a separate SSH connection to the production host.</dd></div>
-                </dl>
-                <details class="hm-detail">
-                    <summary>Provisioning the instance</summary>
-                    <pre><code>cd infra
-cp terraform.tfvars.example terraform.tfvars
-cp backend.hcl.example backend.hcl
+    <h3>4. Check availability, then ask a harder question</h3>
+    <p>The original release check inspected running containers and requested the public homepage. That establishes a limited kind of success: the site answered after deployment. I would also request <code>/ai-news/</code>, because a working homepage does not exercise the briefing loader. Even a 200 from the news route is only an availability check. An old, readable Markdown file still produces a successful response.</p>
+    <p>The next improvement I want is a content check tied to the particular release. Record the expected edition date and merged commit, inspect the deployed checkout, then confirm that the public news page contains the expected edition. The date correction in PR #7 makes this more than a theoretical concern. The intended publication date needs to be explicit, with a defined timezone, instead of inferred from whichever machine happens to run a check.</p>
+    <p>I also want a documented recovery procedure. Git preserves earlier briefings, but keeping history is not the same as implementing rollback. A deliberate revert through a new PR would fit this workflow; it would still need deployment and the same public-content check. Freshness checks and that recovery procedure are planned improvements, not protections I am claiming the present pipeline already provides.</p>
+</section>
+<section id="infrastructure" aria-labelledby="infrastructure-heading">
+  <p class="section-label">03 / Provisioning &amp; access</p>
+  <h2 id="infrastructure-heading">A small server, with a job I can explain</h2>
+  <p>I run Hermes on an Ubuntu 24.04 EC2 instance in <code>us-east-1</code>. It is a <code>t3.medium</code>, with 4 GB of memory and an encrypted gp3 root volume. That is enough for the agent, its gateway, browser tools, and the Ollama client because I am not loading the language model's weights on this machine. The expensive inference happens with a cloud provider.</p>
+  <p>Ollama listens on <code>127.0.0.1:11434</code>. Hermes uses its OpenAI-compatible API at <code>/v1</code>, and Ollama forwards requests to the selected cloud model. Keeping the endpoint local makes the configuration convenient; it does not make inference local. Prompts and the context included in those requests still leave the instance. What I operate myself is the process that maintains sessions, reads files, schedules work, and invokes tools.</p>
+  <p>That separation is useful. I can change the model without moving the health database, rewriting the deployment procedure, or rebuilding the messaging integration. Telegram and the desktop gateway are ways into the same agent environment. My Mac and the production server supply capabilities the EC2 instance does not have on its own.</p>
+
+  <h3>What Terraform actually rebuilds</h3>
+  <p>The <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">infrastructure repository</a> defines the instance, security group, instance profile, and first-boot install. It selects an Ubuntu 24.04 image, requires IMDSv2 for instance metadata, and encrypts the root disk. I can recreate that machine from configuration. Recreating the machine and restoring its working state are separate jobs: Terraform does not recover my SQLite records, conversations, or credentials.</p>
+  <pre><code>cd infra
+cp terraform.tfvars.example terraform.tfvars &amp;&amp; cp backend.hcl.example backend.hcl
 terraform init -backend-config=backend.hcl
-terraform apply</code></pre>
-                    <p>First-boot installation takes about five to ten minutes. The infrastructure is in <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">bvmcode/my-hermes-agent</a>.</p>
-                </details>
-            </div>
-        </section>
+terraform apply        # ~5-10 min of user-data install on first boot</code></pre>
+  <p>There is an important gap between the instance existing and the agent being ready. User-data is still installing packages after Terraform finishes. The bootstrap installs Ollama, installs Hermes as the <code>ubuntu</code> user, and enables lingering so that user's services can continue without an interactive login. It also creates a systemd service for the dashboard, configured to restart on failure. The install writes a progress log and a completion marker so I can distinguish “EC2 is up” from “the install finished.”</p>
+  <p>The dashboard username, password, and signing secret are created on the instance. The password is generated with OpenSSL, and shell tracing is disabled while those values are written. The resulting environment file is owned by <code>ubuntu</code> with mode <code>0600</code>. Those generated credentials never need to be embedded in the Terraform configuration, state, or user-data template.</p>
 
-        <section class="hm-section" id="everyday" aria-labelledby="hm-everyday-title">
-            <div class="hm-section-heading">
-                <p class="hm-eyebrow">03 / Everyday use</p>
-                <div>
-                    <h2 id="hm-everyday-title">The smaller jobs matter, too.</h2>
-                    <p>
-                        Most of my interactions with Hermes are fairly ordinary. I give it a reading,
-                        ask it to send a message, or read the list it found while I was doing something else.
-                        These are the jobs that made the setup worth keeping.
-                    </p>
-                </div>
-            </div>
-            <div class="hm-use" id="health">
-                <div><h3>A health log I use</h3><p class="hm-use-tag hm-mono">Dictate → SQLite → CSV</p></div>
-                <div>
-                    <p>
-                        I can say my blood pressure, glucose, or weight in a sentence. Hermes puts the
-                        readings into typed SQLite fields and keeps meals in a separate table. Values
-                        come from me or a verified nutrition label; missing quantities need a question,
-                        not an estimate quietly added to the record.
-                    </p>
-                    <p>
-                        After an entry, a sync script sends a full CSV copy to my Mac. Rebuilding the
-                        copy means a corrected or deleted row makes it across, too. That detail matters
-                        much more to me than saving a few seconds by appending to yesterday's export.
-                    </p>
-                </div>
-            </div>
-            <div class="hm-use" id="imessage">
-                <div><h3>The morning message</h3><p class="hm-use-tag hm-mono">Daily / 6:00 AM</p></div>
-                <div>
-                    <p>
-                        Each morning it sends my wife a note with a Bible verse, signed “I love you,
-                        Barry.” The Linux agent reaches my Mac over Tailscale and sends through
-                        AppleScript. Contacts supplies the recipient, and the bridge resolves the
-                        one-to-one conversation before sending.
-                    </p>
-                    <p>
-                        A separate check reads the Mac's Messages database for the exact text, an
-                        outgoing flag, and a recent timestamp. That confirms the outgoing message is
-                        recorded on my Mac; it doesn't tell me whether she has read it.
-                    </p>
-                </div>
-            </div>
-            <div class="hm-use" id="cron">
-                <div><h3>The daily job scout</h3><p class="hm-use-tag hm-mono">Daily / 9:00 AM</p></div>
-                <div>
-                    <p>
-                        The scout looks for remote senior and lead data-engineering roles with a stated
-                        salary of at least $150K. It checks that the postings are still available,
-                        removes roles it has already sent, and delivers the remaining list to Telegram.
-                        Failed scheduled jobs also report there.
-                    </p>
-                    <p class="hm-small-note">
-                        The morning jobs use UTC-based schedule anchors. Their local times need
-                        attention when daylight saving time changes.
-                    </p>
-                </div>
-            </div>
-            <div class="hm-use" id="voice">
-                <div><h3>Talking to it</h3><p class="hm-use-tag hm-mono">Phone &amp; desktop</p></div>
-                <div>
-                    <p>
-                        Telegram voice notes are transcribed with faster-whisper, and replies can use
-                        text-to-speech. On the desktop, a realtime voice session lets me interrupt and
-                        follow up naturally. Requests that need tools go to the same Hermes agent that
-                        handles the scheduled work.
-                    </p>
-                </div>
-            </div>
-        </section>
+  <h3>SSM gets me in; the tailnet connects the machines</h3>
+  <p>I use AWS Systems Manager Session Manager for an administrative shell on Hermes. The default Terraform configuration has no inbound SSH rule and no EC2 key pair. That does not prevent the agent from making outbound SSH connections. When it needs Messages on my Mac or the deployment script on production, it acts as an SSH client across Tailscale.</p>
+  <p>The dashboard listens on port <code>9119</code>. During setup, access is controlled by <code>dashboard_allowed_cidrs</code>; the repository's default is broad, so narrowing it is an explicit setup step. Once the desktop can reach the gateway over the tailnet, I set that list to <code>[]</code> and apply again. That removes the public dashboard ingress rule. The agent still needs outbound access for model APIs, messaging services, and package downloads.</p>
+  <p>For the Mac, I install a dedicated ed25519 public key in <code>authorized_keys</code>. The production host has its own SSH access, a pinned host key, and the <code>mysite</code> alias. These keys let the agent reach particular machines. The repository deploy key is a different credential: it grants Git access to one repository. The GitHub CLI's OAuth token handles API operations such as creating and merging pull requests. A repo-scoped Git key does not automatically limit that token's permissions, and joining the tailnet does not replace authentication to the services on it.</p>
+</section>
 
-        <section class="hm-section" id="lessons" aria-labelledby="hm-lessons-title">
-            <div class="hm-section-heading">
-                <p class="hm-eyebrow">04 / Field notes</p>
-                <div><h2 id="hm-lessons-title">A few things I had to get right.</h2></div>
-            </div>
-            <div class="hm-inset">
-                <ol class="hm-lessons">
-                    <li>
-                        <h3>Auto-merge can be waiting while everything looks finished.</h3>
-                        <p>
-                            One pull request stayed open because the agent's commit email wasn't tied
-                            to a GitHub identity. The repository's attribution rule held it. Using my
-                            GitHub noreply address fixed the attribution. I now distinguish requesting
-                            a merge from seeing that it has happened.
-                        </p>
-                    </li>
-                    <li>
-                        <h3>Permissions were part of the deployment work.</h3>
-                        <p>
-                            The production checkout needed the right owner, and the deploy user needed
-                            Docker access. Fixing those let the script run without interactive
-                            <code>sudo</code> prompts. An agent can't finish an unattended deployment
-                            if the underlying script is still waiting for a terminal.
-                        </p>
-                    </li>
-                    <li>
-                        <h3>Each job needs a check suited to its result.</h3>
-                        <p>
-                            For a message, I look for the outgoing record in Messages. For a release,
-                            I check the merged change, the containers, and the public response.
-                            These checks answer different questions. Keeping them separate makes
-                            failures much easier to track down.
-                        </p>
-                    </li>
-                </ol>
-                <aside class="hm-next" id="next" aria-labelledby="hm-next-title">
-                    <h3 id="hm-next-title">What I'd improve next</h3>
-                    <p>
-                        First, check that the live AI News page contains the expected briefing date
-                        after deployment. Then make the morning schedules handle daylight saving time
-                        without a manual adjustment. Health trend charts can follow once there's enough
-                        history to make them useful.
-                    </p>
-                </aside>
-            </div>
-        </section>
+<section id="personal-automation" aria-labelledby="automation-heading">
+  <p class="section-label">04 / Everyday workflows</p>
+  <h2 id="automation-heading">The same setup handles the small, recurring work</h2>
+  <p>Deployments are the most visible example, but they are not the reason I keep the agent running. I also use it for health records, a morning message to my wife, and a daily search for jobs. These are ordinary tasks with enough small details that a half-finished result is more trouble than it is worth.</p>
 
-        <footer class="hm-end">
-            <p>Built with Hermes Agent by Nous Research.<br>Infrastructure and integration by Barry.</p>
-            <div class="hm-end-links">
-                <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">Infrastructure repo <span aria-hidden="true">↗</span></a>
-                <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent <span aria-hidden="true">↗</span></a>
-                <a class="hm-back" href="#hermes-top">Back to top <span aria-hidden="true">↑</span></a>
-            </div>
-        </footer>
+  <h3>Health records: SQLite first, a complete CSV copy second</h3>
+  <p>I can dictate a reading in a sentence instead of opening a form. The agent separates the values and writes them to SQLite. The original schema has a <code>daily_readings</code> table for dates, times, weight, glucose, blood pressure, pulse, and notes, plus a <code>meals</code> table for food descriptions and nutrition values. Glucose entries have a constrained category: fasting, before-meal, after-meal, bedtime, or random.</p>
+  <p>The database schema helps, but it cannot decide whether the agent understood me correctly. SQLite column declarations alone are not a complete validation system. The recording procedure matters too: do not invent a missing measurement, check serving sizes against the nutrition source, and ask when the amount is something only I know. The weight column uses kilograms, so a dictated value in pounds also needs a deliberate conversion rather than a unit silently dropped.</p>
+  <p>After an insert, a Python sync script exports the full state to <code>~/Documents/HealthData/</code> on my Mac. SQLite remains the source of truth. The CSVs are a convenient local copy I can inspect and use elsewhere. I rebuild that copy instead of appending one new line because I sometimes correct old entries. If I change or delete a row in the database, the next complete export reflects it; a simple append would leave the old version behind.</p>
+  <pre><code>/usr/bin/python3 /home/ubuntu/health_data/health_sync.py
+# synced: daily_readings=1, meals=6</code></pre>
+  <p>This makes repeat runs useful: exporting the same database again should produce the same records, without duplicates caused by the retry. It also gives me two separate outcomes to check. Saving a reading and copying the export to the Mac are different operations; a failed transfer does not mean the database insert failed. The agent's role here is recording and organizing information. I do not ask it to turn those rows into a diagnosis.</p>
+
+  <h3>Scheduled jobs need a result and a clock</h3>
+  <p>The morning message is scheduled for 6:00 AM. It writes a Bible-verse note to my wife, rotates the selection, signs it “I love you, Barry,” and sends it through the Mac. The job also checks the outgoing message record and runs the health-data sync. At 9:00 AM, the job scout looks for remote senior or lead data-engineering roles with a stated salary of at least $150,000. It checks that postings are live, excludes jobs already sent, and delivers the remaining list to Telegram.</p>
+  <p>Those times describe the intended local schedule. The original jobs use UTC anchors, so they need adjustment when the local UTC offset changes with daylight saving time. A fixed UTC schedule does not automatically preserve 6:00 AM in New Jersey throughout the year. I want that limitation stated plainly because a job that runs successfully at the wrong hour is still wrong for its purpose.</p>
+  <p>Telegram is also where failures are meant to surface. For the scout, a smaller list of verified, new postings is more useful than padding the result with repeats. For the morning message, a send command finishing is only one step. The workflow needs to check what the Mac recorded before reporting the outcome.</p>
+
+  <h3>What the iMessage check proves</h3>
+  <p>The Linux instance reaches my Mac over SSH and uses a small AppleScript to send through Messages. Before sending, it resolves the recipient through Contacts, normalizes the phone number, and selects the one-to-one chat. Finding a group conversation that happens to contain the same person is not enough. For an ad hoc message, the procedure includes confirming the recipient and exact text with me; the morning job uses the recurring instruction I already gave it.</p>
+  <p>The verification step reads the Mac's Messages SQLite database separately from the send script. It checks the outgoing flag, a recent timestamp, and the exact message text, including decoding <code>attributedBody</code> when the text lives in that serialized field. That is evidence that my Mac recorded the intended outgoing message. It is not evidence from my wife's phone, and it does not prove she received or read it. Keeping that distinction makes the confirmation useful rather than overstated.</p>
+
+  <h3>Voice is another way to reach the tools</h3>
+  <p>Telegram voice notes are transcribed with faster-whisper in the gateway environment. Spoken replies use OpenAI text-to-speech, with Opus output and the voice selected in configuration. The desktop also has a full-duplex realtime voice session over WebRTC, so I can interrupt while it is speaking.</p>
+  <p>Those are separate roles: transcription turns audio into a request; speech synthesis turns a response into audio; the realtime session manages a live conversation. Work that needs the shell, files, or another machine goes to the Hermes agent. A spoken request to log a reading or deploy a fix should reach the same procedure and checks as a typed one. The microphone changes how I ask, not what counts as finishing the job.</p>
+</section>
+
+<section id="operations" aria-labelledby="operations-heading">
+    <p class="section-kicker">05 / Operating the system</p>
+    <h2 id="operations-heading">What I check before calling a job finished</h2>
+    <p>The common thread across these jobs is that each crosses a boundary. A draft moves into Git. A merged commit moves onto another machine. A reading moves from speech into a database, then into a file on my Mac. I get a clearer picture of failures when I check those transitions separately instead of treating a long sequence of commands as one success or failure.</p>
+    <div class="hb-table-scroll" tabindex="0" role="region" aria-label="Scrollable outcome checks table">
+        <table>
+            <caption>Evidence I can inspect, and what it leaves unanswered</caption>
+            <thead><tr><th scope="col">Operation</th><th scope="col">Useful evidence</th><th scope="col">Still a separate question</th></tr></thead>
+            <tbody>
+                <tr><td>Merge a briefing</td><td>PR state is <code>MERGED</code>; the change is on <code>main</code>.</td><td>Has production pulled that change?</td></tr>
+                <tr><td>Deploy the site</td><td>Host-side deployment output and running containers.</td><td>Does the public news page serve the expected edition?</td></tr>
+                <tr><td>Record a reading</td><td>The intended values exist in SQLite.</td><td>Did the full CSV mirror reach the Mac?</td></tr>
+                <tr><td>Send a message</td><td>Exact outgoing text, sender flag, and timestamp on the Mac.</td><td>Was it received or read on the other device?</td></tr>
+            </tbody>
+        </table>
     </div>
+    <p>Some fixes have been straightforward systems work. The production checkout needed the correct owner, and the deploy user needed Docker access so the script could run without an interactive <code>sudo</code> prompt. That access deserves care: membership in the Docker group is powerful access to the host, even when the command line no longer contains <code>sudo</code>. Removing the prompt solves an automation problem; it does not make the underlying privilege disappear.</p>
+    <p>The branch-attribution issue taught a similar lesson. Git had accepted a commit, but GitHub's rules still had a reason to hold the PR. Keeping the agent's commit identity attributable made the audit history more useful and let the intended merge workflow work. I want failures like that to remain visible, because they identify the specific boundary that needs attention.</p>
+    <h3>The next improvements</h3>
+    <p>My first priority is the AI News release check: compare the expected edition and merged commit with the deployed checkout and public page. That gives the publishing job a stronger finish line than a successful HTTP response. A documented revert-and-redeploy procedure belongs alongside it. I also want to make the morning schedules follow the intended local timezone through daylight saving changes, and to keep recovery of the agent's working data distinct from recreating its EC2 instance.</p>
+    <p>Beyond that, I want charts from the health history once there is enough data to make a trend meaningful. The useful foundation is already in place: records I can query, procedures I can inspect, and machines the agent can reach. Each additional job should be small enough to explain in those same terms.</p>
+</section>
+
+        </div>
+    </div>
+    <footer class="hb-end"><p>Built with <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a> by Nous Research.<br>Infrastructure and integration by Barry Martin.</p><a href="#hermes-top">Back to top ↑</a></footer>
 </article>
 {% endblock %}
