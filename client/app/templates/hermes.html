@@ -110,12 +110,12 @@
     <header class="hb-hero">
         <p class="hb-eyebrow">Hermes / Architecture &amp; implementation</p>
         <h1 id="hermes-title">Building a personal AI agent<br> with Hermes</h1>
-        <p class="hb-deck">The infrastructure behind my everyday agent, with a closer look at how AI News moves from a Markdown file through Git, deployment, and a production Flask application.</p>
-        <p class="hb-meta"><span>By Barry Martin</span><span>Terraform · Tailscale · Python · Docker</span><span>About 16 min read</span></p>
+        <p class="hb-deck">How my everyday agent is wired, and how one of its jobs, AI News, travels from a Markdown file onto this site.</p>
+        <p class="hb-meta"><span>By Barry Martin</span><span>Terraform · Tailscale · Python · Docker</span><span>About 14 min read</span></p>
     </header>
     <figure class="hb-cover">
         <img src="{{ url_for('static', filename='images/hermes-infrastructure-illustration.png') }}" width="1774" height="887" fetchpriority="high" alt="An isometric blue-and-yellow illustration of a laptop and phone connected through a central agent server to a separate publishing server.">
-        <figcaption>A visual interpretation of the setup: personal devices, an agent host, and the server that publishes this site. The architecture diagram below shows the actual connections.</figcaption>
+        <figcaption>A sketch of the setup: my laptop and phone, the agent, and the server that publishes this site. The diagram below is the real wiring.</figcaption>
     </figure>
     <div class="hb-layout">
         <nav class="hb-toc" aria-label="Article contents">
@@ -124,8 +124,8 @@
                 <li><a href="#overview">01 · What runs where</a></li>
                 <li><a href="#deploy">02 · AI News, end to end</a></li>
                 <li><a href="#infrastructure">03 · Provisioning &amp; access</a></li>
-                <li><a href="#personal-automation">04 · Everyday workflows</a></li>
-                <li><a href="#operations">05 · Operating the system</a></li>
+                <li><a href="#personal-automation">04 · The ordinary jobs</a></li>
+                <li><a href="#operations">05 · Before I call it done</a></li>
             </ol>
             <p class="hb-toc-extra"><a href="{{ url_for('ai_news.index') }}">Read AI News ↗</a><br><a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">Infrastructure repo ↗</a></p>
         </nav>
@@ -134,29 +134,29 @@
 <section id="overview" aria-labelledby="overview-heading">
     <p class="section-kicker">01 / The system</p>
     <h2 id="overview-heading">What runs where</h2>
-    <p>I wanted an assistant that could pick up a task after I had closed the conversation. Some of those tasks are personal: record a health reading, send the morning message, or look for new jobs. Others involve the infrastructure behind this website. In all of them, the useful part happens after the agent has worked out what I asked for. It needs a place to save the result, access to the right machine, and a way to tell whether the work finished.</p>
-    <p>I chose <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>, the open-source framework from Nous Research. It brings persistent sessions, tools, scheduling, and reusable skills into one environment. The procedures I use repeatedly can be written down as skills and loaded again, so the next conversation has the same deployment steps or recording rules available. I still have to give those procedures working credentials, sensible permissions, and checks that match the task.</p>
-    <p>The setup has three main machines. Hermes runs on EC2. My Mac supplies the Apple-specific capabilities, including Contacts and Messages, and keeps a CSV copy of my health data. A separate production host runs this site. Tailscale connects the machines privately. Telegram gives me a familiar interface from my phone; the desktop app reaches the agent through the tailnet.</p>
+    <p>I wanted an assistant that would keep going after I closed the chat. Sometimes that means logging a health reading, sending the morning note, or pulling together a note on the economy and the job market. Sometimes it means working on this site. Either way, the useful part starts once Hermes understands what I asked. It has to put the result somewhere, reach the right machine, and show me that the work actually finished. I check each of those steps on its own.</p>
+    <p>I run <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>, the open-source framework from Nous Research. Jobs I repeat, like a deploy or logging a reading, live in skills, so the next conversation already knows the steps. Three machines do the work. Hermes runs on EC2. My Mac handles the Apple-only pieces, Contacts and Messages, and keeps a CSV copy of my health data. Another host runs this site. Tailscale connects them on a private network.</p>
+    <p>From my phone I use Telegram. Voice notes are transcribed with faster-whisper in the gateway, and when Hermes talks back it uses OpenAI text-to-speech, in Opus. The desktop app reaches the same agent over the tailnet, including a live WebRTC session I can interrupt while it is still speaking.</p>
     <figure>
         <div class="hb-diagram-scroll" tabindex="0" role="region" aria-label="Scrollable system architecture diagram">
             <img src="{{ url_for('static', filename='images/hermes-architecture.svg') }}" width="920" height="570" loading="lazy" alt="Hermes on EC2 connects to external Telegram, cloud model, and GitHub services. Inside the Tailscale network it uses SSH to reach the Mac and production host. Public readers reach production over HTTPS, while SSM administers the agent host.">
         </div>
-        <figcaption>Private administration, external services, and public web traffic have different paths. <a href="{{ url_for('static', filename='images/hermes-architecture.svg') }}" target="_blank" rel="noopener noreferrer">Open the full-size diagram ↗</a></figcaption>
+        <figcaption>Admin traffic, outside services, and public visitors each take a different path. <a href="{{ url_for('static', filename='images/hermes-architecture.svg') }}" target="_blank" rel="noopener noreferrer">Open the full-size diagram ↗</a></figcaption>
     </figure>
-    <p>AI News makes a useful walkthrough because it touches nearly every part of that arrangement. The agent writes the briefing, changes a tracked file, works through GitHub, connects to production, and checks the website. The page advertises a daily update at 7pm. That publishing schedule belongs to the agent's automation; Flask's job is to serve the document that reached production.</p>
-    <p>Below, I follow that update through the system first, then explain how the agent host is provisioned and how the same connections support the smaller daily jobs.</p>
+    <p>AI News is the best tour of the whole setup, because one update touches almost every piece. Hermes writes the briefing, commits the file, goes through GitHub, connects to production, and checks the site. The page says it updates daily at 7pm. That clock belongs to the agent. Flask just serves whatever document made it to production.</p>
+    <p>I'll follow one update from the Markdown file through Git, the production host, and Flask. Then I'll show how the agent host is set up, how those same connections carry the smaller daily jobs, and what I look at before I call any of them done.</p>
 </section>
 <section id="deploy" aria-labelledby="deploy-heading">
     <p class="section-kicker">02 / The publishing pipeline</p>
-    <h2 id="deploy-heading">How AI News gets onto the site.</h2>
-    <p>AI News is where the pieces of this setup have to agree with one another. Hermes produces a briefing, Git records it, the production host picks it up, and Flask serves it. A good draft can still fail to reach the website. A perfectly healthy website can still be showing yesterday's draft. I find the system much easier to reason about when I treat those as separate problems.</p>
-    <p>The durable output is <code>client/app/hermes/ai_news.md</code>: a dated heading, story summaries, and links to their sources. Publishing means replacing that document through the site's existing repository workflow. When somebody opens <a href="{{ url_for('ai_news.index') }}">AI News</a>, the application reads the deployed file. The reader's request does not start an agent session or wait for a model.</p>
+    <h2 id="deploy-heading">How AI News gets onto the site</h2>
+    <p>AI News is where all of this has to line up. Hermes writes a briefing, Git stores it, production picks it up, and Flask serves it. A good draft can still miss the site. A healthy site can still be showing yesterday. Those are different problems, and the setup is much easier to debug once I treat them that way.</p>
+    <p>What gets published is <code>client/app/hermes/ai_news.md</code>: a date, short summaries, and links. Publishing means replacing that file through the same repo I already use for the site. When you open <a href="{{ url_for('ai_news.index') }}">AI News</a>, Flask reads the file that was deployed. That request never starts an agent session or waits on a model.</p>
 
 
     <div class="hb-flow" aria-label="Publishing sequence"><strong>One update, from source to reader</strong><span>Markdown</span> <b aria-hidden="true">→</b> <span>Git branch</span> <b aria-hidden="true">→</b> <span>Merged PR</span> <b aria-hidden="true">→</b> <span>Production checkout</span> <b aria-hidden="true">→</b> <span>Flask page</span></div>
-    <h3>1. Give the draft a history</h3>
-    <p>I keep the briefing in Git because the diff answers practical questions. Which stories changed? Did a source link disappear? Was the heading corrected without changing the body? The November 2 update in PR #4 changed only <code>ai_news.md</code>. Later, PR #7 corrected its heading from November 3 to November 2. That small correction is useful evidence: the publication date is part of the content, and it can be wrong even when every infrastructure step succeeds.</p>
-    <p>The agent works in its own clone, creates a branch, commits the document, and pushes it. Git transport and GitHub's pull-request API use different credentials in this setup: a repository-scoped SSH deploy key handles the push, while the authenticated <code>gh</code> CLI creates the PR and requests squash auto-merge. That separation matters when troubleshooting. A successful push says nothing about whether the CLI can open or merge a pull request.</p>
+    <h3>1. Put the draft in Git</h3>
+    <p>I keep the briefing in Git because the diff answers the questions I actually have. Which stories changed? Did a link disappear? Did the heading get fixed while the body stayed the same? The November 2 update, PR #4, touched only <code>ai_news.md</code>. PR #7 came later and corrected the heading, which said November 3. The date is part of the article. It can be wrong even when every deploy step worked.</p>
+    <p>Hermes does this from its own clone. It branches, commits, and pushes. The push and the pull request use different credentials. An SSH deploy key, scoped to this one repo, handles the push. The <code>gh</code> command, logged in as me, opens the PR and asks for a squash auto-merge. I keep those apart because they fail in different ways. A push that succeeds tells me nothing about whether <code>gh</code> can open or merge the PR.</p>
     <pre><code># Illustrative sequence in the agent's clone; substitute the date and PR number.
 git switch -c content/ai-news-YYYY-MM-DD
 git add client/app/hermes/ai_news.md
@@ -169,11 +169,11 @@ gh pr merge &lt;pr-number&gt; --auto --squash
 
 # Inspect the result before deployment. The required state is MERGED.
 gh pr view &lt;pr-number&gt; --json state,mergedAt,mergeCommit</code></pre>
-    <p>The pause between requesting auto-merge and deploying is essential. Auto-merge can remain pending while repository rules are unsatisfied. During the original setup, commit attribution held a merge open; using my GitHub noreply identity resolved it. The command returning successfully was not proof that <code>main</code> contained the change. I want the actual merge state before asking production to pull anything.</p>
+    <p>I wait after asking for auto-merge. The command can return while a repo rule is still holding the merge. That happened on the first setup. GitHub would not accept the commit attribution, and switching the commits to my GitHub noreply address cleared it. Before I tell production to pull, I look at the PR and make sure the state is <code>MERGED</code>.</p>
 
-    <h3>2. Move the merged content onto the production host</h3>
-    <p>The deployment sequence I set up connects over the tailnet and runs <code>ssh mysite 'sh ~/deploy.sh'</code>. That host-side script pulls the repository and runs <code>docker-compose up -d --build</code>. The script lives outside this website repository, so the application checkout is not a complete record of the deployment machinery. What it does contain is the configuration of the services being deployed.</p>
-    <p>The application image starts from Python 3.11, installs the Python requirements, copies the client directory into <code>/app</code>, and starts uWSGI. Production Compose defines the application, Redis, and nginx services. There is an important detail in the application's volume configuration:</p>
+    <h3>2. Put the merged file on the production host</h3>
+    <p>From the agent, the deploy is <code>ssh mysite 'sh ~/deploy.sh'</code> over the tailnet. On the host, that script pulls the repo and runs <code>docker-compose up -d --build</code>. The script lives outside this website repo, so the checkout is not the whole story of how a deploy works. The repo does hold the configuration of the services being started.</p>
+    <p>The image starts from Python 3.11, installs the requirements, copies the client directory into <code>/app</code>, and starts uWSGI. Production Compose runs the app, Redis, and nginx. The volume on the app service is the detail I have to remember:</p>
     <pre><code># Relevant excerpt from docker-compose.yml
 services:
     app:
@@ -182,22 +182,11 @@ services:
           - ./client:/app
       expose:
         - 8080</code></pre>
-    <p>That bind mount makes the host's <code>client</code> directory the running application's <code>/app</code> directory. It takes precedence over the copy baked into the image. For a news-only update, the checked-out Markdown is therefore the content the application reads; rebuilding an image is not inherently necessary just to replace that file. Rebuilding remains part of the established deployment procedure, which also handles application changes. This makes the production checkout part of the release. The image alone does not capture everything a reader will see.</p>
-    <p>The two network paths also have different jobs. Hermes uses private access to administer the host. Readers arrive at nginx over public HTTPS. The nginx configuration forwards application requests to <code>app:8080</code> using the uWSGI protocol, while static assets have their own nginx location. uWSGI runs four worker processes with two threads each. Redis is present in the wider site's stack, but the AI News route itself reads a file; it does not ask Redis for the briefing.</p>
-
-
-    <p>On the agent, the deployment invocation and the host inspection are separate commands. Running <code>docker ps</code> on the agent would inspect the wrong Docker daemon. The container check needs to run on <code>mysite</code>; the HTTP check needs to use the public address that readers use.</p>
-    <pre><code># From the agent host, after the PR has merged:
-ssh mysite 'sh ~/deploy.sh'
-ssh mysite 'docker ps'
-
-# News-route diagnostic, beyond the original homepage check:
-# Inspect the printed status; this alone does not check freshness.
-curl --fail --silent --show-error --output /dev/null \
-  --write-out '%{http_code}\n' https://thepythongeek.com/ai-news/</code></pre>
-    <h3>3. Render the document within an explicit boundary</h3>
-    <p>The file path is anchored to the Python module with <code>Path(__file__).resolve().parent</code>, so it does not depend on the process's working directory. The loader decodes UTF-8 and rejects a blank document. After that, the route passes the text to a shared renderer used elsewhere in the site.</p>
-    <pre><code># The shared renderer in app/stormy_ai/views.py
+    <p>That mount puts the host's <code>client</code> directory at <code>/app</code> inside the container, in front of the copy baked into the image. For a news-only change, the Markdown in the checkout is the file Flask reads. The script still rebuilds the image, because the same deploy also ships application changes. What you see on the site comes from the checkout.</p>
+    <p>Hermes reaches the host over the tailnet. Everyone else comes in through nginx on public HTTPS. Nginx passes application requests to <code>app:8080</code> over the uWSGI protocol, and serves static files from their own location. uWSGI runs four workers, two threads each. Redis is there for the rest of the site. The briefing is the file on that mount.</p>
+    <h3>3. Turn the file into a page</h3>
+    <p>The path is tied to the Python module with <code>Path(__file__).resolve().parent</code>, so it does not matter which directory the process was started from. The loader reads the file as UTF-8 and refuses a blank one. Then the route hands the text to a renderer the site already had.</p>
+    <pre><code># Shared Markdown renderer
 rendered = markdown.markdown(
     markdown_text,
     extensions=["extra", "sane_lists"],
@@ -210,85 +199,89 @@ sanitized = bleach.clean(
     strip=True,
 )
 return Markup(sanitized)</code></pre>
-    <p>Markdown conversion and HTML sanitization solve different problems. The first supplies headings, lists, links, and tables. The second limits which HTML survives. The allowlist admits presentation elements and selected attributes; link protocols are restricted to HTTP, HTTPS, and mailto. Only the sanitized result is marked safe for Jinja. A test exercises this boundary with a script tag, an image event handler, and a JavaScript link. Sanitization controls browser behavior; it does not establish whether a news claim or its source is trustworthy.</p>
-    <p>Although that helper lives in the Stormy AI module, AI News does not use Stormy's storage path. Stormy follows an S3 <code>latest.txt</code> pointer to another object. AI News reads the Markdown beside its own view module on each request. Sharing the renderer saves duplicate code without making the two publishing systems identical.</p>
-    <p>If the file is missing, unreadable, incorrectly encoded, or empty, the news route logs the exception and returns a useful unavailable message with HTTP 503. Its tests cover loading a real document, rendering a supplied Markdown sample, and the missing-file response. Those checks are valuable, but they do not exercise the agent, GitHub, the external deployment script, or the production network.</p>
+    <p>Turning Markdown into HTML, and deciding which HTML is allowed, are two different jobs. The converter gives me headings, lists, links, and tables. Bleach then drops anything that is not on the allowlist. Links are limited to HTTP, HTTPS, and mailto. Only the cleaned HTML is marked safe for Jinja. A test feeds the renderer a script tag, an image with an event handler, and a <code>javascript:</code> link, to make sure none of those survive.</p>
+    <p>If the file is missing, unreadable, badly encoded, or empty, the route logs the error and returns a short unavailable message with a 503. The tests cover a real document, a sample string, and the missing-file case. They stop at the Flask route. They don't run the agent, GitHub, the deploy script, or the production network.</p>
 
-    <h3>4. Check availability, then ask a harder question</h3>
-    <p>The original release check inspected running containers and requested the public homepage. That establishes a limited kind of success: the site answered after deployment. I would also request <code>/ai-news/</code>, because a working homepage does not exercise the briefing loader. Even a 200 from the news route is only an availability check. An old, readable Markdown file still produces a successful response.</p>
-    <p>The next improvement I want is a content check tied to the particular release. Record the expected edition date and merged commit, inspect the deployed checkout, then confirm that the public news page contains the expected edition. The date correction in PR #7 makes this more than a theoretical concern. The intended publication date needs to be explicit, with a defined timezone, instead of inferred from whichever machine happens to run a check.</p>
-    <p>I also want a documented recovery procedure. Git preserves earlier briefings, but keeping history is not the same as implementing rollback. A deliberate revert through a new PR would fit this workflow; it would still need deployment and the same public-content check. Freshness checks and that recovery procedure are planned improvements, not protections I am claiming the present pipeline already provides.</p>
+    <h3>4. Check that the site is up, then check the edition</h3>
+    <p>On the agent, deploying and checking are two different commands. <code>docker ps</code> has to run on <code>mysite</code>, or I am looking at the wrong Docker. The HTTP check has to hit the public URL, the one readers actually use.</p>
+    <pre><code># From the agent host, after the PR has merged:
+ssh mysite 'sh ~/deploy.sh'
+ssh mysite 'docker ps'
+
+# News-route diagnostic, beyond the original homepage check.
+# Prints a status code. It does not say which edition is on the page.
+curl --fail --silent --show-error --output /dev/null \
+  --write-out '%{http_code}\n' https://thepythongeek.com/ai-news/</code></pre>
+    <p>The first version of this check looked at running containers and the homepage. I also request <code>/ai-news/</code>, because the homepage never opens the briefing. A 200 only means the route could read some file. Yesterday's Markdown returns 200 too. That is why the curl above prints a status code and stops.</p>
+    <p>What I want next is a check tied to this particular release. Write down the edition date and the merge commit, look at the checkout on the host, and confirm the public page contains that edition. PR #7 is why this matters. The heading had the wrong day, and every machine in the path had done its job. The date needs to be an explicit value, with a timezone, rather than whatever clock happens to be on the machine running the check.</p>
+    <p>I also want a written way to roll back. Git still has the older briefings. A rollback would be a revert PR, another deploy, and the same look at the public page. I have not built the freshness check or that rollback yet.</p>
 </section>
 <section id="infrastructure" aria-labelledby="infrastructure-heading">
   <p class="section-label">03 / Provisioning &amp; access</p>
   <h2 id="infrastructure-heading">A small server, with a job I can explain</h2>
-  <p>I run Hermes on an Ubuntu 24.04 EC2 instance in <code>us-east-1</code>. It is a <code>t3.medium</code>, with 4 GB of memory and an encrypted gp3 root volume. That is enough for the agent, its gateway, browser tools, and the Ollama client because I am not loading the language model's weights on this machine. The expensive inference happens with a cloud provider.</p>
-  <p>Ollama listens on <code>127.0.0.1:11434</code>. Hermes uses its OpenAI-compatible API at <code>/v1</code>, and Ollama forwards requests to the selected cloud model. Keeping the endpoint local makes the configuration convenient; it does not make inference local. Prompts and the context included in those requests still leave the instance. What I operate myself is the process that maintains sessions, reads files, schedules work, and invokes tools.</p>
-  <p>That separation is useful. I can change the model without moving the health database, rewriting the deployment procedure, or rebuilding the messaging integration. Telegram and the desktop gateway are ways into the same agent environment. My Mac and the production server supply capabilities the EC2 instance does not have on its own.</p>
+  <p>The machine that holds the clone, pushes the branch, and runs <code>ssh mysite</code> is a small Ubuntu 24.04 instance in <code>us-east-1</code>. It is a <code>t3.medium</code>, with 4 GB of memory and an encrypted gp3 root disk. That is plenty for the agent, the gateway, the browser tools, and an Ollama client. The model weights live with a cloud provider. What this machine does is keep the sessions, read files, run the schedule, and call tools.</p>
+  <p>Ollama listens on <code>127.0.0.1:11434</code>. Hermes talks to its OpenAI-compatible API at <code>/v1</code>, and Ollama forwards each request to whichever cloud model I have selected. The socket is on the box. The prompt, and whatever context went with it, still leaves the instance.</p>
+  <p>I like that split. I can swap the model without moving the health database, rewriting the deploy, or rebuilding how messages get sent. Telegram and the desktop app are just two ways into the same agent. The Mac and the production server do the things this instance cannot do on its own.</p>
 
   <h3>What Terraform actually rebuilds</h3>
-  <p>The <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">infrastructure repository</a> defines the instance, security group, instance profile, and first-boot install. It selects an Ubuntu 24.04 image, requires IMDSv2 for instance metadata, and encrypts the root disk. I can recreate that machine from configuration. Recreating the machine and restoring its working state are separate jobs: Terraform does not recover my SQLite records, conversations, or credentials.</p>
+  <p>The <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">infrastructure repository</a> describes the instance, the security group, the instance profile, and the first-boot install. It picks an Ubuntu 24.04 image, requires IMDSv2, and encrypts the root disk. I can rebuild the machine from that config. I cannot get the SQLite records, the conversations, or the credentials back from Terraform. Those live on the instance.</p>
   <pre><code>cd infra
 cp terraform.tfvars.example terraform.tfvars &amp;&amp; cp backend.hcl.example backend.hcl
 terraform init -backend-config=backend.hcl
 terraform apply        # ~5-10 min of user-data install on first boot</code></pre>
-  <p>There is an important gap between the instance existing and the agent being ready. User-data is still installing packages after Terraform finishes. The bootstrap installs Ollama, installs Hermes as the <code>ubuntu</code> user, and enables lingering so that user's services can continue without an interactive login. It also creates a systemd service for the dashboard, configured to restart on failure. The install writes a progress log and a completion marker so I can distinguish “EC2 is up” from “the install finished.”</p>
-  <p>The dashboard username, password, and signing secret are created on the instance. The password is generated with OpenSSL, and shell tracing is disabled while those values are written. The resulting environment file is owned by <code>ubuntu</code> with mode <code>0600</code>. Those generated credentials never need to be embedded in the Terraform configuration, state, or user-data template.</p>
+  <p>Terraform finishing is not the same as the agent being ready. User-data is still installing packages after <code>apply</code> returns. The bootstrap installs Ollama, installs Hermes as the <code>ubuntu</code> user, and turns on lingering so that user's services keep running with nobody logged in. It also adds a systemd service for the dashboard, set to restart on failure. A progress log and a completion marker let me tell "the instance is up" from "the install actually finished."</p>
+  <p>The dashboard username, password, and signing secret are created on the box. OpenSSL generates the password, and the script turns off shell tracing while it writes those values. The env file ends up owned by <code>ubuntu</code>, mode <code>0600</code>. None of those secrets need to live in the Terraform config, the state, or the user-data template.</p>
 
-  <h3>SSM gets me in; the tailnet connects the machines</h3>
-  <p>I use AWS Systems Manager Session Manager for an administrative shell on Hermes. The default Terraform configuration has no inbound SSH rule and no EC2 key pair. That does not prevent the agent from making outbound SSH connections. When it needs Messages on my Mac or the deployment script on production, it acts as an SSH client across Tailscale.</p>
-  <p>The dashboard listens on port <code>9119</code>. During setup, access is controlled by <code>dashboard_allowed_cidrs</code>; the repository's default is broad, so narrowing it is an explicit setup step. Once the desktop can reach the gateway over the tailnet, I set that list to <code>[]</code> and apply again. That removes the public dashboard ingress rule. The agent still needs outbound access for model APIs, messaging services, and package downloads.</p>
-  <p>For the Mac, I install a dedicated ed25519 public key in <code>authorized_keys</code>. The production host has its own SSH access, a pinned host key, and the <code>mysite</code> alias. These keys let the agent reach particular machines. The repository deploy key is a different credential: it grants Git access to one repository. The GitHub CLI's OAuth token handles API operations such as creating and merging pull requests. A repo-scoped Git key does not automatically limit that token's permissions, and joining the tailnet does not replace authentication to the services on it.</p>
+  <h3>Getting onto the box, and connecting the machines</h3>
+  <p>I get a shell on Hermes through AWS Systems Manager Session Manager. The default Terraform setup has no inbound SSH rule and no EC2 key pair. When the agent needs Messages on my Mac, or the deploy script on production, it connects outward over Tailscale as an SSH client.</p>
+  <p>The dashboard listens on port <code>9119</code>. While I am setting things up, <code>dashboard_allowed_cidrs</code> controls who can reach it. The repo's default is wide open, so tightening that list is a step I have to remember to do. Once the desktop can reach the gateway over the tailnet, I set the list to <code>[]</code> and apply again. That drops the public rule. The agent still needs to call out for model APIs, messaging, and package downloads.</p>
+  <p>On the Mac I install a dedicated ed25519 public key in <code>authorized_keys</code>. Production has its own SSH access, a pinned host key, and the <code>mysite</code> alias. Those keys are how the agent reaches those two machines. Git push uses a different key, a deploy key scoped to this repo. The <code>gh</code> command uses an OAuth token, and that token is what creates and merges the pull requests.</p>
 </section>
 
 <section id="personal-automation" aria-labelledby="automation-heading">
-  <p class="section-label">04 / Everyday workflows</p>
-  <h2 id="automation-heading">The same setup handles the small, recurring work</h2>
-  <p>Deployments are the most visible example, but they are not the reason I keep the agent running. I also use it for health records, a morning message to my wife, and a daily search for jobs. These are ordinary tasks with enough small details that a half-finished result is more trouble than it is worth.</p>
+  <p class="section-label">04 / Day to day</p>
+  <h2 id="automation-heading">The ordinary jobs</h2>
+  <p>The SSH path to my Mac is also how the everyday work runs. I log health readings, send my wife a note in the morning, and collect a short briefing on the economy and the job market. Shipping the site is the visible one. These smaller jobs are why I leave the agent running. They are easy to get half-right, and a half-finished one is worse than skipping it.</p>
 
-  <h3>Health records: SQLite first, a complete CSV copy second</h3>
-  <p>I can dictate a reading in a sentence instead of opening a form. The agent separates the values and writes them to SQLite. The original schema has a <code>daily_readings</code> table for dates, times, weight, glucose, blood pressure, pulse, and notes, plus a <code>meals</code> table for food descriptions and nutrition values. Glucose entries have a constrained category: fasting, before-meal, after-meal, bedtime, or random.</p>
-  <p>The database schema helps, but it cannot decide whether the agent understood me correctly. SQLite column declarations alone are not a complete validation system. The recording procedure matters too: do not invent a missing measurement, check serving sizes against the nutrition source, and ask when the amount is something only I know. The weight column uses kilograms, so a dictated value in pounds also needs a deliberate conversion rather than a unit silently dropped.</p>
-  <p>After an insert, a Python sync script exports the full state to <code>~/Documents/HealthData/</code> on my Mac. SQLite remains the source of truth. The CSVs are a convenient local copy I can inspect and use elsewhere. I rebuild that copy instead of appending one new line because I sometimes correct old entries. If I change or delete a row in the database, the next complete export reflects it; a simple append would leave the old version behind.</p>
+  <h3>Logging a reading</h3>
+  <p>Most mornings I just say the numbers. Weight, glucose, what I ate. Hermes pulls them out of the sentence and writes them to SQLite, so I don't have to open a form. Readings go in <code>daily_readings</code>: date, time, weight, glucose, blood pressure, pulse, and notes. Meals have their own table, with the food and the nutrition numbers. A glucose entry has to be one of fasting, before a meal, after a meal, bedtime, or random.</p>
+  <p>The tables keep a row in the right shape. They can't tell whether Hermes heard me correctly. That part is in the procedure: don't invent a number I didn't say, check serving sizes against the nutrition source, and ask me when the amount is something only I would know. Weight is stored in kilograms, so if I say it in pounds, the conversion has to be on purpose.</p>
+  <p>After the insert, a small Python script copies the whole database to <code>~/Documents/HealthData/</code> on my Mac. SQLite stays the source of truth. The CSVs are there so I can open them and use them somewhere else. I rewrite the whole export each time, because I go back and fix old rows. Change or delete a row, and the next export matches. Appending a single new line would leave the old version sitting in the file.</p>
   <pre><code>/usr/bin/python3 /home/ubuntu/health_data/health_sync.py
 # synced: daily_readings=1, meals=6</code></pre>
-  <p>This makes repeat runs useful: exporting the same database again should produce the same records, without duplicates caused by the retry. It also gives me two separate outcomes to check. Saving a reading and copying the export to the Mac are different operations; a failed transfer does not mean the database insert failed. The agent's role here is recording and organizing information. I do not ask it to turn those rows into a diagnosis.</p>
+  <p>Run the export again on the same database and you should get the same files, with no duplicates from the retry. Saving the reading and copying it to the Mac are two different jobs. If the copy fails, the row is still in SQLite. I keep these as records I can look up. I don't ask Hermes to tell me what they mean medically.</p>
 
-  <h3>Scheduled jobs need a result and a clock</h3>
-  <p>The morning message is scheduled for 6:00 AM. It writes a Bible-verse note to my wife, rotates the selection, signs it “I love you, Barry,” and sends it through the Mac. The job also checks the outgoing message record and runs the health-data sync. At 9:00 AM, the job scout looks for remote senior or lead data-engineering roles with a stated salary of at least $150,000. It checks that postings are live, excludes jobs already sent, and delivers the remaining list to Telegram.</p>
-  <p>Those times describe the intended local schedule. The original jobs use UTC anchors, so they need adjustment when the local UTC offset changes with daylight saving time. A fixed UTC schedule does not automatically preserve 6:00 AM in New Jersey throughout the year. I want that limitation stated plainly because a job that runs successfully at the wrong hour is still wrong for its purpose.</p>
-  <p>Telegram is also where failures are meant to surface. For the scout, a smaller list of verified, new postings is more useful than padding the result with repeats. For the morning message, a send command finishing is only one step. The workflow needs to check what the Mac recorded before reporting the outcome.</p>
+  <h3>The morning note and the market briefing</h3>
+  <p>At 6:00 AM it sends my wife a short note with a Bible verse. It rotates which verse it picks, signs the note “I love you, Barry,” and sends it through the Mac. Then it checks that the message really went out, and runs the health-data sync.</p>
+  <p>At 9:00 AM it puts together a short briefing on the economy and the job market. It checks that each item is still current, skips anything it has already sent me, and drops the rest in Telegram. I would rather get a few new findings than a long list padded with repeats.</p>
+  <p>Those times are what I want on a New Jersey clock. The schedules are anchored in UTC, so when daylight saving time changes they slide by an hour unless I move the anchors. A run at the wrong hour has still missed.</p>
 
-  <h3>What the iMessage check proves</h3>
-  <p>The Linux instance reaches my Mac over SSH and uses a small AppleScript to send through Messages. Before sending, it resolves the recipient through Contacts, normalizes the phone number, and selects the one-to-one chat. Finding a group conversation that happens to contain the same person is not enough. For an ad hoc message, the procedure includes confirming the recipient and exact text with me; the morning job uses the recurring instruction I already gave it.</p>
-  <p>The verification step reads the Mac's Messages SQLite database separately from the send script. It checks the outgoing flag, a recent timestamp, and the exact message text, including decoding <code>attributedBody</code> when the text lives in that serialized field. That is evidence that my Mac recorded the intended outgoing message. It is not evidence from my wife's phone, and it does not prove she received or read it. Keeping that distinction makes the confirmation useful rather than overstated.</p>
-
-  <h3>Voice is another way to reach the tools</h3>
-  <p>Telegram voice notes are transcribed with faster-whisper in the gateway environment. Spoken replies use OpenAI text-to-speech, with Opus output and the voice selected in configuration. The desktop also has a full-duplex realtime voice session over WebRTC, so I can interrupt while it is speaking.</p>
-  <p>Those are separate roles: transcription turns audio into a request; speech synthesis turns a response into audio; the realtime session manages a live conversation. Work that needs the shell, files, or another machine goes to the Hermes agent. A spoken request to log a reading or deploy a fix should reach the same procedure and checks as a typed one. The microphone changes how I ask, not what counts as finishing the job.</p>
+  <h3>Knowing the message left my Mac</h3>
+  <p>The Linux box reaches my Mac over SSH and sends through Messages with a short AppleScript. Before it sends, it looks the person up in Contacts, normalizes the phone number, and picks the one-to-one chat. A group thread that happens to include them is the wrong conversation. If I ask for a one-off message, Hermes confirms the recipient and the exact text with me first. The morning note uses the standing instruction I already gave it.</p>
+  <p>The check is a separate look at the Mac's Messages database, not a promise from the send script. It looks for the outgoing flag, a recent timestamp, and the exact text. Sometimes that text is tucked into <code>attributedBody</code>, so the check has to decode that field. What I learn is that my Mac recorded the message I meant to send. I still don't know if her phone got it, or if she read it.</p>
 </section>
 
 <section id="operations" aria-labelledby="operations-heading">
-    <p class="section-kicker">05 / Operating the system</p>
-    <h2 id="operations-heading">What I check before calling a job finished</h2>
-    <p>The common thread across these jobs is that each crosses a boundary. A draft moves into Git. A merged commit moves onto another machine. A reading moves from speech into a database, then into a file on my Mac. I get a clearer picture of failures when I check those transitions separately instead of treating a long sequence of commands as one success or failure.</p>
+    <p class="section-kicker">05 / Checking the work</p>
+    <h2 id="operations-heading">Before I call it done</h2>
+    <p>A briefing has to land in Git, and then on another machine. A reading has to land in SQLite, and then on the Mac. I look at those one at a time.</p>
     <div class="hb-table-scroll" tabindex="0" role="region" aria-label="Scrollable outcome checks table">
         <table>
-            <caption>Evidence I can inspect, and what it leaves unanswered</caption>
-            <thead><tr><th scope="col">Operation</th><th scope="col">Useful evidence</th><th scope="col">Still a separate question</th></tr></thead>
+            <caption>What I can check, and what that check still leaves open</caption>
+            <thead><tr><th scope="col">Job</th><th scope="col">What I can see</th><th scope="col">What I still don't know</th></tr></thead>
             <tbody>
-                <tr><td>Merge a briefing</td><td>PR state is <code>MERGED</code>; the change is on <code>main</code>.</td><td>Has production pulled that change?</td></tr>
-                <tr><td>Deploy the site</td><td>Host-side deployment output and running containers.</td><td>Does the public news page serve the expected edition?</td></tr>
-                <tr><td>Record a reading</td><td>The intended values exist in SQLite.</td><td>Did the full CSV mirror reach the Mac?</td></tr>
-                <tr><td>Send a message</td><td>Exact outgoing text, sender flag, and timestamp on the Mac.</td><td>Was it received or read on the other device?</td></tr>
+                <tr><td>Merge a briefing</td><td>The PR state is <code>MERGED</code>, and the change is on <code>main</code>.</td><td>Has production pulled that change?</td></tr>
+                <tr><td>Deploy the site</td><td>The deploy output, and the containers that are running.</td><td>Is the public news page showing this edition?</td></tr>
+                <tr><td>Log a reading</td><td>The numbers I meant are in SQLite.</td><td>Did the full CSV copy reach the Mac?</td></tr>
+                <tr><td>Send a message</td><td>The exact text, the outgoing flag, and a timestamp on the Mac.</td><td>Did the other phone receive it, or was it read?</td></tr>
             </tbody>
         </table>
     </div>
-    <p>Some fixes have been straightforward systems work. The production checkout needed the correct owner, and the deploy user needed Docker access so the script could run without an interactive <code>sudo</code> prompt. That access deserves care: membership in the Docker group is powerful access to the host, even when the command line no longer contains <code>sudo</code>. Removing the prompt solves an automation problem; it does not make the underlying privilege disappear.</p>
-    <p>The branch-attribution issue taught a similar lesson. Git had accepted a commit, but GitHub's rules still had a reason to hold the PR. Keeping the agent's commit identity attributable made the audit history more useful and let the intended merge workflow work. I want failures like that to remain visible, because they identify the specific boundary that needs attention.</p>
-    <h3>The next improvements</h3>
-    <p>My first priority is the AI News release check: compare the expected edition and merged commit with the deployed checkout and public page. That gives the publishing job a stronger finish line than a successful HTTP response. A documented revert-and-redeploy procedure belongs alongside it. I also want to make the morning schedules follow the intended local timezone through daylight saving changes, and to keep recovery of the agent's working data distinct from recreating its EC2 instance.</p>
-    <p>Beyond that, I want charts from the health history once there is enough data to make a trend meaningful. The useful foundation is already in place: records I can query, procedures I can inspect, and machines the agent can reach. Each additional job should be small enough to explain in those same terms.</p>
+    <p>A couple of the fixes were ordinary systems work. The production checkout had the wrong owner, and the deploy user had to be in the Docker group so the script would not stop and ask for a <code>sudo</code> password. That group is a lot of power on the host. Dropping the password prompt lets the script run. The access is just as broad as it was.</p>
+    <p>Commit attribution was the same kind of snag. Git was happy with the commit. GitHub held the pull request until the commits used my GitHub noreply identity. Once that was fixed, the merge went through, and the history still showed who wrote it. I want snags like that to stay visible. They point at the exact step that needs a change.</p>
+    <h3>What I want to build next</h3>
+    <p>First is a real release check for AI News. Compare the edition and the merge commit with the checkout on the host and with the public page. A 200 is a weak way to decide the job is finished. Next to that, I want a short note on how to revert and redeploy. I also want those morning schedules to stay on local time through daylight saving, and a way to restore the agent's data without building a new EC2 instance.</p>
+    <p>After that, charts from the health history, once there is enough of it to show a trend. The base is already there. I have rows I can query, steps I can read, and machines the agent can reach. Anything I add should stay small enough to explain the same way.</p>
 </section>
 
         </div>
