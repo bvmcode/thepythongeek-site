@@ -1,60 +1,61 @@
-# AI News — Monday, November 2, 2026
+# AI News — Tuesday, November 3, 2026
 
 A short briefing of the day's main stories.
 
-## Best model still fails most real expert work, new benchmark finds
+## On Election Day, chatbots prove easy to push toward a voting list
 
-SemiAnalysis released GDPx, a benchmark of long agentic tasks in eleven fields chosen for economic stakes — chip design, cybersecurity, biology, finance, law, quant trading, materials science, alignment, and software engineering — built with specialist vendors in each field. Claude Opus 5.5 leads at 12.0%, with Gemini 4 Carbon at 10.9% and GPT-6 Astra at 9.6%. Nearly every model scored zero on the finance and legal tasks. The firm found safety classifiers now measurably depress scores: Meta's Muse Wonder was the strongest cybersecurity model partly because it refuses less. The takeaway is a floor reading on where frontier agents actually are.
+NPR put five chatbots through three voter personas in New York races. Four of five — all but Gemini — produced candidate lists after two or three pushes, typically once the user pleaded time pressure; a researcher calls these "leaky refusals" that deliver an endorsement behind hedged language. The nonprofit's seven-chatbot study found 5.1 percent of answers carried a clear factual error, 13.9 percent of voting-logistics answers outdated or wrong, and errors in 5.9 percent serious enough to mislead a voter. Claude and Copilot produced three-quarters of the clear errors.
 
-- [SemiAnalysis](https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities)
+- [NPR](https://www.npr.org/2026/11/02/nx-s1-6025407/chatbots-midterms-voting-advice)
 
-## Anthropic reports $17 billion in quarterly revenue ahead of its IPO
+## OpenAI readies a post-election policy blitz, starting with rebranding data centers
 
-Anthropic amended its S-1 with full third-quarter results: roughly $17 billion in Q3 revenue, about twelve times a year earlier, against a $23.29 billion net loss driven mainly by accounting charges on notes and derivatives, not cash burn. Nine-month revenue reached $33.24 billion, with purchase commitments and leases of about $895.4 billion, substantially all for compute. The Wall Street Journal separately reported that institutional investors are pushing the mid-November Nasdaq listing toward a $1.5–1.6 trillion valuation, down from $2 trillion previously floated.
+Axios reports OpenAI will launch a policy and PR offensive after today's vote, centered on rebranding data centers as "AI compute campuses," plus binding frontier-safety rules that chief global affairs officer Chris Lehane calls "speed limits." Lehane told Axios the midterms are "a bit of a movie trailer for what you're going to see in 2028," when he expects AI to be the issue in the presidential race. OpenAI expects harder questions than the last two years brought, and New York assemblyman Alex Bores says the real test is whether it tries to stop states enforcing their own AI laws.
 
-- [The Decoder](https://the-decoder.com/anthropic-grows-revenue-twelvefold-but-posts-23-billion-loss/)
+- [TechCrunch](https://techcrunch.com/2026/11/01/openai-might-rebrand-its-data-centers-as-ai-compute-campuses/)
+- [Yahoo Finance](https://finance.yahoo.com/technology/ai/articles/openai-might-rebrand-data-centers-215523615.html)
 
-## Marvell to buy Lumentum for $115 billion in stock, its AI-connectivity bet
+## Anthropic carves out up to $3.5 billion of its IPO for Japanese investors
 
-Marvell confirmed an all-stock acquisition of optical-component maker Lumentum at an implied enterprise value of $115 billion — about $1,132 per Lumentum share, a 23.9% premium to the October 28 close — the largest public technology acquisition ever. Marvell shareholders will own 67% of the combined company, and the deal targets a close in early 2028. The logic: optical links between AI chips have become the constrained piece of the data-center buildout. Lumentum CEO Michael Hurlston said the combination could help meet rising demand for connections between AI components, and called the opportunity enormous.
+Anthropic will sell up to 552.9 billion yen — about $3.5 billion — of shares in Japan as part of its Nasdaq listing, per a registration disclosed Monday, with Mizuho Securities managing the Japan tranche and proceeds going to working capital, operating expenses, and capex. The filing does not state total size or valuation; Reuters reports investors discussing about $1.5 trillion. The scale: at SpaceX's June IPO, the largest ever, Japanese buyers took $2.2 billion of the $75 billion raised — Anthropic's Japan ceiling is roughly 1.6 times that.
 
-- [CNBC](https://www.cnbc.com/2026/11/02/marvell-lumentum-ai-deal.html)
+- [The Star / Reuters](https://www.thestar.com.my/tech/tech-news/2026/11/02/anthropic-plans-to-sell-35-billion-of-shares-to-japan-investors-in-ipo-filing-shows)
+- [Nikkei](https://asia.nikkei.com/business/markets/ipo/anthropic-seeks-to-raise-up-to-3.5bn-from-japanese-investors-in-ipo)
 
-## The New York Times and other publishers sue the Brave browser
+## OpenAI folds ChatGPT's Chat and Work tabs together, with one quota pool behind both
 
-The New York Times and three other newspapers sued Brave, alleging the browser company copied their articles and supplied the content to AI companies without permission. The lawsuits also challenge a Brave feature that bypasses paywalls, along with the company's ad practices. The suits open a new front over who profits from published writing: this time the target is the browser layer that funnels the web's content into AI products wholesale.
+OpenAI is merging the Chat and Work tabs in ChatGPT's desktop app — and once the rollout finishes in December, ChatGPT and Codex will draw usage from the same allocation pool, TechCrunch reported. The Decoder reads the change as the end of all-you-can-prompt flat-rate pricing, since agentic tasks cost four to fifteen times a simple chat to serve by Anthropic's estimate. OpenAI is also capping how many paid subscriptions can share one payment card or device, pushing plan-hopping users toward bought credits and resets instead.
 
-- [TechCrunch](https://techcrunch.com/2026/11/02/new-york-times-and-other-outlets-sue-web-browser-brave-over-alleged-content-scraping/)
+- [TechCrunch](https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/)
+- [The Decoder](https://the-decoder.com/openais-upcoming-chat-and-work-merger-in-chatgpt-signals-the-end-of-all-you-can-prompt-pricing/)
 
-## On the eve of the midterms, chatbots fail almost 40 percent of election answers
+## An Israeli stealth startup says its world model predicts what a trader does next
 
-A study by Forum AI, which evaluates AI models, found that almost 40 percent of answers from eight chatbots to US election questions contained at least one factual error, AFP reported ahead of the November 3 vote. Logistics questions failed more often than candidate questions: Google's Gemini 3.6 Flash gave the wrong deadline to request a mail-in ballot in Pennsylvania, a week too late to be useful, and Claude credited a North Carolina congressman with another person's résumé. NewsGuard separately found Google's AI Overview, Gemini, and Copilot repeating a smear of a Texas Senate candidate that fact-checkers had already debunked.
+42AI came out of stealth with $62.5 million in seed funding and a "behavioral world model" that predicts an individual's next decision even in situations they have never faced. It runs at a handful of brokerages, predicting how traders respond to volatile conditions — not by extrapolating from past trades but by reading signals from seemingly unrelated moments like support-call sentiment, onboarding, and transfers, and returning probabilities over decisions. "Behavior is not deterministic; it's constantly probabilistic," founder Amit Gal-Or told TechCrunch. The company says one brokerage already generated about $30 million of added value through dynamic hedging.
 
-- [AFP via Arab News](https://www.arabnews.pk/world/spewing-us-election-falsehoods-ai-chatbots-face-scrutiny-3005766)
+- [TechCrunch](https://techcrunch.com/2026/11/02/42ai-comes-out-of-stealth-with-62-5m-and-a-world-model-that-can-predict-human-behavior/)
 
-## MIT shows GPT-6 Astra editing a neural network's weights directly
+## Chinese robot-data startup GenRobot AI raises $100 million on a million hours of demos
 
-MIT CSAIL researchers published "Sparks of Weight-Space Programming," showing frontier models can natively read and write raw network weights with no gradient descent. GPT-6 Astra could infer what small networks were trained on from the raw numbers alone, write from scratch game-playing networks that beat networks trained with PPO for 100 million steps, and — asked to fix looping failures in Qwen3.5-0.8B's math answers, a flaw Qwen's own model card warns about — it edited 0.016% of the weights directly. MATH-500 rose from 7.9% to 48.1% and instruction-following tripled. The edit mostly stopped repetition: an interpretability result, not a leap in math skill.
+GenRobot AI, a Beijing company founded in 2025, disclosed a $100 million Series A+ closed in the third quarter, backed by SAIC Motor, Baidu, Shoucheng Holdings, Galaxy General Robotics with GL Ventures, CITIC Goldstone, and Huatai Zijin. It owns more than one million hours of human demonstration data, serves over 30 AI companies, and publishes an open-source 13,000-hour dataset downloaded over a million times a month. As humanoid developers race to teach whole-body skills, data has quietly become the bottleneck of the physical-AI buildout, and this is one of the biggest bets that a data vendor can own that layer.
 
-- [Research blog](https://rikiyat.github.io/blog/weight-space-programming/)
+- [TechNode](https://technode.com/2026/11/02/robot-training-data-startup-genrobot-ai-raises-100-million-in-series-a-funding/)
 
-## OpenAI signs four Abu Dhabi deals spanning government, energy, and investment
+## Aramco closes a 49 percent stake in Humain, folding an oil major into sovereign AI
 
-OpenAI signed four agreements in Abu Dhabi with the government, the state investor Mubadala, and Inception42, a subsidiary of G42, after Altman met Crown Prince Khaled bin Mohamed. The most concrete is a "machine-readable government" project that turns policies and regulations into a form AI can check applications against, with a food-imports pilot already running on models served from inside the UAE and officials keeping final decisions. The others cover investment analysis with Mubadala, a five-year Frontier-platform rollout by Inception42, and deployment of frontier models across ADNOC operations with G42. No contract values were disclosed; the deals land as OpenAI seeks UAE backing for a round near $20 billion.
+Saudi Aramco completed its purchase of a 49 percent stake in Humain from the PIF sovereign wealth fund, which retains 51 percent, funding it with about $2.6 billion in cash during 2026 plus AI, computing, and digital assets of undisclosed value. Humain, founded by PIF in May 2025, builds data centers, cloud services, and the Arabic model ALLaM, targeting three gigawatts of data-center capacity by 2030. Aramco gains deployable AI for its own operations and a solutions business to sell; Humain gains an oil super-major's balance sheet behind it.
 
-- [CNBC](https://www.cnbc.com/2026/11/02/openai-abu-dhabi-ai-deals.html)
-- [Reuters](https://www.reuters.com/business/energy/abu-dhabis-adnoc-g42-sign-deal-with-openai-sam-altman-travels-uae-2026-11-02/)
+- [The Decoder](https://the-decoder.com/saudi-aramco-takes-49-percent-stake-in-ai-firm-humain-with-2-6-billion-deal/)
 
-## Oracle files a $20 billion stock-and-bond sale as AI spend leans on debt
+## HSBC adds a Hong Kong AI institute, hot on Singapore's heels
 
-Oracle filed plans to raise $20 billion — $10 billion in shares and $10 billion in bonds — to fund its AI infrastructure buildout, and its stock fell 8.8% Monday as investors weighed the plan against the company's existing debt. Bloomberg separately reported that Meta is sounding out an investment-grade bond offering of at least $20 billion, after a quarter of negative free cash flow and $135–145 billion in planned data-center capex. Both test how much leverage the debt market will extend.
+HSBC is setting up an AI and emerging-technology institute in Hong Kong, following a similar Singapore launch earlier this year, expected to focus on AI safety, fraud detection, post-quantum cryptography, and blockchain. It continues a pattern of banks institutionalizing AI research rather than just buying tools.
 
-- [CNBC](https://www.cnbc.com/2026/11/02/oracle-files-to-sell-20-billion-in-new-stock-bonds-to-finance-ai-buildout.html)
+- [Economic Times / Reuters](https://m.economictimes.com/tech/artificial-intelligence/hsbc-to-open-hong-kong-ai-institute-following-singapore-launch/articleshow/135447713.cms)
+- [Analytics Insight](https://www.analyticsinsight.net/news/hsbc-hong-kong-ai-hub-4-key-areas-set-for-research)
 
 ## Also noted
 
-- **Anthropic puts a near-term self-improvement warning in its filing.** The same S-1 cautions that "using AI to help build more capable AI could also pose a considerable safety risk," pointing to its Responsible Scaling Policy and what it calls recursive self-improvement; no current model has reached the threshold. ([TechCrunch](https://techcrunch.com/2026/11/02/anthropic-warns-that-its-very-close-to-rsi-capability-aka-self-building-ai/))
-- **Meituan ships LongCat-2.5.** A natively multimodal mixture-of-experts model with 1.6 trillion total parameters, about 48 billion active per token, a 1-million-token context window, built for agentic coding and GUI work. ([TechNode](https://technode.com/2026/11/02/meituan-launches-longcat-2-5-multimodal-ai-model-for-extended-coding-tasks/))
-- **Grok Bot gets throttled.** Usage limits fell for some users weeks after Elon Musk called it his fastest-growing product; Musk said its cost of serving was "unsustainably high relative to revenue," giving no figure or fix. ([The Decoder](https://the-decoder.com/spacexsi-apparently-cuts-grok-bot-quotas-weeks-after-musk-called-it-his-fastest-growing-product/))
-- **Squarespace cuts 19% of staff.** About 300 employees, framed as simplification for growth phases, as AI website builders — its own Blueprint AI and Forma among them — reshape the market. ([TechCrunch](https://techcrunch.com/2026/11/02/web-host-squarespace-lays-off-19-of-its-employees))
-- **South Korea's October exports hit a record $115.3 billion.** Chip exports jumped 259% to $56.4 billion on AI demand, with US-bound shipments nearly tripling as buyers pay for high-bandwidth memory. ([AI Pro Playbook](https://aiproplaybook.com/top-ai-stories/2026-11-02))
+- **Data-center water gets its first consolidation deal.** Omen AI, maker of real-time cooling-water sensors, acquired Aquatic Labs for $16 million in cash and stock, merging complementary sensors that check water chemistry and valve failures. US data centers use 17 to 19 billion gallons of water a year for cooling, a figure expected to triple within five years. ([TechCrunch](https://techcrunch.com/2026/11/02/omen-ai-adds-liquid-know-how-in-16-million-aquatic-labs-acquisition/))
+- **Korea stacks two giant AI-infrastructure rounds.** NAVER is raising $1 billion from NVIDIA — about a 4.8% stake, allotment paid November 6 — to fund its AI-factory business, while chipmaker FuriosaAI closed a $623 million Series D at roughly $2.89 billion post-money, backed by Korea Development Bank, NAVER, and Kakao Investment. ([WOWTALE](https://en.wowtale.net/2026/11/01/235810/))
+- **Fifty AI agents spent one Minecraft night being scared straight.** A Y Combinator Labs and Olam Labs experiment put 50 GPT-6.1 Sol agents in Minecraft for three hours to build a civilization; after zombie deaths on night one the colony turned cautious and procedural — ration ledgers, permits, an official fertilizer officer. In competition against ten Claude Opus 5.5 agents, the GPT side won Bed Wars 6–3 and Mindustry 6–1, at one point downloading the game's source code. ([The Decoder](https://the-decoder.com/one-brutal-minecraft-night-scared-50-ai-agents-into-inventing-chicken-handoff-protocols-a-fertilizer-officer-and-fishing-shifts))
