@@ -1,4 +1,4 @@
-# AI News — Tuesday, November 3, 2026
+# AI News — Monday, November 2, 2026
 
 A short briefing of the day's main stories.
 
