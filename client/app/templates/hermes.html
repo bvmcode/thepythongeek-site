@@ -1,532 +1,291 @@
 {% extends "base.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-{% block title_h1 %}{{ title }}{% endblock %}
+{% block title %}Building a personal AI agent with Hermes | The Python Geek{% endblock %}
+{% block title_h1 %}Hermes{% endblock %}
 {% block title_img %}{{ title_img }}{% endblock %}
-
 {% block content %}
-<article class="container hermes-blog">
-    <header class="hermes-intro">
-        <p class="hermes-kicker">Portfolio</p>
-        <h2>My Personal AI Agent — A Chief of Staff on a Tailnet</h2>
-        <p class="hermes-dek">
-            One EC2 box, one gateway, every device I own — and an agent that runs the
-            infrastructure of my life: my health records, my family's morning messages,
-            my job-hunt pipeline, and the deploy pipeline of my production web site.
-        </p>
-        <p class="hermes-credit">
-            Built with
-            <a href="https://hermes-agent.nousresearch.com/" target="_blank" rel="noopener noreferrer">Hermes Agent</a>,
-            an open-source agent framework by Nous Research. Provisioned with Terraform,
-            private by default behind Tailscale, and driven from Telegram, my Mac, and
-            the Claude-style terminal — wherever I happen to be.
-        </p>
-        <ul class="hermes-facts">
-            <li>
-                <strong>One replaceable box</strong>
-                <span>Ubuntu 24.04 on a t3.medium. Terraform builds it. SSH never listens.</span>
-            </li>
-            <li>
-                <strong>A private mesh</strong>
-                <span>Tailscale joins the agent, my Mac, my phone, and the production site.</span>
-            </li>
-            <li>
-                <strong>Two jobs that finish</strong>
-                <span>A 6:00 AM note and a 9:00 AM job scout. Failures show up as failures.</span>
-            </li>
-            <li>
-                <strong>Deploys with proof</strong>
-                <span>Branch, PR, merge, rebuild. The public site answers HTTP 200.</span>
-            </li>
-        </ul>
+{# Page-local layout; colors and typography inherit the site's existing theme. #}
+<style>
+    #page-header { display: none; }
+    main.py-4 { padding-top: 30px !important; }
+    .navbar .navbar-toggler-icon { filter: none; }
+    .hb-article {
+        --hb-muted: color-mix(in srgb, var(--text-muted) 90%, var(--text));
+        max-width: 1080px; margin: 0 auto 32px; background: var(--surface);
+        border: 1px solid var(--border); border-top: 4px solid var(--accent);
+        border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+        color: var(--text); font-family: 'Roboto', system-ui, sans-serif;
+        font-size: 16.5px; line-height: 1.85; scroll-margin-top: 90px;
+    }
+    .hb-article *, .hb-article *::before, .hb-article *::after { box-sizing: border-box; }
+    .hb-article :where(h1,h2,h3,p,figure,ol,ul) { margin: 0; }
+    .hb-article :where(h1,h2,h3) { color: var(--primary-dark); font-family: 'Chakra Petch', 'Roboto', sans-serif; font-weight: 600; text-wrap: balance; }
+    .hb-article a { color: var(--primary); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+    .hb-article a:hover { color: var(--primary-dark); }
+    .hb-article a:focus-visible, .hb-article summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; border-radius: 2px; }
+    .hb-article ::selection { background: var(--accent); color: var(--primary-dark); }
+    .hb-article code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.84em; color: var(--primary-dark); background: var(--surface-2); padding: 0.1em 0.25em; border: 1px solid var(--border); border-radius: 3px; overflow-wrap: anywhere; }
+    .hb-hero { padding: 44px 56px 30px; }
+    .hb-eyebrow, .hb-body .section-kicker, .hb-body .section-label { color: var(--primary); font: 600 0.72rem/1.5 'Chakra Petch', sans-serif; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 12px; }
+    .hb-hero h1 { font-size: clamp(2.25rem, 4.1vw, 3.4rem); line-height: 1.14; letter-spacing: -0.025em; max-width: 900px; }
+    .hb-deck { max-width: 790px; margin-top: 20px !important; color: var(--text); font-size: 1.13rem; line-height: 1.75; }
+    .hb-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--hb-muted); font-size: 0.78rem; margin-top: 20px !important; }
+    .hb-cover { margin: 0 56px 36px; }
+    .hb-cover img { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--primary-dark); }
+    .hb-article figcaption { color: var(--hb-muted); font-size: 0.78rem; line-height: 1.6; margin-top: 10px; }
+    .hb-layout { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 40px; padding: 0 56px 48px; }
+    .hb-toc { align-self: start; position: sticky; top: 88px; font-size: 0.8rem; line-height: 1.5; padding: 6px 20px 0 0; border-right: 1px solid var(--border); }
+    .hb-toc-title { font-family: 'Chakra Petch',sans-serif; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.68rem; font-weight: 600; color: var(--hb-muted); margin-bottom: 16px !important; }
+    .hb-toc ol { list-style: none; padding: 0; }
+    .hb-toc li + li { margin-top: 14px; }
+    .hb-toc a { text-decoration: none; display: inline-block; }
+    .hb-toc a:hover { text-decoration: underline; }
+    .hb-toc-extra { margin-top: 24px !important; padding-top: 20px; border-top: 1px solid var(--border); }
+    .hb-toc-extra a + a { margin-top: 10px; }
+    .hb-body { min-width: 0; }
+    .hb-body section { scroll-margin-top: 90px; }
+    .hb-body section + section { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .hb-body h2 { font-size: clamp(1.8rem, 2.6vw, 2.15rem); line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 22px; }
+    .hb-body h3 { font-size: 1.35rem; line-height: 1.35; margin: 34px 0 16px; scroll-margin-top: 90px; }
+    .hb-body p + p { margin-top: 20px; }
+    .hb-body p + ul, .hb-body p + ol { margin-top: 16px; }
+    .hb-body ul, .hb-body ol { padding-left: 24px; }
+    .hb-body li + li { margin-top: 10px; }
+    .hb-body pre { background: var(--primary-dark); color: var(--surface-2); font: 0.78rem/1.8 'SFMono-Regular', Consolas, monospace; padding: 22px; border-radius: var(--radius); overflow-x: auto; margin: 24px 0; tab-size: 2; }
+    .hb-body pre code { font: inherit; padding: 0; border: 0; background: none; color: inherit; overflow-wrap: normal; white-space: pre; }
+    .hb-body figure { margin: 28px 0; }
+    .hb-diagram-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+    .hb-diagram-scroll img { display: block; width: 100%; min-width: 650px; height: auto; }
+    .hb-body .hb-note { background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 18px 22px; margin: 24px 0; font-size: 0.92rem; }
+    .hb-flow { margin: 24px 0; padding: 18px 20px; border-block: 1px solid var(--border); color: var(--primary-dark); font-size: 0.9rem; line-height: 2; }
+    .hb-flow strong { display: block; font: 600 0.68rem/1.5 'Chakra Petch', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hb-muted); margin-bottom: 7px; }
+    .hb-flow span { display: inline-block; }
+    .hb-flow b { font-weight: 400; color: var(--primary); padding-inline: 5px; }
+    .hb-table-scroll { overflow-x: auto; margin: 24px 0; border: 1px solid var(--border); border-radius: var(--radius); }
+    .hb-article table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.86rem; line-height: 1.6; }
+    .hb-article caption { caption-side: top; padding: 14px 18px; background: var(--primary-dark); color: var(--surface); font-weight: 500; }
+    .hb-article th, .hb-article td { text-align: left; vertical-align: top; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .hb-article th { color: var(--primary-dark); background: var(--surface-2); font-weight: 600; }
+    .hb-article tr:last-child td { border-bottom: 0; }
+    .hb-end { display: flex; justify-content: space-between; gap: 24px; border-top: 1px solid var(--border); padding: 25px 56px; color: var(--hb-muted); font-size: 0.8rem; }
+    @media (max-width: 1000px) {
+        .hb-hero { padding: 36px 36px 26px; }
+        .hb-cover { margin-inline: 36px; }
+        .hb-layout { grid-template-columns: 150px minmax(0,1fr); gap: 28px; padding-inline: 36px; }
+        .hb-toc { padding-right: 14px; }
+        .hb-end { padding-inline: 36px; }
+    }
+    @media (max-width: 760px) {
+        main.py-4 { padding-top: 16px !important; }
+        .hb-hero { padding: 28px 24px 24px; }
+        .hb-hero h1 { font-size: clamp(2.05rem, 6vw, 2.7rem); }
+        .hb-deck { font-size: 1rem; }
+        .hb-cover { margin: 0 24px 24px; }
+        .hb-layout { display: block; padding: 0 24px 32px; }
+        .hb-toc { position: static; border: 0; border-bottom: 1px solid var(--border); padding: 0 0 24px; margin-bottom: 28px; }
+        .hb-toc ol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+        .hb-toc li + li { margin: 0; }
+        .hb-toc-extra { display: none; }
+        .hb-body section + section { margin-top: 36px; padding-top: 30px; }
+        .hb-body h3 { font-size: 1.24rem; margin-top: 28px; }
+        .hb-body pre { padding: 17px; font-size: 0.72rem; }
+        .hb-body .hb-note { padding: 16px; }
+        .hb-end { padding: 22px 24px; flex-wrap: wrap; }
+    }
+    @media (max-width: 400px) {
+        .hb-hero { padding-inline: 18px; }
+        .hb-cover { margin-inline: 18px; }
+        .hb-layout, .hb-end { padding-inline: 18px; }
+        .hb-article { font-size: 15.5px; }
+        .hb-toc ol { gap: 12px; }
+    }
+    @media print {
+        .navbar, #page-header, .site-footer, .hb-toc, .hb-end a { display: none !important; }
+        .hb-article { box-shadow: none; border: 0; margin: 0; }
+        .hb-layout { display: block; }
+        .hb-body pre, .hb-body figure { break-inside: avoid; }
+        .hb-diagram-scroll img { min-width: 0; }
+    }
+</style>
+<article class="hb-article" id="hermes-top" aria-labelledby="hermes-title">
+    <header class="hb-hero">
+        <p class="hb-eyebrow">Hermes / Architecture &amp; implementation</p>
+        <h1 id="hermes-title">Building a personal AI agent<br> with Hermes</h1>
+        <p class="hb-deck">How my everyday agent is wired, and how one of its jobs, AI News, travels from a Markdown file onto this site.</p>
+        <p class="hb-meta"><span>By Barry Martin</span><span>Terraform · Tailscale · Python · Docker</span><span>About 14 min read</span></p>
     </header>
-
-    <div class="hermes-layout">
-        <nav class="hermes-toc" aria-label="In this post">
-            <p>In this post</p>
+    <figure class="hb-cover">
+        <img src="{{ url_for('static', filename='images/hermes-infrastructure-illustration.png') }}" width="1774" height="887" fetchpriority="high" alt="An isometric blue-and-yellow illustration of a laptop and phone connected through a central agent server to a separate publishing server.">
+        <figcaption>A sketch of the setup: my laptop and phone, the agent, and the server that publishes this site. The diagram below is the real wiring.</figcaption>
+    </figure>
+    <div class="hb-layout">
+        <nav class="hb-toc" aria-label="Article contents">
+            <p class="hb-toc-title">In this build</p>
             <ol>
-                <li><a href="#why">Why a personal agent</a></li>
-                <li><a href="#stack">The stack</a></li>
-                <li><a href="#provisioning">Provisioning</a></li>
-                <li><a href="#tailnet">The tailnet</a></li>
-                <li><a href="#health">Health tracking</a></li>
-                <li><a href="#cron">Scheduled automations</a></li>
-                <li><a href="#imessage">The iMessage bridge</a></li>
-                <li><a href="#deploy">The deploy pipeline</a></li>
-                <li><a href="#voice">Voice</a></li>
-                <li><a href="#lessons">Lessons</a></li>
-                <li><a href="#next">What's next</a></li>
+                <li><a href="#overview">01 · What runs where</a></li>
+                <li><a href="#deploy">02 · AI News, end to end</a></li>
+                <li><a href="#infrastructure">03 · Provisioning &amp; access</a></li>
+                <li><a href="#personal-automation">04 · The ordinary jobs</a></li>
+                <li><a href="#operations">05 · Before I call it done</a></li>
             </ol>
+            <p class="hb-toc-extra"><a href="{{ url_for('ai_news.index') }}">Read AI News ↗</a><br><a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">Infrastructure repo ↗</a></p>
         </nav>
+        <div class="hb-body">
 
-        <div class="hermes-body">
-            <section id="why">
-                <h3>Why a personal agent (and why Hermes)</h3>
-                <p>
-                    Every assistant I've used lives in someone else's sandbox. It can chat, but it
-                    can't touch my machines, remember anything meaningful between sessions, or wake
-                    up on a schedule. That's a toy. A hosted chatbot can be charming and still forget
-                    the reading I logged yesterday, refuse to touch the machine that actually sends
-                    the text, and go quiet at 6:00 AM because nobody gave it a clock.
-                </p>
-                <p>
-                    What I wanted was a <strong>chief of staff</strong>: a process on a box I
-                    provisioned, with tools, a schedule, and a memory that survives the session.
-                </p>
-                <ul class="hermes-requirements">
-                    <li>
-                        <strong>Persistent memory</strong>
-                        <span>It knows my health history, my contacts, my preferences. It does not meet me again from zero every morning.</span>
-                    </li>
-                    <li>
-                        <strong>Real tool access</strong>
-                        <span>Shell, files, git, HTTP. An agent is only as capable as what it can <em>do</em>, and chat is not a tool.</span>
-                    </li>
-                    <li>
-                        <strong>A messaging gateway, not an app</strong>
-                        <span>I talk to it from Telegram on my phone and from a desktop app on my Mac. A new platform is configuration, not a rewrite.</span>
-                    </li>
-                    <li>
-                        <strong>Scheduling</strong>
-                        <span>Cron jobs that <em>do things</em>, not reminders. Send the message. Run the script. Deliver the report.</span>
-                    </li>
-                    <li>
-                        <strong>Skills it writes itself</strong>
-                        <span>Every procedure it learns becomes a reusable, reloadable skill. The next session starts with the last one's hard-won steps already written down.</span>
-                    </li>
-                </ul>
-                <p>
-                    <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>
-                    checks every box, and it adds one I didn't think to ask for: it works with
-                    <strong>any model provider</strong>. Mine points at a local Ollama relay on the
-                    same box, so the weights stay remote while the agent, the files, and the cron
-                    stay mine. The brain is swappable. The chief of staff is not.
-                </p>
+<section id="overview" aria-labelledby="overview-heading">
+    <p class="section-kicker">01 / The system</p>
+    <h2 id="overview-heading">What runs where</h2>
+    <p>I wanted an assistant that would keep going after I closed the chat. Sometimes that means logging a health reading, sending the morning note, or pulling together a note on the economy and the job market. Sometimes it means working on this site. Either way, the useful part starts once Hermes understands what I asked. It has to put the result somewhere, reach the right machine, and show me that the work actually finished. I check each of those steps on its own.</p>
+    <p>I run <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a>, the open-source framework from Nous Research. Jobs I repeat, like a deploy or logging a reading, live in skills, so the next conversation already knows the steps. Three machines do the work. Hermes runs on EC2. My Mac handles the Apple-only pieces, Contacts and Messages, and keeps a CSV copy of my health data. Another host runs this site. Tailscale connects them on a private network.</p>
+    <p>From my phone I use Telegram. Voice notes are transcribed with faster-whisper in the gateway, and when Hermes talks back it uses OpenAI text-to-speech, in Opus. The desktop app reaches the same agent over the tailnet, including a live WebRTC session I can interrupt while it is still speaking.</p>
+    <figure>
+        <div class="hb-diagram-scroll" tabindex="0" role="region" aria-label="Scrollable system architecture diagram">
+            <img src="{{ url_for('static', filename='images/hermes-architecture.svg') }}" width="920" height="570" loading="lazy" alt="Hermes on EC2 connects to external Telegram, cloud model, and GitHub services. Inside the Tailscale network it uses SSH to reach the Mac and production host. Public readers reach production over HTTPS, while SSM administers the agent host.">
+        </div>
+        <figcaption>Admin traffic, outside services, and public visitors each take a different path. <a href="{{ url_for('static', filename='images/hermes-architecture.svg') }}" target="_blank" rel="noopener noreferrer">Open the full-size diagram ↗</a></figcaption>
+    </figure>
+    <p>AI News is the best tour of the whole setup, because one update touches almost every piece. Hermes writes the briefing, commits the file, goes through GitHub, connects to production, and checks the site. The page says it updates daily at 7pm. That clock belongs to the agent. Flask just serves whatever document made it to production.</p>
+    <p>I'll follow one update from the Markdown file through Git, the production host, and Flask. Then I'll show how the agent host is set up, how those same connections carry the smaller daily jobs, and what I look at before I call any of them done.</p>
+</section>
+<section id="deploy" aria-labelledby="deploy-heading">
+    <p class="section-kicker">02 / The publishing pipeline</p>
+    <h2 id="deploy-heading">How AI News gets onto the site</h2>
+    <p>AI News is where all of this has to line up. Hermes writes a briefing, Git stores it, production picks it up, and Flask serves it. A good draft can still miss the site. A healthy site can still be showing yesterday. Those are different problems, and the setup is much easier to debug once I treat them that way.</p>
+    <p>What gets published is <code>client/app/hermes/ai_news.md</code>: a date, short summaries, and links. Publishing means replacing that file through the same repo I already use for the site. When you open <a href="{{ url_for('ai_news.index') }}">AI News</a>, Flask reads the file that was deployed. That request never starts an agent session or waits on a model.</p>
 
-                <h4>How I actually use it</h4>
-                <p class="hermes-lead">Five jobs. All of them run. None of them is a demo prompt.</p>
-                <div class="hermes-uses">
-                    <div class="hermes-use">
-                        <i class="fa-solid fa-heart-pulse" aria-hidden="true"></i>
-                        <h5>Health tracking</h5>
-                        <p>I dictate numbers mid-sentence ("172/110, sugar 320, 285.4 lbs"). It parses them into a real SQLite schema, mirrors them to CSVs on my Mac, and confirms. Diabetic logging that takes five seconds, with a row I would trust later.</p>
-                    </div>
-                    <div class="hermes-use">
-                        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
-                        <h5>Family comms</h5>
-                        <p>Every morning at 6:00 AM it texts my wife a Bible-verse note signed "I love you, Barry," rotating the verse each day. When I say "text Vic," it means it — and delivery is checked from her side of the Messages database, not from the agent's optimism.</p>
-                    </div>
-                    <div class="hermes-use">
-                        <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
-                        <h5>Job hunt</h5>
-                        <p>A daily 9:00 AM scout combs remote job boards for senior and lead data-engineer roles with a stated salary of at least $150K. It verifies each posting is still live, drops anything already sent, and delivers a curated list to my phone.</p>
-                    </div>
-                    <div class="hermes-use">
-                        <i class="fa-solid fa-rocket" aria-hidden="true"></i>
-                        <h5>Site deploys</h5>
-                        <p>"Push this fix" becomes a branch, a commit, a pull request, an auto-merge, the deploy script on the production box, and a health check. Done means the public site answered, not that the agent said it tried.</p>
-                    </div>
-                    <div class="hermes-use hermes-use-wide">
-                        <i class="fa-solid fa-microphone" aria-hidden="true"></i>
-                        <h5>Voice</h5>
-                        <p>Voice notes in get transcribed. Replies talk back. On the desktop, a full-duplex realtime session lets me interrupt while the agent does the actual work behind the voice and answers in speakable prose.</p>
-                    </div>
-                </div>
-            </section>
 
-            <section id="stack">
-                <h3>The stack</h3>
-                <p>
-                    Nothing on this box is meant to be reached from the public internet. Telegram is
-                    the front door I already carry. The Mac, the phone, and the production site sit
-                    on a Tailscale mesh, and the agent sits in the middle of it — gateway, scheduler,
-                    and the only place secrets live.
-                </p>
-                <div class="hermes-mesh" aria-label="Machines on the tailnet">
-                    <p class="hermes-mesh-label"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Tailscale mesh</p>
-                    <div class="hermes-nodes">
-                        <div class="hermes-node">
-                            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-                            <strong>Telegram</strong>
-                            <span>The phone client. Job-scout deliveries and failure alerts land here.</span>
-                        </div>
-                        <div class="hermes-node">
-                            <i class="fa-brands fa-apple" aria-hidden="true"></i>
-                            <strong>Mac</strong>
-                            <span>Messages, Calendar, and the health CSVs. The agent reaches it by SSH.</span>
-                        </div>
-                        <div class="hermes-node">
-                            <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i>
-                            <strong>iPhone</strong>
-                            <span>On the tailnet, so the mesh includes the device I actually have in my pocket.</span>
-                        </div>
-                        <div class="hermes-node">
-                            <i class="fa-solid fa-globe" aria-hidden="true"></i>
-                            <strong>mysite</strong>
-                            <span>Production. docker compose, nginx on 443, and one deploy script.</span>
-                        </div>
-                    </div>
-                    <div class="hermes-node hermes-node-core">
-                        <i class="fa-solid fa-server" aria-hidden="true"></i>
-                        <strong>EC2 “hermes”</strong>
-                        <span>t3.medium · us-east-1 · the only machine the agent runs on</span>
-                        <ul>
-                            <li>Terraform-provisioned, SSM-only shell. No public SSH.</li>
-                            <li>Hermes gateway, dashboard, and cron scheduler.</li>
-                            <li>Ollama relay to a cloud model. The weights stay remote.</li>
-                            <li><code>~/.hermes/.env</code> holds secrets. An auth pool covers git and the clouds.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+    <div class="hb-flow" aria-label="Publishing sequence"><strong>One update, from source to reader</strong><span>Markdown</span> <b aria-hidden="true">→</b> <span>Git branch</span> <b aria-hidden="true">→</b> <span>Merged PR</span> <b aria-hidden="true">→</b> <span>Production checkout</span> <b aria-hidden="true">→</b> <span>Flask page</span></div>
+    <h3>1. Put the draft in Git</h3>
+    <p>I keep the briefing in Git because the diff answers the questions I actually have. Which stories changed? Did a link disappear? Did the heading get fixed while the body stayed the same? The November 2 update, PR #4, touched only <code>ai_news.md</code>. PR #7 came later and corrected the heading, which said November 3. The date is part of the article. It can be wrong even when every deploy step worked.</p>
+    <p>Hermes does this from its own clone. It branches, commits, and pushes. The push and the pull request use different credentials. An SSH deploy key, scoped to this one repo, handles the push. The <code>gh</code> command, logged in as me, opens the PR and asks for a squash auto-merge. I keep those apart because they fail in different ways. A push that succeeds tells me nothing about whether <code>gh</code> can open or merge the PR.</p>
+    <pre><code># Illustrative sequence in the agent's clone; substitute the date and PR number.
+git switch -c content/ai-news-YYYY-MM-DD
+git add client/app/hermes/ai_news.md
+git commit -m "Update AI News for YYYY-MM-DD"
+git push -u origin content/ai-news-YYYY-MM-DD
 
-            <section id="provisioning">
-                <h3><span>1</span> Provisioning — Terraform first, always</h3>
-                <p>
-                    The instance is not a hand-built pet. The infrastructure repo
-                    (<a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">bvmcode/my-hermes-agent</a>)
-                    defines it, and I want to be able to throw the box away. If I lose it,
-                    <code>terraform apply</code> and first-boot user-data rebuild the same shape:
-                    Ubuntu 24.04, a <code>t3.medium</code>, an encrypted gp3 root volume, IMDSv2
-                    enforced, and SSH <em>off</em>. Shell access is SSM Session Manager. The
-                    user-data installs Hermes, writes one-time dashboard credentials, and starts
-                    the dashboard on <code>:9119</code>. Those five to ten minutes on first boot
-                    are the install. They are not a ritual I want to repeat by hand.
-                </p>
-                <pre><code>cd infra
+gh pr create --base main --title "AI News: YYYY-MM-DD" \
+  --body "Update the daily briefing and source links."
+gh pr merge &lt;pr-number&gt; --auto --squash
+
+# Inspect the result before deployment. The required state is MERGED.
+gh pr view &lt;pr-number&gt; --json state,mergedAt,mergeCommit</code></pre>
+    <p>I wait after asking for auto-merge. The command can return while a repo rule is still holding the merge. That happened on the first setup. GitHub would not accept the commit attribution, and switching the commits to my GitHub noreply address cleared it. Before I tell production to pull, I look at the PR and make sure the state is <code>MERGED</code>.</p>
+
+    <h3>2. Put the merged file on the production host</h3>
+    <p>From the agent, the deploy is <code>ssh mysite 'sh ~/deploy.sh'</code> over the tailnet. On the host, that script pulls the repo and runs <code>docker-compose up -d --build</code>. The script lives outside this website repo, so the checkout is not the whole story of how a deploy works. The repo does hold the configuration of the services being started.</p>
+    <p>The image starts from Python 3.11, installs the requirements, copies the client directory into <code>/app</code>, and starts uWSGI. Production Compose runs the app, Redis, and nginx. The volume on the app service is the detail I have to remember:</p>
+    <pre><code># Relevant excerpt from docker-compose.yml
+services:
+    app:
+      build: .
+      volumes:
+          - ./client:/app
+      expose:
+        - 8080</code></pre>
+    <p>That mount puts the host's <code>client</code> directory at <code>/app</code> inside the container, in front of the copy baked into the image. For a news-only change, the Markdown in the checkout is the file Flask reads. The script still rebuilds the image, because the same deploy also ships application changes. What you see on the site comes from the checkout.</p>
+    <p>Hermes reaches the host over the tailnet. Everyone else comes in through nginx on public HTTPS. Nginx passes application requests to <code>app:8080</code> over the uWSGI protocol, and serves static files from their own location. uWSGI runs four workers, two threads each. Redis is there for the rest of the site. The briefing is the file on that mount.</p>
+    <h3>3. Turn the file into a page</h3>
+    <p>The path is tied to the Python module with <code>Path(__file__).resolve().parent</code>, so it does not matter which directory the process was started from. The loader reads the file as UTF-8 and refuses a blank one. Then the route hands the text to a renderer the site already had.</p>
+    <pre><code># Shared Markdown renderer
+rendered = markdown.markdown(
+    markdown_text,
+    extensions=["extra", "sane_lists"],
+)
+sanitized = bleach.clean(
+    rendered,
+    tags=ALLOWED_MARKDOWN_TAGS,
+    attributes=ALLOWED_MARKDOWN_ATTRIBUTES,
+    protocols=ALLOWED_MARKDOWN_PROTOCOLS,
+    strip=True,
+)
+return Markup(sanitized)</code></pre>
+    <p>Turning Markdown into HTML, and deciding which HTML is allowed, are two different jobs. The converter gives me headings, lists, links, and tables. Bleach then drops anything that is not on the allowlist. Links are limited to HTTP, HTTPS, and mailto. Only the cleaned HTML is marked safe for Jinja. A test feeds the renderer a script tag, an image with an event handler, and a <code>javascript:</code> link, to make sure none of those survive.</p>
+    <p>If the file is missing, unreadable, badly encoded, or empty, the route logs the error and returns a short unavailable message with a 503. The tests cover a real document, a sample string, and the missing-file case. They stop at the Flask route. They don't run the agent, GitHub, the deploy script, or the production network.</p>
+
+    <h3>4. Check that the site is up, then check the edition</h3>
+    <p>On the agent, deploying and checking are two different commands. <code>docker ps</code> has to run on <code>mysite</code>, or I am looking at the wrong Docker. The HTTP check has to hit the public URL, the one readers actually use.</p>
+    <pre><code># From the agent host, after the PR has merged:
+ssh mysite 'sh ~/deploy.sh'
+ssh mysite 'docker ps'
+
+# News-route diagnostic, beyond the original homepage check.
+# Prints a status code. It does not say which edition is on the page.
+curl --fail --silent --show-error --output /dev/null \
+  --write-out '%{http_code}\n' https://thepythongeek.com/ai-news/</code></pre>
+    <p>The first version of this check looked at running containers and the homepage. I also request <code>/ai-news/</code>, because the homepage never opens the briefing. A 200 only means the route could read some file. Yesterday's Markdown returns 200 too. That is why the curl above prints a status code and stops.</p>
+    <p>What I want next is a check tied to this particular release. Write down the edition date and the merge commit, look at the checkout on the host, and confirm the public page contains that edition. PR #7 is why this matters. The heading had the wrong day, and every machine in the path had done its job. The date needs to be an explicit value, with a timezone, rather than whatever clock happens to be on the machine running the check.</p>
+    <p>I also want a written way to roll back. Git still has the older briefings. A rollback would be a revert PR, another deploy, and the same look at the public page. I have not built the freshness check or that rollback yet.</p>
+</section>
+<section id="infrastructure" aria-labelledby="infrastructure-heading">
+  <p class="section-label">03 / Provisioning &amp; access</p>
+  <h2 id="infrastructure-heading">A small server, with a job I can explain</h2>
+  <p>The machine that holds the clone, pushes the branch, and runs <code>ssh mysite</code> is a small Ubuntu 24.04 instance in <code>us-east-1</code>. It is a <code>t3.medium</code>, with 4 GB of memory and an encrypted gp3 root disk. That is plenty for the agent, the gateway, the browser tools, and an Ollama client. The model weights live with a cloud provider. What this machine does is keep the sessions, read files, run the schedule, and call tools.</p>
+  <p>Ollama listens on <code>127.0.0.1:11434</code>. Hermes talks to its OpenAI-compatible API at <code>/v1</code>, and Ollama forwards each request to whichever cloud model I have selected. The socket is on the box. The prompt, and whatever context went with it, still leaves the instance.</p>
+  <p>I like that split. I can swap the model without moving the health database, rewriting the deploy, or rebuilding how messages get sent. Telegram and the desktop app are just two ways into the same agent. The Mac and the production server do the things this instance cannot do on its own.</p>
+
+  <h3>What Terraform actually rebuilds</h3>
+  <p>The <a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">infrastructure repository</a> describes the instance, the security group, the instance profile, and the first-boot install. It picks an Ubuntu 24.04 image, requires IMDSv2, and encrypts the root disk. I can rebuild the machine from that config. I cannot get the SQLite records, the conversations, or the credentials back from Terraform. Those live on the instance.</p>
+  <pre><code>cd infra
 cp terraform.tfvars.example terraform.tfvars &amp;&amp; cp backend.hcl.example backend.hcl
 terraform init -backend-config=backend.hcl
 terraform apply        # ~5-10 min of user-data install on first boot</code></pre>
-                <div class="hermes-callout">
-                    <strong>Private by default.</strong>
-                    Port 9119 starts open only so the dashboard can be reached while Tailscale
-                    comes up, narrowed by <code>dashboard_allowed_cidrs</code>. Once the mesh is
-                    healthy that list is set to <code>[]</code>. The dashboard, the agent, and
-                    every automation live only inside the tailnet. The public internet sees a box
-                    that answers nothing.
-                </div>
-            </section>
+  <p>Terraform finishing is not the same as the agent being ready. User-data is still installing packages after <code>apply</code> returns. The bootstrap installs Ollama, installs Hermes as the <code>ubuntu</code> user, and turns on lingering so that user's services keep running with nobody logged in. It also adds a systemd service for the dashboard, set to restart on failure. A progress log and a completion marker let me tell "the instance is up" from "the install actually finished."</p>
+  <p>The dashboard username, password, and signing secret are created on the box. OpenSSL generates the password, and the script turns off shell tracing while it writes those values. The env file ends up owned by <code>ubuntu</code>, mode <code>0600</code>. None of those secrets need to live in the Terraform config, the state, or the user-data template.</p>
 
-            <section id="tailnet">
-                <h3><span>2</span> The tailnet — one mesh, every device</h3>
-                <p>
-                    Tailscale joins the EC2 box, my MacBook, and my phone into one private mesh.
-                    All real inter-machine flows travel there. The key design is deliberately dull:
-                    a dedicated ed25519 key, installed with a one-liner, revoked by deleting one
-                    line from <code>authorized_keys</code>. No shared password. No account-wide
-                    token sitting on the agent just so it can reach my laptop.
-                </p>
-                <div class="hermes-flows">
-                    <article>
-                        <h4>Desktop to the gateway</h4>
-                        <p>The desktop app talks to the agent over the tailnet. Dashboard CIDRs are closed to zero, so that path is the path. There is no leftover public hole "just in case."</p>
-                    </article>
-                    <article>
-                        <h4>Agent to the Mac</h4>
-                        <p>The agent reaches the Mac over <code>ssh &lt;user&gt;@&lt;tailscale-ip&gt;</code>. That is how iMessage gets sent and how the health CSVs land in <code>~/Documents/HealthData/</code>.</p>
-                    </article>
-                    <article>
-                        <h4>Production, pinned</h4>
-                        <p><code>mysite</code> got the same treatment through one interactive SSH session: a repo-scoped key, the host key pinned, an alias recorded. After that, <code>ssh mysite</code> goes anywhere the deploy needs to go.</p>
-                    </article>
-                </div>
-            </section>
+  <h3>Getting onto the box, and connecting the machines</h3>
+  <p>I get a shell on Hermes through AWS Systems Manager Session Manager. The default Terraform setup has no inbound SSH rule and no EC2 key pair. When the agent needs Messages on my Mac, or the deploy script on production, it connects outward over Tailscale as an SSH client.</p>
+  <p>The dashboard listens on port <code>9119</code>. While I am setting things up, <code>dashboard_allowed_cidrs</code> controls who can reach it. The repo's default is wide open, so tightening that list is a step I have to remember to do. Once the desktop can reach the gateway over the tailnet, I set the list to <code>[]</code> and apply again. That drops the public rule. The agent still needs to call out for model APIs, messaging, and package downloads.</p>
+  <p>On the Mac I install a dedicated ed25519 public key in <code>authorized_keys</code>. Production has its own SSH access, a pinned host key, and the <code>mysite</code> alias. Those keys are how the agent reaches those two machines. Git push uses a different key, a deploy key scoped to this repo. The <code>gh</code> command uses an OAuth token, and that token is what creates and merges the pull requests.</p>
+</section>
 
-            <section id="health">
-                <h3><span>3</span> Health tracking — dictate, parse, mirror</h3>
-                <p>
-                    I do not open an app and tap through a form. I say the numbers in the middle of
-                    a sentence, and the agent is responsible for turning that into a row I would
-                    trust later. That only works if the schema is strict and the agent is forbidden
-                    from guessing.
-                </p>
-                <ol class="hermes-rail">
-                    <li>
-                        <strong>Dictate</strong>
-                        <span>A blood pressure, a glucose, a weight, dropped into an ordinary sentence.</span>
-                    </li>
-                    <li>
-                        <strong>Parse into SQLite</strong>
-                        <span>Source of truth. Typed columns, not a notes field pretending to be a database.</span>
-                    </li>
-                    <li>
-                        <strong>Mirror the whole CSV</strong>
-                        <span>After every insert, a full-state copy lands on the Mac. Updates and deletes travel too.</span>
-                    </li>
-                    <li>
-                        <strong>Stay in its lane</strong>
-                        <span>A dangerous reading gets one plain warning and a pointer to my provider. Then it stops.</span>
-                    </li>
-                </ol>
-                <p>
-                    The schema is deliberately diabetic-shaped. Two tables, because the log I
-                    actually keep is glucose, blood pressure, weight, and what I ate. The check
-                    constraint on <code>glucose_type</code> is there so a sloppy phrase cannot
-                    invent a category the later charts would quietly lie about.
-                </p>
-                <pre><code>CREATE TABLE daily_readings (
-    reading_date TEXT, taken_at TEXT,
-    weight_kg REAL, glucose_mg_dl INTEGER,
-    glucose_type TEXT CHECK (glucose_type IN
-        ('fasting','before_meal','after_meal','bedtime','random')),
-    systolic INTEGER, diastolic INTEGER, pulse INTEGER, notes TEXT
-);
-CREATE TABLE meals (
-    meal_date TEXT, meal_type TEXT, eat_time TEXT,
-    description TEXT, calories INTEGER,
-    carbs_g REAL, protein_g REAL, fat_g REAL,
-    fiber_g REAL, sugar_g REAL, notes TEXT
-);</code></pre>
-                <p>
-                    The mirror is the part most demos skip. SQLite stays the source of truth. A
-                    sync script pushes a <strong>full-state CSV mirror</strong> to
-                    <code>~/Documents/HealthData/</code> on my Mac after every insert — id-keyed,
-                    idempotent, and rebuilt whole each run. Rebuilding is slower than appending,
-                    and it is the version that stays correct the first time I fix a row.
-                    Append-only mirrors look fine until that correction.
-                </p>
-                <pre><code>/usr/bin/python3 /home/ubuntu/health_data/health_sync.py
+<section id="personal-automation" aria-labelledby="automation-heading">
+  <p class="section-label">04 / Day to day</p>
+  <h2 id="automation-heading">The ordinary jobs</h2>
+  <p>The SSH path to my Mac is also how the everyday work runs. I log health readings, send my wife a note in the morning, and collect a short briefing on the economy and the job market. Shipping the site is the visible one. These smaller jobs are why I leave the agent running. They are easy to get half-right, and a half-finished one is worse than skipping it.</p>
+
+  <h3>Logging a reading</h3>
+  <p>Most mornings I just say the numbers. Weight, glucose, what I ate. Hermes pulls them out of the sentence and writes them to SQLite, so I don't have to open a form. Readings go in <code>daily_readings</code>: date, time, weight, glucose, blood pressure, pulse, and notes. Meals have their own table, with the food and the nutrition numbers. A glucose entry has to be one of fasting, before a meal, after a meal, bedtime, or random.</p>
+  <p>The tables keep a row in the right shape. They can't tell whether Hermes heard me correctly. That part is in the procedure: don't invent a number I didn't say, check serving sizes against the nutrition source, and ask me when the amount is something only I would know. Weight is stored in kilograms, so if I say it in pounds, the conversion has to be on purpose.</p>
+  <p>After the insert, a small Python script copies the whole database to <code>~/Documents/HealthData/</code> on my Mac. SQLite stays the source of truth. The CSVs are there so I can open them and use them somewhere else. I rewrite the whole export each time, because I go back and fix old rows. Change or delete a row, and the next export matches. Appending a single new line would leave the old version sitting in the file.</p>
+  <pre><code>/usr/bin/python3 /home/ubuntu/health_data/health_sync.py
 # synced: daily_readings=1, meals=6</code></pre>
-                <div class="hermes-callout hermes-callout-warn">
-                    <strong>The agent never invents a number.</strong>
-                    Values come from me or from a verified nutrition label. Packaged foods get
-                    looked up and the serving size gets checked. Quantities only I know are asked
-                    once, with calorie-anchored options. A fabricated row in a medical record
-                    poisons the whole picture, so the rule is absolute.
-                </div>
-                <p>
-                    And the record-keeper knows its lane. When a glucose lands above 300 or a
-                    blood pressure hits crisis range, it says so once, plainly, and points at my
-                    provider. Then it shuts up. A health log is not a clinic, and it should not
-                    improvise one.
-                </p>
-            </section>
+  <p>Run the export again on the same database and you should get the same files, with no duplicates from the retry. Saving the reading and copying it to the Mac are two different jobs. If the copy fails, the row is still in SQLite. I keep these as records I can look up. I don't ask Hermes to tell me what they mean medically.</p>
 
-            <section id="cron">
-                <h3><span>4</span> Scheduled automations — cron as a worker, not a bell</h3>
-                <p>
-                    A reminder that says "text your wife" is not the job. The job is the text, the
-                    proof it landed, and the health mirror riding along afterward. The scout has
-                    the same standard: a list of links I have already seen, or links that 404, is
-                    worse than no list at all. So both jobs do the work, then report.
-                </p>
-                <div class="hermes-jobs">
-                    <article class="hermes-job">
-                        <p class="hermes-job-when">Daily · 6:00 AM</p>
-                        <h4>Love note</h4>
-                        <p>Composes a fresh Bible-verse note, rotating the book, and sends it to my wife's iMessage signed "I love you, Barry." Then it verifies delivery from the Messages database and syncs the health mirror.</p>
-                    </article>
-                    <article class="hermes-job">
-                        <p class="hermes-job-when">Daily · 9:00 AM</p>
-                        <h4>Job scout</h4>
-                        <p>Hits remote-job sources and keeps senior or lead roles with a stated salary of at least $150K. Every posting is checked live, deduped against a seen-set, and what survives is delivered to Telegram.</p>
-                    </article>
-                </div>
-                <div class="hermes-callout">
-                    <strong>Failures arrive as failures.</strong>
-                    The delivery target is my Telegram chat. Silence is not a success state.
-                    One honest limitation: both anchors are UTC-based, so the US spring daylight-saving
-                    change is a known drift they will need nudged. Automation I can reason about
-                    beats a scheduler whose clock I cannot explain.
-                </div>
-            </section>
+  <h3>The morning note and the market briefing</h3>
+  <p>At 6:00 AM it sends my wife a short note with a Bible verse. It rotates which verse it picks, signs the note “I love you, Barry,” and sends it through the Mac. Then it checks that the message really went out, and runs the health-data sync.</p>
+  <p>At 9:00 AM it puts together a short briefing on the economy and the job market. It checks that each item is still current, skips anything it has already sent me, and drops the rest in Telegram. I would rather get a few new findings than a long list padded with repeats.</p>
+  <p>Those times are what I want on a New Jersey clock. The schedules are anchored in UTC, so when daylight saving time changes they slide by an hour unless I move the anchors. A run at the wrong hour has still missed.</p>
 
-            <section id="imessage">
-                <h3><span>5</span> The iMessage bridge — reach in, verify out</h3>
-                <p>
-                    iMessage cannot be reached from Linux. Every bridge runs on a Mac, so the agent
-                    crosses the tailnet into mine and treats "sent" as a claim that still has to be
-                    proven. Send and verify are separate steps on purpose. The thing that transmits
-                    the message does not get to grade its own homework.
-                </p>
-                <ol class="hermes-steps">
-                    <li>
-                        <strong>Resolve the recipient from Contacts</strong>
-                        <span>The real Contacts app, not a string I typed once. Digit-normalization means <code>(856) 237-…</code> and <code>+1856…</code> resolve to the same person. I should not have to remember E.164 to text my wife.</span>
-                    </li>
-                    <li>
-                        <strong>Resolve the 1:1 chat, and refuse the rest</strong>
-                        <span>The chat id pattern is <code>any;-;&lt;phone&gt;</code>. Anything that merely <em>contains</em> the person — a group chat included — is not a send. Close is not correct.</span>
-                    </li>
-                    <li>
-                        <strong>Send with a small AppleScript</strong>
-                        <span>Transmission only. The script does not read the database back, and it does not decide whether the send worked.</span>
-                    </li>
-                    <li>
-                        <strong>Verify in the Messages database</strong>
-                        <span>Read the SQLite store on the Mac and decode the <code>attributedBody</code> typedstream blob: the exact sent string, the <code>is_from_me</code> flag, and a seconds-old timestamp as proof.</span>
-                    </li>
-                </ol>
-                <div class="hermes-callout">
-                    <strong>The same gate, every time.</strong>
-                    Exact recipient, exact text, my confirmation — then done. A human-directed
-                    send does not get a shortcut because the last one went fine.
-                </div>
-            </section>
+  <h3>Knowing the message left my Mac</h3>
+  <p>The Linux box reaches my Mac over SSH and sends through Messages with a short AppleScript. Before it sends, it looks the person up in Contacts, normalizes the phone number, and picks the one-to-one chat. A group thread that happens to include them is the wrong conversation. If I ask for a one-off message, Hermes confirms the recipient and the exact text with me first. The morning note uses the standing instruction I already gave it.</p>
+  <p>The check is a separate look at the Mac's Messages database, not a promise from the send script. It looks for the outgoing flag, a recent timestamp, and the exact text. Sometimes that text is tucked into <code>attributedBody</code>, so the check has to decode that field. What I learn is that my Mac recorded the message I meant to send. I still don't know if her phone got it, or if she read it.</p>
+</section>
 
-            <section id="deploy">
-                <h3><span>6</span> The deploy pipeline — from repo to production, agent-driven</h3>
-                <p>
-                    This is the piece I use most. <code>thepythongeek.com</code> runs on a small
-                    Ubuntu box: docker-compose v1, nginx on 80 and 443, a uWSGI app container,
-                    long uptime, and one deployment script. The loop is boring on purpose. The
-                    interesting part is that the agent can run the whole thing, and that every
-                    step leaves evidence somewhere other than the agent's own log.
-                </p>
-                <h4>Credential design</h4>
-                <div class="hermes-flows">
-                    <article>
-                        <h4>One repo, one key</h4>
-                        <p>An ed25519 deploy key with read and write on a single repository. Nothing account-wide. A leaked key is a bad day for one repo, not for the GitHub user.</p>
-                    </article>
-                    <article>
-                        <h4>gh, once</h4>
-                        <p>The GitHub CLI was authenticated with a device-code flow. I got a code, approved it in a browser, and the OAuth token lives in the agent's credential store.</p>
-                    </article>
-                    <article>
-                        <h4>No sudo on the box</h4>
-                        <p>The production host got its own key in one interactive session. The repo directory was chowned to my user, and docker group membership replaced every <code>sudo</code> in the deploy path.</p>
-                    </article>
-                </div>
-                <h4>The loop</h4>
-                <ol class="hermes-rail hermes-rail-five">
-                    <li><strong>Branch</strong><span>Work happens in the agent's clone.</span></li>
-                    <li><strong>Push</strong><span>Through the deploy key, not a personal token.</span></li>
-                    <li><strong>Merge</strong><span>Pull request, then squash auto-merge.</span></li>
-                    <li><strong>Deploy</strong><span><code>ssh mysite</code> runs the script.</span></li>
-                    <li><strong>Verify</strong><span>Containers recreated. HTTP 200.</span></li>
-                </ol>
-                <pre><code># 1. work happens in ~/repos/&lt;site&gt; (the agent's clone)
-git checkout -b fix/&lt;thing&gt;
-# ... edit ...
-git commit -m "..."
-# 2. push through the deploy key
-git push -u origin fix/&lt;thing&gt;
-# 3. PR + auto-merge through gh
-gh pr create --base main --title "..." --body "..."
-gh pr merge &lt;n&gt; --auto --squash
-# 4. deploy on the box
-ssh mysite 'sh ~/deploy.sh'   # git pull + docker-compose up -d --build
-# 5. verify
-docker ps                     # containers recreated
-curl -s -o /dev/null -w "%{http_code}" https://thepythongeek.com   # 200</code></pre>
-                <h4>What the first day actually proved</h4>
-                <ul class="hermes-results">
-                    <li>
-                        <strong>Two pull requests, merged</strong>
-                        <span>Authored, pushed, and merged — one instantly by repo auto-merge, one after it armed. The merged file was checked in the working tree after <code>git pull</code>, not trusted from the GitHub UI alone.</span>
-                    </li>
-                    <li>
-                        <strong>The production box rebuilt</strong>
-                        <span>Image rebuilt, and <code>nginx</code>, <code>app</code>, and <code>redis</code> all recreated and up in seconds. The public site answered <strong>HTTP 200</strong> through real TLS.</span>
-                    </li>
-                    <li>
-                        <strong>The ruleset held the line</strong>
-                        <span>The repo carries a branch ruleset: no branch deletion, no force-push, pull requests required. That ruleset is where the agent learned the lesson below.</span>
-                    </li>
-                </ul>
-                <blockquote>
-                    <p><strong>Commit identity is a security feature.</strong> The ruleset's <code>require_extra_approval_for_unattributed_changes</code> silently held the auto-merge open because the agent's commits carried a custom email with no GitHub identity behind it. The fix: commit as the owner's <code>&lt;id&gt;+&lt;username&gt;@users.noreply.github.com</code>, so every push is attributed and auto-merge fires the way it did on the first try.</p>
-                </blockquote>
-            </section>
+<section id="operations" aria-labelledby="operations-heading">
+    <p class="section-kicker">05 / Checking the work</p>
+    <h2 id="operations-heading">Before I call it done</h2>
+    <p>A briefing has to land in Git, and then on another machine. A reading has to land in SQLite, and then on the Mac. I look at those one at a time.</p>
+    <div class="hb-table-scroll" tabindex="0" role="region" aria-label="Scrollable outcome checks table">
+        <table>
+            <caption>What I can check, and what that check still leaves open</caption>
+            <thead><tr><th scope="col">Job</th><th scope="col">What I can see</th><th scope="col">What I still don't know</th></tr></thead>
+            <tbody>
+                <tr><td>Merge a briefing</td><td>The PR state is <code>MERGED</code>, and the change is on <code>main</code>.</td><td>Has production pulled that change?</td></tr>
+                <tr><td>Deploy the site</td><td>The deploy output, and the containers that are running.</td><td>Is the public news page showing this edition?</td></tr>
+                <tr><td>Log a reading</td><td>The numbers I meant are in SQLite.</td><td>Did the full CSV copy reach the Mac?</td></tr>
+                <tr><td>Send a message</td><td>The exact text, the outgoing flag, and a timestamp on the Mac.</td><td>Did the other phone receive it, or was it read?</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>A couple of the fixes were ordinary systems work. The production checkout had the wrong owner, and the deploy user had to be in the Docker group so the script would not stop and ask for a <code>sudo</code> password. That group is a lot of power on the host. Dropping the password prompt lets the script run. The access is just as broad as it was.</p>
+    <p>Commit attribution was the same kind of snag. Git was happy with the commit. GitHub held the pull request until the commits used my GitHub noreply identity. Once that was fixed, the merge went through, and the history still showed who wrote it. I want snags like that to stay visible. They point at the exact step that needs a change.</p>
+    <h3>What I want to build next</h3>
+    <p>First is a real release check for AI News. Compare the edition and the merge commit with the checkout on the host and with the public page. A 200 is a weak way to decide the job is finished. Next to that, I want a short note on how to revert and redeploy. I also want those morning schedules to stay on local time through daylight saving, and a way to restore the agent's data without building a new EC2 instance.</p>
+    <p>After that, charts from the health history, once there is enough of it to show a trend. The base is already there. I have rows I can query, steps I can read, and machines the agent can reach. Anything I add should stay small enough to explain the same way.</p>
+</section>
 
-            <section id="voice">
-                <h3><span>7</span> Voice — STT in, TTS out, and the realtime layer</h3>
-                <p>
-                    Voice is a transport. The agent still does the work. Talking to it does not
-                    create a second, weaker agent that can only chat — a request that needs tools
-                    is handed to the same agent that has the shell, the files, and the tailnet.
-                </p>
-                <div class="hermes-flows">
-                    <article>
-                        <h4>Voice in</h4>
-                        <p>Telegram voice notes auto-transcribe with local faster-whisper in the gateway's virtualenv. When that path was missing one dependency and failed, the same transcription ran locally: bundled ffmpeg, WAV, whisper, and the text fed straight back in. The fallback is the same pipeline, not a shrug.</p>
-                    </article>
-                    <article>
-                        <h4>Voice out</h4>
-                        <p>OpenAI TTS is the provider. Opus out, voice chosen in config, with per-message tone steering. It is the same engine the desktop's live mode uses, so a spoken reply and a live session do not sound like two different products.</p>
-                    </article>
-                    <article>
-                        <h4>Realtime, on the desktop</h4>
-                        <p>A full-duplex <code>gpt-live</code> session over WebRTC. It listens while it speaks, and I interrupt freely. Every request that is real work <em>delegates to the agent</em>, which runs the tools and streams the answer back as speakable prose.</p>
-                    </article>
-                </div>
-            </section>
-
-            <section id="lessons">
-                <h3><span>8</span> Lessons this system taught</h3>
-                <p>
-                    A weekend of wiring this up was mostly a weekend of finding out where "it
-                    worked" was a lie. The checks that mattered were never the ones the agent
-                    reported about itself.
-                </p>
-                <ol class="hermes-lessons">
-                    <li>
-                        <strong>Where a check runs matters more than the check.</strong>
-                        A send is not real until the target system's own store confirms it. That is the Messages database, the merge state, or an HTTP status read from outside the box that just deployed.
-                    </li>
-                    <li>
-                        <strong>Cloud browser TTLs are a real constraint class.</strong>
-                        Free-tier sessions die in minutes. An automation that needs a human in the loop either fits inside a burst or waits for a persistent-profile tier. There is no third option where the session politely stays up.
-                    </li>
-                    <li>
-                        <strong>Anti-bot layers differ per site.</strong>
-                        Cloudflare's interstitial needed a click. GitHub's wall was a host-key fetch. Reddit rejects non-browser user agents at the proxy. DoorDash and Uber freeze synthetic input at the identity widget. There is no one stealth pass. Expect one fight per vendor.
-                    </li>
-                    <li>
-                        <strong>Strict-origin credential stores are correct, even when annoying.</strong>
-                        The vault refused a login saved for <code>doordash.com</code> when the page was <code>identity.doordash.com</code>. That is the right behavior. The fix was saving the entry for the actual auth host.
-                    </li>
-                    <li>
-                        <strong>Attribution is not bureaucracy.</strong>
-                        Repo rulesets enforce commit identity. The agent's commits should belong to a real identity — for the audit log, for auto-merge, and for the simple question of who pushed this.
-                    </li>
-                    <li>
-                        <strong>The boring wins: chown, groups, and one-liners.</strong>
-                        Half of "deployment automation" was removing <code>sudo</code> from a script by fixing ownership the right way, once. The clever half did not matter until the file permissions did.
-                    </li>
-                </ol>
-            </section>
-
-            <section id="next">
-                <h3><span>9</span> What's next</h3>
-                <p>
-                    The rails are already there. What is left is the work that needs either more
-                    data or a browser session that does not evaporate.
-                </p>
-                <div class="hermes-roadmap">
-                    <article>
-                        <h4>Trend charts</h4>
-                        <p>Glucose, blood pressure, weight, and calories from the health database, delivered as attachments. This waits on a week of rows so the chart is a trend and not a single point.</p>
-                    </article>
-                    <article>
-                        <h4>More daily tasks</h4>
-                        <p>New updates riding the cron that already fires, reports failures, and knows the difference between a schedule and a reminder.</p>
-                    </article>
-                    <article>
-                        <h4>DoorDash and Instacart</h4>
-                        <p>Behind a persistent-profile browser tier: log in once, fill a cart from a sentence, and leave checkout to a human. A free-tier session will not survive that.</p>
-                    </article>
-                    <article>
-                        <h4>A shopping list</h4>
-                        <p>Keyed to the meal log. What I have eaten, what is running low, drafted once a week instead of reconstructed from memory in the store.</p>
-                    </article>
-                </div>
-            </section>
-
-            <footer class="hermes-close">
-                <a class="hermes-repo" href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">
-                    <span>Infrastructure repo</span>
-                    <strong>bvmcode/my-hermes-agent</strong>
-                    <em>Terraform and the install</em>
-                </a>
-                <a class="hermes-repo" href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">
-                    <span>The agent itself</span>
-                    <strong>Hermes Agent</strong>
-                    <em>Open source, self-improving, and after one weekend: employed.</em>
-                </a>
-            </footer>
         </div>
     </div>
+    <footer class="hb-end"><p>Built with <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener noreferrer">Hermes Agent</a> by Nous Research.<br>Infrastructure and integration by Barry Martin.</p><a href="#hermes-top">Back to top ↑</a></footer>
 </article>
 {% endblock %}

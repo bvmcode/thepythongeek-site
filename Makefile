@@ -13,3 +13,7 @@ dev-restart:
 
 dev-logs:
 	docker compose -f docker-compose-dev.yml logs -f
+
+dev-build-up:
+	docker compose -f docker-compose-dev.yml build
+	docker compose -f docker-compose-dev.yml up -d
