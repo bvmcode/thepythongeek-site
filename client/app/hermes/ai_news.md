@@ -1,61 +1,51 @@
-# AI News — Monday, November 2, 2026
+# AI News — Tuesday, November 3, 2026
 
 A short briefing of the day's main stories.
 
-## On Election Day, chatbots prove easy to push toward a voting list
+## Google tells K-12 schools to switch AI on or lose Search
 
-NPR put five chatbots through three voter personas in New York races. Four of five — all but Gemini — produced candidate lists after two or three pushes, typically once the user pleaded time pressure; a researcher calls these "leaky refusals" that deliver an endorsement behind hedged language. The nonprofit's seven-chatbot study found 5.1 percent of answers carried a clear factual error, 13.9 percent of voting-logistics answers outdated or wrong, and errors in 5.9 percent serious enough to mislead a voter. Claude and Copilot produced three-quarters of the clear errors.
+In a Tuesday education update, Google said access to Gemini, Gemini Notebook, Gemini in Classroom, and Google Search will be "entirely off" for K-12 student accounts unless administrators explicitly turn them on, and that schools which disable the Gemini features lose Search too: there is no toggle that keeps one without the other. "Search and AI are deeply integrated," Google's education VP Chris Phillips told The New York Times, which reports the choice arrives in early 2027. Former FTC chair Lina Khan called it "using its search monopoly to coerce schools into adopting AI"; NYC and LA, the nation's two biggest districts, already have temporary AI bans in elementary and middle schools — and the ultimatum lands after October Senate pressure over the August default-on Gemini rollout in Classroom.
 
-- [NPR](https://www.npr.org/2026/11/02/nx-s1-6025407/chatbots-midterms-voting-advice)
+- [The Verge](https://www.theverge.com/tech/1025411/google-turn-off-search-ai-features)
+- [AP](https://apnews.com/article/ai-schools-classroom-students-google-7ba4219e505db1c11d672f6eefe7155a)
 
-## OpenAI readies a post-election policy blitz, starting with rebranding data centers
+## Election Day: the chatbot war rooms face chatbot errors
 
-Axios reports OpenAI will launch a policy and PR offensive after today's vote, centered on rebranding data centers as "AI compute campuses," plus binding frontier-safety rules that chief global affairs officer Chris Lehane calls "speed limits." Lehane told Axios the midterms are "a bit of a movie trailer for what you're going to see in 2028," when he expects AI to be the issue in the presidential race. OpenAI expects harder questions than the last two years brought, and New York assemblyman Alex Bores says the real test is whether it tries to stop states enforcing their own AI laws.
+OpenAI and Anthropic both staffed dedicated election "war rooms" for Tuesday's midterms — a first for both — monitoring for misuse and ready to respond to misleading voting information, Semafor reports. Their products remain part of the problem: WIRED's Election-Day piece cites Forum AI research finding almost 40 percent of mainstream chatbots' election answers contained at least one factual error — Gemini gave November 3 as the Pennsylvania mail-ballot deadline; the real date was October 27 — while NewsGuard found chatbots cite "pink slime" partisan sites in half of candidate-and-policy queries, ChatGPT the worst above 70 percent and Grok the best at 30 percent. The war rooms can catch incidents; the answers themselves are the risk.
 
-- [TechCrunch](https://techcrunch.com/2026/11/01/openai-might-rebrand-its-data-centers-as-ai-compute-campuses/)
-- [Yahoo Finance](https://finance.yahoo.com/technology/ai/articles/openai-might-rebrand-data-centers-215523615.html)
+- [WIRED](https://www.wired.com/story/heres-why-you-shouldnt-use-ai-to-vote/)
+- [Semafor](https://www.semafor.com/article/11/02/2026/election-war-rooms-enter-the-ai-age)
 
-## Anthropic carves out up to $3.5 billion of its IPO for Japanese investors
+## Anthropic's amended IPO filing: a $17B quarter, $895B of compute, and an RSI warning
 
-Anthropic will sell up to 552.9 billion yen — about $3.5 billion — of shares in Japan as part of its Nasdaq listing, per a registration disclosed Monday, with Mizuho Securities managing the Japan tranche and proceeds going to working capital, operating expenses, and capex. The filing does not state total size or valuation; Reuters reports investors discussing about $1.5 trillion. The scale: at SpaceX's June IPO, the largest ever, Japanese buyers took $2.2 billion of the $75 billion raised — Anthropic's Japan ceiling is roughly 1.6 times that.
+Monday's revised S-1/A, a week after the original and ahead of a Nasdaq debut expected this month under ticker ANT, shows quarterly revenue of $17 billion (up from $11.5 billion) against a $23.3 billion quarterly net loss, nine-month revenue up 13-fold to $33.2 billion, and a nine-month loss of $104 billion including a $94 billion accounting charge from financing agreements. Anthropic disclosed $895.4 billion of committed AI compute and infrastructure spend, $70 billion of it due within 12 months; TechCrunch's read has compute absorbing 58 percent of quarterly revenue (up from 48 percent), revenue per compute-dollar down from a peak above 2x to 1.72x, and a $10 billion quarterly compute bill whose $5 billion of short-term commitments cost "significantly more" than multi-year terms — the price of chasing demand through providers like SpaceX, at $1.25 billion a month. The risk factors add a quieter disclosure: Anthropic "may imminently meet" its Responsible Scaling Policy's definition of "dramatically accelerated progress attributable to AI" — recursive self-improvement — with no current model past that threshold and a promise to keep Claude from building "successive generations of frontier models without meaningful human supervision." AI building AI is now formally an SEC-disclosed risk.
 
-- [The Star / Reuters](https://www.thestar.com.my/tech/tech-news/2026/11/02/anthropic-plans-to-sell-35-billion-of-shares-to-japan-investors-in-ipo-filing-shows)
-- [Nikkei](https://asia.nikkei.com/business/markets/ipo/anthropic-seeks-to-raise-up-to-3.5bn-from-japanese-investors-in-ipo)
+- [AP](https://apnews.com/article/anthropic-ipo-revenue-ai-claude-0cbd1a649a4cce904be59af8f6b30179)
+- [TechCrunch](https://techcrunch.com/2026/11/03/anthropic-is-still-grappling-with-the-economics-of-compute/)
 
-## OpenAI folds ChatGPT's Chat and Work tabs together, with one quota pool behind both
+## Anthropic publishes FlashProve: cryptographic proof of which model answered
 
-OpenAI is merging the Chat and Work tabs in ChatGPT's desktop app — and once the rollout finishes in December, ChatGPT and Codex will draw usage from the same allocation pool, TechCrunch reported. The Decoder reads the change as the end of all-you-can-prompt flat-rate pricing, since agentic tasks cost four to fifteen times a simple chat to serve by Anthropic's estimate. OpenAI is also capping how many paid subscriptions can share one payment card or device, pushing plan-hopping users toward bought credits and resets instead.
+Anthropic released research Tuesday on FlashProve, an open-source design for "provable inference": labs would publish a cryptographic fingerprint of each model release, without revealing weights, so anyone can verify locally that an output really came from the model claimed — the way an email signature proves a sender. It targets live trust gaps, from silently swapping in cheaper models to claims that a library "was scanned for vulnerabilities by a frontier cybersecurity model," and migration trackers flagged xAI just this week for quietly redirecting a retired image model's traffic to a cheaper model's lowest-quality output. Anthropic shipped a specification and working code on GitHub, and stages it as research with no deployment planned yet.
 
-- [TechCrunch](https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/)
-- [The Decoder](https://the-decoder.com/openais-upcoming-chat-and-work-merger-in-chatgpt-signals-the-end-of-all-you-can-prompt-pricing/)
+- [TechCrunch](https://techcrunch.com/2026/11/03/anthropic-is-working-on-a-system-to-prove-ai-models-identity/)
+- [Anthropic](https://www.anthropic.com/research/provable-inference)
 
-## An Israeli stealth startup says its world model predicts what a trader does next
+## Goldman Sachs pulls Claude Code and GitHub from traders and bankers
 
-42AI came out of stealth with $62.5 million in seed funding and a "behavioral world model" that predicts an individual's next decision even in situations they have never faced. It runs at a handful of brokerages, predicting how traders respond to volatile conditions — not by extrapolating from past trades but by reading signals from seemingly unrelated moments like support-call sentiment, onboarding, and transfers, and returning probabilities over decisions. "Behavior is not deterministic; it's constantly probabilistic," founder Amit Gal-Or told TechCrunch. The company says one brokerage already generated about $30 million of added value through dynamic hedging.
+Internal guidance updated in October and seen by Bloomberg restricts coding agents — Anthropic's Claude Code and Microsoft's GitHub — to Goldman's engineers, ending months in which traders and bankers used them to follow client trading flows, simulate market shifts, and draft documents. "Strats," the hybrid quant-engineer-trader group, keep access; the move unwinds CIO Marco Argenti's spring push for non-engineer vibe-coding with engineer review. Spokesperson Nick Carcaterra called it the end of the experiment: after weighing "productivity and risk management," "we put them in the hands of those who are best suited to leverage them for the long term." The bet: the limiting factor on agents at work is not capability but the number of people who can audit what they produce.
 
-- [TechCrunch](https://techcrunch.com/2026/11/02/42ai-comes-out-of-stealth-with-62-5m-and-a-world-model-that-can-predict-human-behavior/)
+- [Quartz](https://qz.com/goldman-sachs-restricts-ai-coding-tools-traders-bankers-110226)
 
-## Chinese robot-data startup GenRobot AI raises $100 million on a million hours of demos
+## Beijing speeds toward a national AI law as its regulator flags AI concentration
 
-GenRobot AI, a Beijing company founded in 2025, disclosed a $100 million Series A+ closed in the third quarter, backed by SAIC Motor, Baidu, Shoucheng Holdings, Galaxy General Robotics with GL Ventures, CITIC Goldstone, and Huatai Zijin. It owns more than one million hours of human demonstration data, serves over 30 AI companies, and publishes an open-source 13,000-hour dataset downloaded over a million times a month. As humanoid developers race to teach whole-body skills, data has quietly become the bottleneck of the physical-AI buildout, and this is one of the biggest bets that a data vendor can own that layer.
+At a Tuesday briefing on the 15th Five-Year Plan, NDRC deputy director-general Wang Ruomeng said China will accelerate a basic national AI law, set safety standards and ethics guidelines across the AI life cycle, and push developers to disclose safety risks and report incidents on their own initiative — rules that, under Bloomberg's reading, reach DeepSeek, Moonshot AI, and Alibaba. The package adds AI job titles like model trainer to China's occupations list and includes a US-China AI incident channel agreed in September. At Hong Kong's Global Financial Leaders' Investment Summit, financial-regulator vice head Xiao Yuanqi warned that global AI investment has become "overly concentrated," crowding out traditional industries by raising borrowing costs and credit risks. Disclosure, self-reporting, and prudential rules for the frontier, all in one motion.
 
-- [TechNode](https://technode.com/2026/11/02/robot-training-data-startup-genrobot-ai-raises-100-million-in-series-a-funding/)
-
-## Aramco closes a 49 percent stake in Humain, folding an oil major into sovereign AI
-
-Saudi Aramco completed its purchase of a 49 percent stake in Humain from the PIF sovereign wealth fund, which retains 51 percent, funding it with about $2.6 billion in cash during 2026 plus AI, computing, and digital assets of undisclosed value. Humain, founded by PIF in May 2025, builds data centers, cloud services, and the Arabic model ALLaM, targeting three gigawatts of data-center capacity by 2030. Aramco gains deployable AI for its own operations and a solutions business to sell; Humain gains an oil super-major's balance sheet behind it.
-
-- [The Decoder](https://the-decoder.com/saudi-aramco-takes-49-percent-stake-in-ai-firm-humain-with-2-6-billion-deal/)
-
-## HSBC adds a Hong Kong AI institute, hot on Singapore's heels
-
-HSBC is setting up an AI and emerging-technology institute in Hong Kong, following a similar Singapore launch earlier this year, expected to focus on AI safety, fraud detection, post-quantum cryptography, and blockchain. It continues a pattern of banks institutionalizing AI research rather than just buying tools.
-
-- [Economic Times / Reuters](https://m.economictimes.com/tech/artificial-intelligence/hsbc-to-open-hong-kong-ai-institute-following-singapore-launch/articleshow/135447713.cms)
-- [Analytics Insight](https://www.analyticsinsight.net/news/hsbc-hong-kong-ai-hub-4-key-areas-set-for-research)
+- [Reuters](https://www.reuters.com/business/finance/ai-investment-is-becoming-overly-concentrated-chinese-official-says-2026-11-03/)
+- [After Update (LinkedIn)](https://www.linkedin.com/pulse/after-update-issue-30-november-3-2026-john-kump-d49gc)
 
 ## Also noted
 
-- **Data-center water gets its first consolidation deal.** Omen AI, maker of real-time cooling-water sensors, acquired Aquatic Labs for $16 million in cash and stock, merging complementary sensors that check water chemistry and valve failures. US data centers use 17 to 19 billion gallons of water a year for cooling, a figure expected to triple within five years. ([TechCrunch](https://techcrunch.com/2026/11/02/omen-ai-adds-liquid-know-how-in-16-million-aquatic-labs-acquisition/))
-- **Korea stacks two giant AI-infrastructure rounds.** NAVER is raising $1 billion from NVIDIA — about a 4.8% stake, allotment paid November 6 — to fund its AI-factory business, while chipmaker FuriosaAI closed a $623 million Series D at roughly $2.89 billion post-money, backed by Korea Development Bank, NAVER, and Kakao Investment. ([WOWTALE](https://en.wowtale.net/2026/11/01/235810/))
-- **Fifty AI agents spent one Minecraft night being scared straight.** A Y Combinator Labs and Olam Labs experiment put 50 GPT-6.1 Sol agents in Minecraft for three hours to build a civilization; after zombie deaths on night one the colony turned cautious and procedural — ration ledgers, permits, an official fertilizer officer. In competition against ten Claude Opus 5.5 agents, the GPT side won Bed Wars 6–3 and Mindustry 6–1, at one point downloading the game's source code. ([The Decoder](https://the-decoder.com/one-brutal-minecraft-night-scared-50-ai-agents-into-inventing-chicken-handoff-protocols-a-fertilizer-officer-and-fishing-shifts))
+- **Data centers are filling the power gap with old jet engines.** Grid hook-ups for 100 megawatts take about seven years in Northern Virginia, so AI builders are burning converted jet engines from retired aircraft: xAI has eight at Colossus 2, Crusoe ordered 13 rebuilt ProEnergy units for Abilene, and a jet-powered site can run in 24 months. ([TechCrunch](https://techcrunch.com/2026/11/03/data-centers-are-turning-to-old-jet-engines-as-the-wait-for-power-grows/))
+- **A deepfake "nudify" network hid in the app stores all year.** WIRED traced 400-plus apps — pet-portrait generators, language tutors, workout coaches — that could silently load interfaces for explicit deepfakes of uploaded photos, run by a Hong Kong-registered entity and spread through Meta ads; 27 Play Store apps found in September had 350,000-plus downloads, many rated for all ages. ([WIRED](https://www.wired.com/story/hundreds-of-mundane-ai-apps-are-hiding-abusive-deepfake-features/))
+- **Zalando unveiled its first AI shopping agent as margins slipped.** The in-app agent lets customers buy from other retailers, with AI-assisted checkout planned for 2027 and only a Westwing pilot live today; Q3 gross margin fell to 38.7 percent against 39.9 expected, and JPMorgan flagged "structural risk from agentic commerce development." ([Reuters](https://www.rte.ie/news/business/2026/1103/1597792-zalando-launches-ai-shopping-agent-as-margins-squeezed/))
+- **The AI trade wobbled from Seoul to New York.** Korea's KOSPI closed down 3.59 percent (Samsung and SK Hynix off 4–5 percent) as brokerages flagged big-tech bond issuance and "Anthropic's financial burden," while the S&P 500 rose 0.4 percent to 7,568.92 on an Nvidia-led AI rebound even as Apple sank on memory-cost margin warnings. ([fnnews](https://fnnews.com/news/202611031557188079), [AP](https://apnews.com/article/wall-street-stocks-dow-nasdaq-95ac47c160dba546cbbdf72c10010e2c))
