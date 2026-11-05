@@ -125,7 +125,8 @@
                 <li><a href="#deploy">02 · AI News, end to end</a></li>
                 <li><a href="#infrastructure">03 · Provisioning &amp; access</a></li>
                 <li><a href="#personal-automation">04 · The ordinary jobs</a></li>
-                <li><a href="#operations">05 · Before I call it done</a></li>
+                <li><a href="#vault">05 · The shared vault</a></li>
+                <li><a href="#operations">06 · Before I call it done</a></li>
             </ol>
             <p class="hb-toc-extra"><a href="{{ url_for('ai_news.index') }}">Read AI News ↗</a><br><a href="https://github.com/bvmcode/my-hermes-agent" target="_blank" rel="noopener noreferrer">Infrastructure repo ↗</a></p>
         </nav>
@@ -144,7 +145,6 @@
         <figcaption>Admin traffic, outside services, and public visitors each take a different path. <a href="{{ url_for('static', filename='images/hermes-architecture.svg') }}" target="_blank" rel="noopener noreferrer">Open the full-size diagram ↗</a></figcaption>
     </figure>
     <p>AI News is the best tour of the whole setup, because one update touches almost every piece. Hermes writes the briefing, commits the file, goes through GitHub, connects to production, and checks the site. The page says it updates daily at 7pm. That clock belongs to the agent. Flask just serves whatever document made it to production.</p>
-    <p>I'll follow one update from the Markdown file through Git, the production host, and Flask. Then I'll show how the agent host is set up, how those same connections carry the smaller daily jobs, and what I look at before I call any of them done.</p>
 </section>
 <section id="deploy" aria-labelledby="deploy-heading">
     <p class="section-kicker">02 / The publishing pipeline</p>
@@ -246,10 +246,10 @@ terraform apply        # ~5-10 min of user-data install on first boot</code></pr
   <h3>Logging a reading</h3>
   <p>Most mornings I just say the numbers. Weight, glucose, what I ate. Hermes pulls them out of the sentence and writes them to SQLite, so I don't have to open a form. Readings go in <code>daily_readings</code>: date, time, weight, glucose, blood pressure, pulse, and notes. Meals have their own table, with the food and the nutrition numbers. A glucose entry has to be one of fasting, before a meal, after a meal, bedtime, or random.</p>
   <p>The tables keep a row in the right shape. They can't tell whether Hermes heard me correctly. That part is in the procedure: don't invent a number I didn't say, check serving sizes against the nutrition source, and ask me when the amount is something only I would know. Weight is stored in kilograms, so if I say it in pounds, the conversion has to be on purpose.</p>
+  <p>The tables keep a row in the right shape. They can't tell whether Hermes heard me correctly. That part is in the procedure: don't invent a number I didn't say, check serving sizes against the nutrition source, and ask me when the amount is something only I would know. Weight is stored in kilograms, so if I say it in pounds, the conversion has to be on purpose.</p>
   <p>After the insert, a small Python script copies the whole database to <code>~/Documents/HealthData/</code> on my Mac. SQLite stays the source of truth. The CSVs are there so I can open them and use them somewhere else. I rewrite the whole export each time, because I go back and fix old rows. Change or delete a row, and the next export matches. Appending a single new line would leave the old version sitting in the file.</p>
   <pre><code>/usr/bin/python3 /home/ubuntu/health_data/health_sync.py
 # synced: daily_readings=1, meals=6</code></pre>
-  <p>Run the export again on the same database and you should get the same files, with no duplicates from the retry. Saving the reading and copying it to the Mac are two different jobs. If the copy fails, the row is still in SQLite. I keep these as records I can look up. I don't ask Hermes to tell me what they mean medically.</p>
 
   <h3>The morning note and the market briefing</h3>
   <p>At 6:00 AM it sends my wife a short note with a Bible verse. It rotates which verse it picks, signs the note “I love you, Barry,” and sends it through the Mac. Then it checks that the message really went out, and runs the health-data sync.</p>
@@ -261,10 +261,19 @@ terraform apply        # ~5-10 min of user-data install on first boot</code></pr
   <p>The check is a separate look at the Mac's Messages database, not a promise from the send script. It looks for the outgoing flag, a recent timestamp, and the exact text. Sometimes that text is tucked into <code>attributedBody</code>, so the check has to decode that field. What I learn is that my Mac recorded the message I meant to send. I still don't know if her phone got it, or if she read it.</p>
 </section>
 
+
+<section id="vault" aria-labelledby="vault-heading">
+    <p class="section-kicker">05 / Shared notes</p>
+    <h2 id="vault-heading">The shared vault</h2>
+    <p>I keep my Obsidian vault in a GitHub repository so Hermes and I can work with the same Markdown files. Hermes can write notes about my health data, research, and other things I want to keep, then commit and push them to the repo. The Obsidian Git plugin automatically pulls those changes into my local vault, where I can read and edit them.</p>
+    <p>It works the other way too. The plugin's auto-commit and auto-push send my own Markdown changes back to GitHub. Hermes can then pull those files into its checkout and use them for the next task. I get a shared notebook with a version history, without copying notes back and forth through chat.</p>
+</section>
+
 <section id="operations" aria-labelledby="operations-heading">
-    <p class="section-kicker">05 / Checking the work</p>
+    <p class="section-kicker">06 / Checking the work</p>
     <h2 id="operations-heading">Before I call it done</h2>
     <p>A briefing has to land in Git, and then on another machine. A reading has to land in SQLite, and then on the Mac. I look at those one at a time.</p>
+    <div class="hb-table-scroll" tabindex="0" role="region" aria-label="Scrollable outcome checks table">
     <div class="hb-table-scroll" tabindex="0" role="region" aria-label="Scrollable outcome checks table">
         <table>
             <caption>What I can check, and what that check still leaves open</caption>
@@ -273,7 +282,6 @@ terraform apply        # ~5-10 min of user-data install on first boot</code></pr
                 <tr><td>Merge a briefing</td><td>The PR state is <code>MERGED</code>, and the change is on <code>main</code>.</td><td>Has production pulled that change?</td></tr>
                 <tr><td>Deploy the site</td><td>The deploy output, and the containers that are running.</td><td>Is the public news page showing this edition?</td></tr>
                 <tr><td>Log a reading</td><td>The numbers I meant are in SQLite.</td><td>Did the full CSV copy reach the Mac?</td></tr>
-                <tr><td>Send a message</td><td>The exact text, the outgoing flag, and a timestamp on the Mac.</td><td>Did the other phone receive it, or was it read?</td></tr>
             </tbody>
         </table>
     </div>
