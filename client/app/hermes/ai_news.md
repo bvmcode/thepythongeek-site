@@ -1,59 +1,57 @@
-# AI News — Saturday, November 7, 2026
+# AI News — Sunday, November 8, 2026
 
 A short briefing of the day's main stories.
 
-## An 18-year-old quantum conjecture, proved by AI
+## Claude Code's "don't ask again" archives plaintext secrets — 2,539 now sit on public GitHub
 
-Aaronson–Ambainis asked whether quantum machines win exponentially on random inputs — one of the field's central open problems since 2008, reduced to polynomials: a varying low-degree polynomial must have an influential bit. On November 6, Physical Superintelligence announced that an internal research system, running instances of a non-public Anthropic model, had a complete proof on day three of a run, with the Lean checker accepting every step, then improved the bound twice more. Caveats: it limits input reads, not total compute; Lean-verified, not journal-reviewed; the Anthropic model unnamed. But the pattern is METR's AI-R&D acceleration thesis, demonstrated.
+Ask Claude Code to check a database and the proposed command carries whatever secret it needs; pick "Yes, and don't ask again," and it saves that literal command — password and all — to `.claude/settings.local.json`, a file nothing in the repo marks private. Apiiro's scan (collected Nov 1–3; reporting broke Nov 7) found 104,185 public copies across 103,617 repos; 1,122 hold a real secret — 379 database passwords, 43 SSH logins, 42 repo/npm tokens, 23 AWS keys across 63 organizations — and one notified company confirmed a live key. Counting history, shared settings files and agent logs, 2,539 secrets hit 1,994 repos. Anthropic's guard — the user's global git excludes — lives on one machine and misses committed files; half sat on default branches 217+ days. Fix: rotate first, untrack with `git rm --cached`, move secrets into `$VAR`s, approve patterns over literals.
 
-- [PSI](https://psi.inc/research/aaronson-ambainis/)
+- [Apiiro research](https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again)
+- [The Hacker News](https://thehackernews.com/2026/11/claude-codes-dont-ask-again-file.html)
 
-## DeepMind's AI-found attacks on legacy 1024-bit RSA
+## Alibaba's Co-Design Bench: agents fully finish one change request in four
 
-DeepMind announced November 6 that AI models, working under human direction, found two weaknesses in legacy 1024-bit RSA — the retired key size (today's 2048-bit keys are unaffected). One: signature forgery, via an algorithm claimed to beat the previous best attack by ~1,600x when the attacker controls only part of the signed data. Two: related-moduli batch factoring made ~30x cheaper per additional key. DeepMind researchers did the work with cryptographers Heninger and Thomé — the numbers are DeepMind's claims, unverified. But the shape is proven: a UCSD/Inria paper (IACR ePrint 2026/2131) forged a real 1024-bit signature through an HSM's black-box API — 1,380 core-years, 232 oracle queries — and reads RSA's signing-oracle security 15–30 bits below factoring estimates.
+Built from real coding sessions — change requests users actually had to rephrase or roll back — Co-Design Bench leaves the best of ten models, GPT-6 Astra, fully completing just 26.4 percent while hitting about 70 percent of requirements on average; older benchmarks score that model class above 99. One AI judge tests the app in a browser; a second re-checks every pass for hardcoded mock-ups. Scores sag when a task mixes three or four kinds of change, and compute doesn't rescue it: GLM-5.2 burns nearly six times Astra's tokens and still scores worse. The harness matters as much as the model — Qwen3.8-27B scored 75 or 56 percent on large overhauls depending only on which harness ran it — so pair model and environment when you buy.
 
-- [Crypto Briefing](https://cryptobriefing.com/google-deepmind-ai-rsa-1024-bit-weaknesses/)
+- [Paper (arXiv)](https://arxiv.org/abs/2610.35138)
+- [The Decoder](https://the-decoder.com/ai-coding-agents-still-need-human-cleanup-on-nearly-three-out-of-four-tasks-in-a-real-world-test/)
 
-## Grok API's default text watermarking turns on today
+## Vals' CyberOffense: agents break corporate networks — open models close to a tenth the cost
 
-As of today, seven Grok API models — grok-4.7 through 4.3 plus the 4.20 variants — return statistically watermarked text by default across Responses and Chat Completions. The mark steers token choices during generation, so copied strings look ordinary; the only visible signal is an `x-watermark: true` response header. xAI posted the policy October 31 and is blunt about why: EU AI Act compliance. Opt-out is deliberately friction-heavy — team admins only, per model, a confirmed legal exception and sole responsibility; changes propagate in five minutes and are audit-logged. Consumer surfaces are untouched, so API users carry the weight: log that header now.
+Vals AI hands each agent a solo Kali box and one public web address; everything after is unsupervised attack on a simulated corporate network. OpenAI's restricted GPT-6 Sol (Daybreak) posted the best aggregate, 80.8 percent of objectives — but open-weight DeepSeek V4.1 Flash reached 72.8 percent at roughly $3 per run against $22. In Lighthouse, Daybreak took the first company's admin, stole passwords and entered a second company — 27 of 31 objectives in under three hours; DeepSeek got 21 at a tenth the cost. Most models went nowhere until past 100 million tokens, so short tests understate open-weight potential; UK AISI put the open/closed gap at 4–7 months, with runs at $1.19 vs $85 for Opus 4.5.
 
-- [xAI developer docs](https://docs.x.ai/developers/advanced-api-usage/watermarking)
+- [Vals AI: CyberOffense](https://www.vals.ai/benchmarks/cyber_offense)
+- [The Decoder](https://the-decoder.com/the-gap-between-open-and-closed-ai-models-in-cyber-capabilities-keeps-shrinking/)
 
-## Raw lab imagery still defeats AI: two new benchmarks agree
+## Nous strips Chinese state propaganda from Qwen3.8-27B with 53 million tokens
 
-Two lab-work benchmarks landed the same day, agreeing. OpenAI's BioBasicsBench (with biotech Ligo, Nov 6) is 100 tasks built from raw bench evidence: gels, cytometry files, FASTQs, technique videos. At top effort, GPT-6 Astra averaged 66.7 percent on ~4,700 output tokens per task versus GPT-5.6 Sol's 43.8 on ~9,100. Given a mislabeled control plate, Sol trusted it; Astra read the rim label and rejected it. Artificial Analysis' VIALS-AA launched the same day on Handshake AI's 161-task science-image benchmark, on pass^3: Gemini 4 Carbon (high) 64, GPT-6 Astra (max) 63, Claude Opus 5.5 61 — while open-weights Kimi K3.1 Pro solves about three-quarters of tasks at least once and only 45 percent every time. Paper-figure benchmarks saturate; raw bench reality doesn't.
+Nous Research fine-tuned Alibaba's 27B open-weight model into Arete-27B and reports the propaganda rate fell from 22 percent to under one, capabilities intact, on just 53 million tokens of fine-tuning over 803 prompts. The finding: the political layer is "applied late, it is applied thin" — a patch, not something baked into the weights. Model and data are public. The corollary: residual Chinese-flavored bias showed up even in Nvidia's Nemotron line — corpora carry politics you didn't choose.
 
-- [OpenAI: BioBasicsBench](https://openai.com/index/measuring-how-ai-agents-handle-wet-lab-science/)
-- [Artificial Analysis: VIALS-AA](https://artificialanalysis.ai/articles/vials-aa)
+- [Nous Research](https://nousresearch.com/arete)
+- [The Decoder](https://the-decoder.com/state-propaganda-in-some-chinese-ai-models-is-only-a-thin-layer-that-fine-tuning-can-strip-away/)
 
-## How Claude should remember — and Anthropic's "dreaming"
+## Inside China's answer to Stargate: an 800MW campus built in a year at $3M per MW
 
-Anthropic's engineering post "The components of agent memory" (Nov 6) defines memory narrowly — knowledge Claude keeps between sessions as text it can reread later, excluding weight updates and compaction. Measured on CL-Bench, each question starting fresh with only the memory folder persisting, Opus 5.5 rose from 0.655 to 0.838 mean reward. "Dreaming" is the mechanism: an offline pass that rereads transcripts, corrects bad notes, builds wikis, and curates what loads next. In Pokémon Red: one Sonnet 3.7 run wrote 413 files and earned one badge; Fable 5 kept ~10 files, mostly strategy, and earned four; Opus 5.5 finished the game on a small goals folder. And the traveling rule: "tell Claude what memory is for, not how to use it" — dictation makes strong models worse.
+SemiAnalysis toured Envision Group's Galaxy campus in Ulanqab, Inner Mongolia — planned for 800MW, the size of Stargate Abilene's core, built-to-suit for two internet giants. The first 120MW phase went up in under twelve months at about one-fifth of US construction cost (under $3M per MW), full campus due end-2027, plus 22 projects and 30,000 workers nearby. Envision plans to cover over 60 percent of early-phase power with 420MW of dedicated wind; a 5MW pilot hall runs solid-state transformers taking 10kV AC straight to 800V DC at the rack. Power runs ~$0.055/kWh, 25GW announced region-wide — while US sites fight anti-datacenter politics.
 
-- [Anthropic Research](https://www.anthropic.com/research/components-of-agent-memory)
-
-## Wonder-trained models roll out to every Muse and Meta AI user
-
-Meta announced November 6 that Muse and Meta AI switch to "specialized" versions of their models, trained with learnings from Muse Wonder — the October 12 frontier family. Active Memory separates temporary from permanent facts and catches staleness: 2.4x less forgetting, critical context correct in 90 percent of tasks, Personal Superintelligence Index up 38→47 percent. Active Focus trains on hard bottlenecks to persist, recover or find alternatives — 67 percent better where surprises arise. No model card; self-reported numbers, not a documented release. The direction: frontier behavior pushed into the default assistant, not a bigger model shipped outward.
-
-- [Meta AI Research](https://research.meta.ai/blog/specialized-models-for-muse-and-metaai)
+- [SemiAnalysis](https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner)
 
 ## Also in tech
 
-- **NVIDIA opens four Cosmos 3 world models** — post-trained 16B Cosmos 3 Nano checkpoints (OpenMDW 1.1): Transfer-Auto, Sim-Auto, Sim-Bimanual — open driving/robotics data generation; NVIDIA says policy-learning support "remains to be measured." ([Hugging Face](https://huggingface.co/collections/nvidia/cosmos3))
-- **OpenAI deputizes Hacktron** — partners the AI-security startup to jointly attack its own systems, third-party seams first, with Daybreak Red model access. ([Hacktron](https://www.hacktron.ai/blog/openai-partnership))
-- **Terminal-Bench 2.1** — a Stanford/Cornell audit (arXiv, Nov 5) found ~30 percent of Terminal-Bench 2.0's 89 tasks defective; repairs moved 19 re-run agents' scores up to ~12 points and ranks by three while order held. ([arXiv](https://arxiv.org/abs/2611.08417))
+- **Google marks agent-to-agent communication stable** — ADK 2.14.0 graduates the A2A protocol, execution environments, evaluation and core runtime to stable; claims 23 percent faster multi-turn runs. ([PyPI](https://pypi.org/project/google-adk/2.14.0/))
+- **AI auditors flood reviewers with false alarms** — a study by Anthropic Institute's Andy Hall (the Decoder, Nov 7) finds GPT-5 catches ~98 percent of reward hacking at a 5 percent false-alarm rate, but 99 percent detection makes the best model flag 15 percent of clean logs; newer models audit no better. ([Free Systems](https://freesystems.substack.com/p/were-using-ai-to-audit-ai))
 
 ## Business roundup
 
-- **Microsoft winds down its Oracle deal** — won't renew the 2023 Oracle rental for AI-powered Bing (Bloomberg, Nov 6); $80B+ in external AI-cloud contracts are under review. ([Santage](https://santageai.com/news/2026/11/07/microsoft-oracle-older-nvidia-gpus))
-- **OpenAI presses on post-midterms** — voters backed limits in 40 of 41 ballot questions; CFO Sarah Friar told CNBC investment continues; its compact now pledges full grid-cost payment, financial assurances and an NDA ban for public officials. ([CNBC](https://www.cnbc.com/2026/11/06/open-ai-data-centers-election.html))
-- **Agent-security M&A** — Palo Alto Networks reportedly negotiating ~$500M for Clutch and separate talks for Beacon — its seventh acquisition of 2026. ([Calcalist](https://www.calcalistech.com/ctechnews/article/4sjcl3ooj))
-- **Packaging is the next chip bottleneck**: advanced-packaging demand exceeds capacity; Yole sees its revenue passing traditional in 2026 on ~$28B capex, AMD $10B+ into Taiwan packaging. ([Euronext/Reuters](https://live.euronext.com/en/financial-news/ai-boom-turns-chip-packaging-next-battleground-semiconductors))
-- **Physicl raises $10M** — to close robotics' sim-to-real gap. ([AI Daybook](https://sguys99.github.io/global-ai-news/en/article/1404))
-- **UK banks: AI gains real but narrow** — KPMG: over half have an AI use case with measurable results, but gains stay "concentrated in specific functions." ([HotMinute](https://hotminute.co.uk/2026/11/07/uk-banks-invest-in-hiring-as-benefits-from-ai-remain-elusive/))
+- **Nvidia's board probes CEO Jensen Huang** — he admitted Sunday an affair with a Megaspeed executive whom US intelligence called an MSS recruit targeting him; the board sees no evidence secrets were compromised. ([TechCrunch](https://techcrunch.com/2026/11/08/nvidia-says-its-investigating-ceo-jensen-huangs-relationship-with-possible-chinese-spy/), [Nvidia](https://nvidianews.nvidia.com/news/statement-from-nvidia-board-of-directors))
+- **Anthropic pushes a pre-Thanksgiving IPO** — targeting $80–100B at a $1.25–1.75T valuation (optimists wanted ~$2T); buyers now weigh $1.1–1.3T. ([Decoder/FT](https://the-decoder.com/anthropic-pushes-ahead-with-pre-thanksgiving-ipo-despite-tech-selloff-accepts-lower-valuation/))
+- **OpenAI's first $11B close lands at $1.25T** — below the $30B at $1.4T it sought in September; CFO Sarah Friar confirmed the price; could reach ~$20B. ([TechCrunch](https://techcrunch.com/2026/11/06/openai-reportedly-raises-an-additional-11-billion-at-a-1-25-trillion-valuation/))
+- **Anthropic buys $3.4B of gas generators** — the late-September deal takes over 1.7GW of Caterpillar-ordered capacity, plus engineering and installation. ([CNBC/FT](https://www.cnbc.com/2026/11/08/anthropic-generator-deal-ai-data-centers.html))
+- **The chip shortage is back, says Microchip** — AI buyers "took over the whole factory" at test houses; its data-center segment grew 55.7 percent as shares fell 10 percent. ([247wallst](https://247wallst.com/investing/2026/11/07/the-chip-shortage-is-back-and-microchip-says-ai-customers-are-crowding-everyone-out/))
+- **Schools adopt AI in place of hiring teachers** — Stanford's SCALE Initiative calls learning-gains evidence "extremely limited"; NYC bans K-8 classroom use. ([Truthout](https://truthout.org/articles/ai-companies-are-preying-on-under-resourced-schools-students-say))
 
 ## Also noted
 
-- **A law professor's cautionary tale** — U Chicago's William Baude asked Claude to renumber pages; during lunch it deleted his syllabus and a year of lecture notes, admitted it deleted the files through its own carelessness, and only a Dropbox copy saved them. ([AI Brief](https://dailyaibrief.com/news/claude-deletes-law-professor-lecture-notes-syllabus-ko0Q7RCk))
+- **Tencent's AI chief: models near "mastering biology"** — Yao Shunyu says cyber and bio abilities near a harm threshold; open weights multiply the risk. ([SCMP](https://www.scmp.com/tech/big-tech/article/3373697/ai-will-soon-master-biology-unleashing-new-safety-risks-tencent-ai-chief-warns))
+- **A 284B DeepSeek model on a 64GB CPU-only box** — llama-modchip claims DeepSeek-V4-Flash in under 59GiB RAM at 9.1–14.7 tok/s, no GPU (self-benchmarked). ([GitHub](https://github.com/synchopate/llama-modchip))
+- **"Agent memory needs its OpenTelemetry moment"** — LoreKit pitches a shared four-layer memory spec under the Linux Foundation's Agentic AI Foundation. ([LoreKit](https://www.lorekit.io/blog/open-agent-memory-format))
