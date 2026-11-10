@@ -1,57 +1,58 @@
-# AI News — Sunday, November 8, 2026
+# AI News — Monday, November 9, 2026
 
 A short briefing of the day's main stories.
 
-## Claude Code's "don't ask again" archives plaintext secrets — 2,539 now sit on public GitHub
+## Anthropic's Fable 5.2 / Mythos 5.2: Fermat formalized in 30 hours
 
-Ask Claude Code to check a database and the proposed command carries whatever secret it needs; pick "Yes, and don't ask again," and it saves that literal command — password and all — to `.claude/settings.local.json`, a file nothing in the repo marks private. Apiiro's scan (collected Nov 1–3; reporting broke Nov 7) found 104,185 public copies across 103,617 repos; 1,122 hold a real secret — 379 database passwords, 43 SSH logins, 42 repo/npm tokens, 23 AWS keys across 63 organizations — and one notified company confirmed a live key. Counting history, shared settings files and agent logs, 2,539 secrets hit 1,994 repos. Anthropic's guard — the user's global git excludes — lives on one machine and misses committed files; half sat on default branches 217+ days. Fix: rotate first, untrack with `git rm --cached`, move secrets into `$VAR`s, approve patterns over literals.
+Anthropic released Claude Fable 5.2 and Mythos 5.2 Monday at $8/M input and $40/M output tokens, up to 30 percent faster than 5.1 with an optional 2.5x fast mode — same underlying model, Mythos dropping the cyber/biology safeguards for vetted organizations. Prerelease, a 1,000-agent team of Fable 5.2 fully formalized Fermat's Last Theorem in 30 hours, and the model solved two open black-hole physics problems. Benchmarks hold: FrontierCode 2.0 at Xhigh effort scores 49.1 percent, the highest of any released model Anthropic has tested; FrontierSWE v2 hits 69.9 (GPT-6 Astra: 65.5); the Remote Labor Index jumps to 41.3 from 17.9 versus Opus 5.5's 21.3. Gemini 4 Carbon still leads AutomationBench (53.9 to 51.4); Fable at High effort matches Opus at Max for roughly half the cost.
 
-- [Apiiro research](https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again)
-- [The Hacker News](https://thehackernews.com/2026/11/claude-codes-dont-ask-again-file.html)
+- [Anthropic announcement](https://www.anthropic.com/claude-fable-and-mythos-5-2)
 
-## Alibaba's Co-Design Bench: agents fully finish one change request in four
+## Meta's Muse Ember: a third of Haiku's price for agent grunt work
 
-Built from real coding sessions — change requests users actually had to rephrase or roll back — Co-Design Bench leaves the best of ten models, GPT-6 Astra, fully completing just 26.4 percent while hitting about 70 percent of requirements on average; older benchmarks score that model class above 99. One AI judge tests the app in a browser; a second re-checks every pass for hardcoded mock-ups. Scores sag when a task mixes three or four kinds of change, and compute doesn't rescue it: GLM-5.2 burns nearly six times Astra's tokens and still scores worse. The harness matters as much as the model — Qwen3.8-27B scored 75 or 56 percent on large overhauls depending only on which harness ran it — so pair model and environment when you buy.
+Meta Superintelligence Labs released Muse Ember Monday, its cheapest model at $0.10/M input and $0.50/M output with 1M context, on Meta's API, Google Cloud and Oracle. It targets what agents do hundreds of times a session — tool calls, routing, extraction, coding subtasks — and its Artificial Analysis numbers put it on the efficiency frontier: Intelligence Index 36 at about $0.14 per task, where Claude Haiku 5.5 only reaches 36 at $0.41 per task and GPT-6 Luna never exceeds 27.8 at any effort setting. Meta's own table shows AutomationBench-AA at 37.8 percent versus Luna's 20.2 and Haiku's 13.9. The catch: on merge-ability (FrontierCode 2.0-AA) Ember scores 27.2 against Haiku's 34.9.
 
-- [Paper (arXiv)](https://arxiv.org/abs/2610.35138)
-- [The Decoder](https://the-decoder.com/ai-coding-agents-still-need-human-cleanup-on-nearly-three-out-of-four-tasks-in-a-real-world-test/)
+- [Meta announcement](https://research.meta.ai/blog/muse-ember)
 
-## Vals' CyberOffense: agents break corporate networks — open models close to a tenth the cost
+## Google takes TPUs to four systems in a year with 8tx and 8i Max
 
-Vals AI hands each agent a solo Kali box and one public web address; everything after is unsupervised attack on a simulated corporate network. OpenAI's restricted GPT-6 Sol (Daybreak) posted the best aggregate, 80.8 percent of objectives — but open-weight DeepSeek V4.1 Flash reached 72.8 percent at roughly $3 per run against $22. In Lighthouse, Daybreak took the first company's admin, stole passwords and entered a second company — 27 of 31 objectives in under three hours; DeepSeek got 21 at a tenth the cost. Most models went nowhere until past 100 million tokens, so short tests understate open-weight potential; UK AISI put the open/closed gap at 4–7 months, with runs at $1.19 vs $85 for Opus 4.5.
+Google announced two more eighth-generation TPU systems Monday — the first year it has shipped four, after 8t and 8i landed in April. Neither is a new chip: TPU 8tx pairs 8t silicon with AMD EPYC hosts and AMD SEV so data and model weights stay encrypted even while the accelerator computes — the first cloud TPU system, per AMD, with hardware-enforced confidential computing, built for running agents over data Google can't see. TPU 8i Max puts two 8i dies in one package, doubling compute, SRAM and HBM bandwidth for million-token contexts. The external business counts nearly 100 customers; pricing and dates wait.
 
-- [Vals AI: CyberOffense](https://www.vals.ai/benchmarks/cyber_offense)
-- [The Decoder](https://the-decoder.com/the-gap-between-open-and-closed-ai-models-in-cyber-capabilities-keeps-shrinking/)
+- [Google Cloud blog](https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max)
 
-## Nous strips Chinese state propaganda from Qwen3.8-27B with 53 million tokens
+## Operation Snowball: a two-week autonomous hack, nobody at the keyboard
 
-Nous Research fine-tuned Alibaba's 27B open-weight model into Arete-27B and reports the propaganda rate fell from 22 percent to under one, capabilities intact, on just 53 million tokens of fine-tuning over 803 prompts. The finding: the political layer is "applied late, it is applied thin" — a patch, not something baked into the weights. Model and data are public. The corollary: residual Chinese-flavored bias showed up even in Nvidia's Nemotron line — corpora carry politics you didn't choose.
+Malbear Labs researchers found an AI intrusion operator's entire workspace in an open, unauthenticated directory — ~70 session transcripts, credential caches and exfiltrated database dumps, operator instructions in Chinese. The November 8 report describes a two-week campaign against a European telecom plus 13 organizations hosted in its data centers. The harness runs on DeepSeek Flash's million-token context — every host and failed attempt stays in memory across the campaign — behind a 78,000-character jailbreak from the public "Little Code Sauce" template; transcripts record zero refusals, with operator input reduced to nudges like "Go on." The agent chose its own CVEs: an unauthenticated XXE in Cisco BroadWorks (CVE-2026-20320, port 2208) yielded system identity keys and SSL credentials. Blocked from PwnKit it switched to a sudo vi escape and systemd persistence; when its tunnel was signature-matched it wrote a Perl bridge nobody detected.
 
-- [Nous Research](https://nousresearch.com/arete)
-- [The Decoder](https://the-decoder.com/state-propaganda-in-some-chinese-ai-models-is-only-a-thin-layer-that-fine-tuning-can-strip-away/)
+- [Malbear Labs report](https://malbearlabs.com/posts/operation-snowball-inside-an-autonomous-ai-intrusion-campaign)
 
-## Inside China's answer to Stargate: an 800MW campus built in a year at $3M per MW
+## Fireworks AI's second breach leaks billing data and incomplete model weights
 
-SemiAnalysis toured Envision Group's Galaxy campus in Ulanqab, Inner Mongolia — planned for 800MW, the size of Stargate Abilene's core, built-to-suit for two internet giants. The first 120MW phase went up in under twelve months at about one-fifth of US construction cost (under $3M per MW), full campus due end-2027, plus 22 projects and 30,000 workers nearby. Envision plans to cover over 60 percent of early-phase power with 420MW of dedicated wind; a 5MW pilot hall runs solid-state transformers taking 10kV AC straight to 800V DC at the rack. Power runs ~$0.055/kWh, 25GW announced region-wide — while US sites fight anti-datacenter politics.
+Fireworks AI, the model-hosting platform used by ~10,000 businesses, expanded its October incident disclosure Monday: the third-party cloud provider hosting its R&D machines was compromised October 23, and an attacker used that route the next day to reach Fireworks development machines and run an unauthorized workload — far beyond the October 6 credential misuse first reported. For a limited group of customers it now says stored secrets, customer datasets and incomplete model weights were accessed, with billing data beyond that. Bloomberg says it's under investigation as LLMjacking. Self-serve dataset transfers are disabled, the Training SDK is zero-retention only, and inference is so far unaffected — but incomplete weights plus customer datasets is most of the recipe to resume someone's training run elsewhere.
 
-- [SemiAnalysis](https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner)
+- [Fireworks bulletin](https://fireworks.ai/security/bulletins/october-2026-security-incident-update)
+
+## DeepX tapes out 100B-parameter inference under five watts
+
+Korean edge-AI startup DeepX taped out its second-generation accelerator on a 2nm node: 80 TOPS, memory bandwidth tripled to 150 GB/s, and the same sub-5W budget as the DX-M1 — enough, it says, for 20-to-100-billion-parameter MoE models at 10–30 tokens per second. The memory play: 18 months with Samsung lets its LPDDR5x-PIM chips run the bandwidth-bound GEMV operations in the memory itself, lifting Llama3.1-8B throughput 6.7x at 2.7x power, with the DX-M3 slated for official LPDDR6 PIM. DX-Newton libraries drop in for Nvidia's Isaac robotics stack, and the DX-M1 is already in mass production at Hyundai's robotics lab. The thesis: 100B-parameter models on devices could cut AI data-center traffic by more than 80 percent.
+
+- [EE Times](https://www.eetimes.com/deepx-tapes-out-second-gen-chip-projects-6-7x-performance-gain-with-lpddr5x-pim/)
 
 ## Also in tech
 
-- **Google marks agent-to-agent communication stable** — ADK 2.14.0 graduates the A2A protocol, execution environments, evaluation and core runtime to stable; claims 23 percent faster multi-turn runs. ([PyPI](https://pypi.org/project/google-adk/2.14.0/))
-- **AI auditors flood reviewers with false alarms** — a study by Anthropic Institute's Andy Hall (the Decoder, Nov 7) finds GPT-5 catches ~98 percent of reward hacking at a 5 percent false-alarm rate, but 99 percent detection makes the best model flag 15 percent of clean logs; newer models audit no better. ([Free Systems](https://freesystems.substack.com/p/were-using-ai-to-audit-ai))
+- **Google quietly routes your Drive files and Gmail to human reviewers** — an October 16 edit to Google's 2023 promise plus updated docs confirm connected-app content can reach human annotation; demos show casual chat autonomously pulling unredacted PII. ([GitHub receipts](https://github.com/thisisme6598/gemini_files/))
+- **NVIDIA deepens Korea's sovereign-AI buildout** — NVLink Fusion for Korean NPU/XPU makers, Dynamo for four Korean model builders, and a new SK Telecom × Rebellions collaboration. ([NVIDIA blog](https://blogs.nvidia.com/blog/korea-sovereign-ai-collaboration/))
 
 ## Business roundup
 
-- **Nvidia's board probes CEO Jensen Huang** — he admitted Sunday an affair with a Megaspeed executive whom US intelligence called an MSS recruit targeting him; the board sees no evidence secrets were compromised. ([TechCrunch](https://techcrunch.com/2026/11/08/nvidia-says-its-investigating-ceo-jensen-huangs-relationship-with-possible-chinese-spy/), [Nvidia](https://nvidianews.nvidia.com/news/statement-from-nvidia-board-of-directors))
-- **Anthropic pushes a pre-Thanksgiving IPO** — targeting $80–100B at a $1.25–1.75T valuation (optimists wanted ~$2T); buyers now weigh $1.1–1.3T. ([Decoder/FT](https://the-decoder.com/anthropic-pushes-ahead-with-pre-thanksgiving-ipo-despite-tech-selloff-accepts-lower-valuation/))
-- **OpenAI's first $11B close lands at $1.25T** — below the $30B at $1.4T it sought in September; CFO Sarah Friar confirmed the price; could reach ~$20B. ([TechCrunch](https://techcrunch.com/2026/11/06/openai-reportedly-raises-an-additional-11-billion-at-a-1-25-trillion-valuation/))
-- **Anthropic buys $3.4B of gas generators** — the late-September deal takes over 1.7GW of Caterpillar-ordered capacity, plus engineering and installation. ([CNBC/FT](https://www.cnbc.com/2026/11/08/anthropic-generator-deal-ai-data-centers.html))
-- **The chip shortage is back, says Microchip** — AI buyers "took over the whole factory" at test houses; its data-center segment grew 55.7 percent as shares fell 10 percent. ([247wallst](https://247wallst.com/investing/2026/11/07/the-chip-shortage-is-back-and-microchip-says-ai-customers-are-crowding-everyone-out/))
-- **Schools adopt AI in place of hiring teachers** — Stanford's SCALE Initiative calls learning-gains evidence "extremely limited"; NYC bans K-8 classroom use. ([Truthout](https://truthout.org/articles/ai-companies-are-preying-on-under-resourced-schools-students-say))
+- **Nvidia's spy scandal reaches the DOJ** — NYT: Commerce's Megaspeed probe was transferred to the Justice Department after Nvidia intervened; Huang owes an answer by November 11 on the House's November 18 briefing. ([AI Weekly](https://aiweekly.co/alerts/nvidia-lawyers-email-preceded-megaspeed-probe-shift-to-doj))
+- **Anthropic sets IPO dates despite pushback** — investor meetings this week, trading targeted November 19–20 after buyers balked at ~$1.5T. ([RuntimeWire](https://runtimewire.com/article/anthropic-pushes-ahead-november-ipo-valuation-pushback))
+- **EU's Digital Fairness Act draft lands Wednesday** — users may switch off chatbots simulating personal relationships; fines up to 6 percent of revenue. ([AI Weekly](https://aiweekly.co/alerts/eu-draft-digital-fairness-act-targets-ai-companion-bots-6-fines))
+- **SpaceX files a $24B Starbase AI campus** — super-compute facility plus a 748MW gas plant to skip grid interconnect; vote December 9. ([Crypto Briefing](https://cryptobriefing.com/spacex-24-billion-ai-supercomputer-starbase/))
+- **Disney picks Adobe's Firefly Foundry** — brand-safe models trained on Disney characters for parks, cruise line and ESPN. ([The Decoder](https://the-decoder.com/disney-bets-on-adobes-firefly-to-create-brand-safe-ai-models-for-its-entertainment-empire))
+- **Apple's new CEO wants an agentic Siri by 2027** — Gurman: Ternus pressed Federighi to accelerate; Siri chief Mike Rockwell may step down. ([TNW](https://thenextweb.com/news/ternus-federighi-agentic-siri-apple-ai-bloomberg))
 
 ## Also noted
 
-- **Tencent's AI chief: models near "mastering biology"** — Yao Shunyu says cyber and bio abilities near a harm threshold; open weights multiply the risk. ([SCMP](https://www.scmp.com/tech/big-tech/article/3373697/ai-will-soon-master-biology-unleashing-new-safety-risks-tencent-ai-chief-warns))
-- **A 284B DeepSeek model on a 64GB CPU-only box** — llama-modchip claims DeepSeek-V4-Flash in under 59GiB RAM at 9.1–14.7 tok/s, no GPU (self-benchmarked). ([GitHub](https://github.com/synchopate/llama-modchip))
-- **"Agent memory needs its OpenTelemetry moment"** — LoreKit pitches a shared four-layer memory spec under the Linux Foundation's Agentic AI Foundation. ([LoreKit](https://www.lorekit.io/blog/open-agent-memory-format))
+- **OpenAI sells a $200 Game Boy-style Codex handheld** — builds playable ROMs from prompts. ([RuntimeWire](https://runtimewire.com/article/openai-sells-200-codex-chromatic-handheld-that-turns-prompts-into-game-boy-games))
+- **Tencent's upcoming open-weight Hy4 filters hacking knowledge out of its training data** — an approach that reportedly survives abliteration. ([The Decoder](https://the-decoder.com/tencents-ai-chief-says-ai-bioweapons-are-coming-but-closing-off-models-isnt-the-answer/))
