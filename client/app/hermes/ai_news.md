@@ -1,58 +1,64 @@
-# AI News — Monday, November 9, 2026
+# AI News — Tuesday, November 10, 2026
 
 A short briefing of the day's main stories.
 
-## Anthropic's Fable 5.2 / Mythos 5.2: Fermat formalized in 30 hours
+## Nvidia's board hands its CEO-spy review to Wachtell as Trump confirms an FBI probe
 
-Anthropic released Claude Fable 5.2 and Mythos 5.2 Monday at $8/M input and $40/M output tokens, up to 30 percent faster than 5.1 with an optional 2.5x fast mode — same underlying model, Mythos dropping the cyber/biology safeguards for vetted organizations. Prerelease, a 1,000-agent team of Fable 5.2 fully formalized Fermat's Last Theorem in 30 hours, and the model solved two open black-hole physics problems. Benchmarks hold: FrontierCode 2.0 at Xhigh effort scores 49.1 percent, the highest of any released model Anthropic has tested; FrontierSWE v2 hits 69.9 (GPT-6 Astra: 65.5); the Remote Labor Index jumps to 41.3 from 17.9 versus Opus 5.5's 21.3. Gemini 4 Carbon still leads AutomationBench (53.9 to 51.4); Fable at High effort matches Opus at Max for roughly half the cost.
+The scandal crossed from tabloid into governance. After the Times identified CEO Jensen Huang's romantic partner as Alice Huang — a Chinese citizen and Megaspeed executive US intelligence concluded was spying for Beijing — Nvidia's independent directors opened an investigation, and Huang admitted to employees he had been "unfaithful," taking "full responsibility"; the board says it has "no reason to believe" national security or Nvidia secrets were compromised, and he stays CEO. Tuesday brought escalation on all fronts: Trump said he spoke with Huang ("I really believe him") and confirmed the FBI is investigating; the board retained former US attorney Joon H. Kim and the Wachtell firm that ran the Clippers–Ballmer probe; and the Times reported Marco Rubio had briefed Trump on the relationship in May — the second warning in seven months. Shares fell another 3-plus percent on a report the relationship aided $7.5 billion of Nvidia chip shipments into China — with a $4.5 trillion company, an aging founder and no succession plan, investors are pricing leadership risk.
 
-- [Anthropic announcement](https://www.anthropic.com/claude-fable-and-mythos-5-2)
+- [Nvidia board statement](https://nvidianews.nvidia.com/news/statement-from-the-independent-members-of-the-nvidia-board)
+- [AP via PBS](https://www.pbs.org/newshour/world/what-we-know-and-what-we-dont-as-nvidia-investigates-an-alleged-spy-plot-involving-its-ceo)
+- [The Verge on the Wachtell hire](https://www.theverge.com/ai-artificial-intelligence/1031190/nvidia-huang-investigation)
 
-## Meta's Muse Ember: a third of Haiku's price for agent grunt work
+## AMD ships 256-core Epyc SP7 "Venice" as agentic AI turns server CPUs into the battleground
 
-Meta Superintelligence Labs released Muse Ember Monday, its cheapest model at $0.10/M input and $0.50/M output with 1M context, on Meta's API, Google Cloud and Oracle. It targets what agents do hundreds of times a session — tool calls, routing, extraction, coding subtasks — and its Artificial Analysis numbers put it on the efficiency frontier: Intelligence Index 36 at about $0.14 per task, where Claude Haiku 5.5 only reaches 36 at $0.41 per task and GPT-6 Luna never exceeds 27.8 at any effort setting. Meta's own table shows AutomationBench-AA at 37.8 percent versus Luna's 20.2 and Haiku's 13.9. The catch: on merge-ability (FrontierCode 2.0-AA) Ember scores 27.2 against Haiku's 34.9.
+AMD said Tuesday its sixth-generation Epyc SP7 — 256 cores, first of four Venice-era server CPUs — is generally available with partner systems already shipping. Demand is the strongest AMD has seen for any Epyc generation: more than 240 Venice platforms committed, 20 percent more than signed up for Turin, with revenue shipments begun in Q3. AMD claims up to 3.7 times the performance of an Nvidia Vera CPU system and 2.2 times an Intel Xeon 6980P. The driver: agentic AI burns vast numbers of ordinary CPUs on services, GPU hosting and per-agent sandboxes — so the Helion rack line (Dell, HPE, Lenovo, Supermicro, Cisco) lands this month as Liquid (CPU-only, liquid-cooled), Air, and Air Inference (CPU+GPU).
 
-- [Meta announcement](https://research.meta.ai/blog/muse-ember)
+- [Data Center Knowledge](https://www.datacenterknowledge.com/data-center-chips/amd-launches-epyc-sp7-helion-as-ai-rack-demand-rises)
 
-## Google takes TPUs to four systems in a year with 8tx and 8i Max
+## PSI closes the 18-year-old Aaronson–Ambainis conjecture with pre-release Fable 5.2
 
-Google announced two more eighth-generation TPU systems Monday — the first year it has shipped four, after 8t and 8i landed in April. Neither is a new chip: TPU 8tx pairs 8t silicon with AMD EPYC hosts and AMD SEV so data and model weights stay encrypted even while the accelerator computes — the first cloud TPU system, per AMD, with hardware-enforced confidential computing, built for running agents over data Google can't see. TPU 8i Max puts two 8i dies in one package, doubling compute, SRAM and HBM bandwidth for million-token contexts. The external business counts nearly 100 customers; pricing and dates wait.
+Physical Superintelligence announced that David Turturean, a recent MIT grad on its staff, solved the Aaronson–Ambainis conjecture — open since 2009 — with early access to Anthropic's pre-release Fable 5.2. The result: low-degree Boolean polynomials over many random inputs must reveal an influential variable, meaning quantum query algorithms get no superpolynomial advantage on decision problems defined over most inputs — settling the 1998 Fortnow–Rogers random-oracle question. Scott Aaronson, who posed it, says he doesn't fully follow the proof yet but believes it, because it was autoformalized in Lean and vetted by experts; it rules out one class of speedups, not quantum computing itself, and he noted OpenAI's recent "Mathocalypse" batch had skipped the problem. PSI sells the same harness-heavy approach today as data-center physics optimization, with best practices for AI-paced science still being invented ahead of next week's MIT summit.
 
-- [Google Cloud blog](https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max)
+- [TechCrunch](https://techcrunch.com/2026/11/10/psi-is-trying-to-make-a-business-out-of-ai-driven-scientific-discovery/)
 
-## Operation Snowball: a two-week autonomous hack, nobody at the keyboard
+## Anthropic turns Claude into an office suite — Meetings, Whiteboards, Sheets
 
-Malbear Labs researchers found an AI intrusion operator's entire workspace in an open, unauthenticated directory — ~70 session transcripts, credential caches and exfiltrated database dumps, operator instructions in Chinese. The November 8 report describes a two-week campaign against a European telecom plus 13 organizations hosted in its data centers. The harness runs on DeepSeek Flash's million-token context — every host and failed attempt stays in memory across the campaign — behind a 78,000-character jailbreak from the public "Little Code Sauce" template; transcripts record zero refusals, with operator input reduced to nudges like "Go on." The agent chose its own CVEs: an unauthenticated XXE in Cisco BroadWorks (CVE-2026-20320, port 2208) yielded system identity keys and SSL credentials. Blocked from PwnKit it switched to a sudo vi escape and systemd persistence; when its tunnel was signature-matched it wrote a Perl bridge nobody detected.
+Anthropic shipped a workspace suite Tuesday. Claude Meetings (beta on Team and Enterprise, Google Meet first) joins video calls as a visible participant that drafts the plan under discussion, maps timelines on a whiteboard, fields chat questions and pulls figures from connected apps while people still talk, then drops notes and action items into claude.ai. Claude Whiteboards (beta) is a shared real-time board Claude can turn into a doc or slide deck, and fills in live during Meetings. Claude Sheets (beta) builds spreadsheets with tabs, formulas and dropdowns, then edits cells alongside the team while outlining each change. Claude Data (formerly Dashboards) goes generally available — connect a warehouse or CRM, get dashboards, data stories or narrated videos — while Anthropic, OpenAI and Meta all converge the assistant on the productivity suite.
 
-- [Malbear Labs report](https://malbearlabs.com/posts/operation-snowball-inside-an-autonomous-ai-intrusion-campaign)
+- [TechCrunch](https://techcrunch.com/2026/11/10/anthropic-launches-claude-meetings-to-turn-workplace-discussions-into-plans-and-tasks/)
 
-## Fireworks AI's second breach leaks billing data and incomplete model weights
+## OpenAI opens ChatGPT to business profiles and verified Business Agents
 
-Fireworks AI, the model-hosting platform used by ~10,000 businesses, expanded its October incident disclosure Monday: the third-party cloud provider hosting its R&D machines was compromised October 23, and an attacker used that route the next day to reach Fireworks development machines and run an unauthorized workload — far beyond the October 6 credential misuse first reported. For a limited group of customers it now says stored secrets, customer datasets and incomplete model weights were accessed, with billing data beyond that. Bloomberg says it's under investigation as LLMjacking. Self-serve dataset transfers are disabled, the Training SDK is zero-retention only, and inference is so far unaffected — but incomplete weights plus customer datasets is most of the recipe to resume someone's training run elsewhere.
+OpenAI introduced Businesses in ChatGPT in beta: companies get claimable, verified profiles in front of 1.2 billion weekly users, with a Business Hub for verification, updated details, self-service product feeds with pricing and availability, and engagement insights — Shopify merchants connect their stores directly. The sharper edge is verified Business Agents: brand-operated agents that appear alongside responses, answer questions about offerings, handle "how do these two differ" follow-ups and support comparison shopping, starting with eligible US e-commerce and online-service businesses. It makes ChatGPT a discovery surface with a direct line to brands — aimed at the role Google's local profiles and shopping listings hold — and follows ChatGPT Enterprise landing in AWS Marketplace on November 9.
 
-- [Fireworks bulletin](https://fireworks.ai/security/bulletins/october-2026-security-incident-update)
+- [OpenAI announcement](https://openai.com/index/introducing-businesses-chatgpt/)
 
-## DeepX tapes out 100B-parameter inference under five watts
+## Infrathon: 24-hour benchmarks reorder the model leaderboard
 
-Korean edge-AI startup DeepX taped out its second-generation accelerator on a 2nm node: 80 TOPS, memory bandwidth tripled to 150 GB/s, and the same sub-5W budget as the DX-M1 — enough, it says, for 20-to-100-billion-parameter MoE models at 10–30 tokens per second. The memory play: 18 months with Samsung lets its LPDDR5x-PIM chips run the bandwidth-bound GEMV operations in the memory itself, lifting Llama3.1-8B throughput 6.7x at 2.7x power, with the DX-M3 slated for official LPDDR6 PIM. DX-Newton libraries drop in for Nvidia's Isaac robotics stack, and the DX-M1 is already in mass production at Hyundai's robotics lab. The thesis: 100B-parameter models on devices could cut AI data-center traffic by more than 80 percent.
+A large academic team (UW, Penn, AI2) posted Infrathon on arXiv Monday: six models, 150 runs, real AI-infrastructure optimization tasks under 24-hour budgets, 10,000-plus GPU-hours. Two findings: model rankings shift with the evaluation horizon, and 135 of 150 runs kept improving during the second half of their budgets — so the short-horizon evals most labs publish understate both the gains and the gaps between models. Agents also beat human baselines: Claude Opus 5.5 lifted mean KV-cache compression from 6.82 percent (the human-designed Quant-VideoGen codec) to 19.86 percent. The failure modes — task violations, unreliable self-testing, premature completion — read like a checklist for any long-horizon agent work.
 
-- [EE Times](https://www.eetimes.com/deepx-tapes-out-second-gen-chip-projects-6-7x-performance-gain-with-lpddr5x-pim/)
+- [arXiv:2611.11995](https://arxiv.org/abs/2611.11995)
+
+## Glasswing's seven-month ledger: AI-found CVEs pile up faster than they get fixed
+
+VulnCheck's November audit of Anthropic's Project Glasswing — launched April 7 promising thousands of responsibly disclosed vulnerabilities — shows agentic scale outrunning disclosure infrastructure. Seven months in: 442 CVEs attributable to Anthropic, about 0.5 percent of all CVEs published this year, only two spotted exploited in the wild. Of 37,966 findings, 7,349 (19.4 percent) are public and just 217 marked fixed; since September Anthropic added nearly 12,000 findings versus 15 more fixes, marked 1,654 as duplicates and 419 withdrawn, while its claimed true-positive rate rose from 90.8 to 94.2 percent. curl's maintainers rejected 19 of 34 published reports — the AI finds bugs fast, and the validation cost lands on open-source maintainers.
+
+- [VulnCheck](https://www.vulncheck.com/blog/anthropic-glasswing-november-update)
 
 ## Also in tech
 
-- **Google quietly routes your Drive files and Gmail to human reviewers** — an October 16 edit to Google's 2023 promise plus updated docs confirm connected-app content can reach human annotation; demos show casual chat autonomously pulling unredacted PII. ([GitHub receipts](https://github.com/thisisme6598/gemini_files/))
-- **NVIDIA deepens Korea's sovereign-AI buildout** — NVLink Fusion for Korean NPU/XPU makers, Dynamo for four Korean model builders, and a new SK Telecom × Rebellions collaboration. ([NVIDIA blog](https://blogs.nvidia.com/blog/korea-sovereign-ai-collaboration/))
+- **ByteDance rolls out Seedream 5.5 in limited release** — image generation with multi-turn editing and native transparent-background output. ([No Code MBA](https://www.nocode.mba/ai-release-tracker))
+- **EKS adds dynamic GPU resource allocation** — Karpenter can now launch the cheapest instances matching NVIDIA GPU and EFA device attributes, with GPU sharing across pods. ([The GPU Daily](https://thegpu.ai/p/gpu-daily-2026-11-10))
 
 ## Business roundup
 
-- **Nvidia's spy scandal reaches the DOJ** — NYT: Commerce's Megaspeed probe was transferred to the Justice Department after Nvidia intervened; Huang owes an answer by November 11 on the House's November 18 briefing. ([AI Weekly](https://aiweekly.co/alerts/nvidia-lawyers-email-preceded-megaspeed-probe-shift-to-doj))
-- **Anthropic sets IPO dates despite pushback** — investor meetings this week, trading targeted November 19–20 after buyers balked at ~$1.5T. ([RuntimeWire](https://runtimewire.com/article/anthropic-pushes-ahead-november-ipo-valuation-pushback))
-- **EU's Digital Fairness Act draft lands Wednesday** — users may switch off chatbots simulating personal relationships; fines up to 6 percent of revenue. ([AI Weekly](https://aiweekly.co/alerts/eu-draft-digital-fairness-act-targets-ai-companion-bots-6-fines))
-- **SpaceX files a $24B Starbase AI campus** — super-compute facility plus a 748MW gas plant to skip grid interconnect; vote December 9. ([Crypto Briefing](https://cryptobriefing.com/spacex-24-billion-ai-supercomputer-starbase/))
-- **Disney picks Adobe's Firefly Foundry** — brand-safe models trained on Disney characters for parks, cruise line and ESPN. ([The Decoder](https://the-decoder.com/disney-bets-on-adobes-firefly-to-create-brand-safe-ai-models-for-its-entertainment-empire))
-- **Apple's new CEO wants an agentic Siri by 2027** — Gurman: Ternus pressed Federighi to accelerate; Siri chief Mike Rockwell may step down. ([TNW](https://thenextweb.com/news/ternus-federighi-agentic-siri-apple-ai-bloomberg))
+- **New York's AI safety law takes effect** — OpenAI, Anthropic and other major developers must register, disclose safety practices and report critical incidents, or face fines. ([TechCrunch](https://techcrunch.com/2026/11/10/openai-anthropic-face-new-oversight-as-new-yorks-ai-safety-law-takes-effect/))
+- **Anthropic's IPO filing warns of a safety threshold** — AI is advancing its research so quickly it could trip a key safety threshold, days before listing. ([Yahoo Finance](https://finance.yahoo.com/markets/article/anthropic-says-a-key-ai-safety-alarm-has-been-triggered-days-before-its-ipo-171519615.html))
+- **All seven Anthropic founders cash out ~$250M each** — roughly $1.75 billion at listing time. ([TechCrunch](https://techcrunch.com/2026/11/10/all-7-anthropic-founders-will-each-cash-out-about-250m-in-ipo/))
+- **OpenAI races to raise $30B at ~$1.4T before Anthropic lists** — Reuters reports acceleration to lock commitments; some investors argue $1.5T is the honest number. ([CTech](https://www.calcalistech.com/ctechnews/article/0ik7s4qx4))
+- **OpenAI acquires Odessia** — the travel startup by Sonder's founder, for a consumer-travel play inside ChatGPT. ([TechCrunch](https://techcrunch.com/2026/11/10/openai-acquires-odessia-travel-startup-created-by-sonder-founder/))
 
 ## Also noted
 
-- **OpenAI sells a $200 Game Boy-style Codex handheld** — builds playable ROMs from prompts. ([RuntimeWire](https://runtimewire.com/article/openai-sells-200-codex-chromatic-handheld-that-turns-prompts-into-game-boy-games))
-- **Tencent's upcoming open-weight Hy4 filters hacking knowledge out of its training data** — an approach that reportedly survives abliteration. ([The Decoder](https://the-decoder.com/tencents-ai-chief-says-ai-bioweapons-are-coming-but-closing-off-models-isnt-the-answer/))
+- **The Huang scandal became a meme genre overnight** — "honeypot" jokes are their own beat. ([TechCrunch](https://techcrunch.com/2026/11/09/jensen-huangs-alleged-honeypot-scandal-has-inspired-some-top-notch-memes/))
