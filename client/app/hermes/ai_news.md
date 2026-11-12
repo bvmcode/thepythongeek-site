@@ -1,64 +1,72 @@
-# AI News — Tuesday, November 10, 2026
+# AI News — Wednesday, November 11, 2026
 
 A short briefing of the day's main stories.
 
-## Nvidia's board hands its CEO-spy review to Wachtell as Trump confirms an FBI probe
+## Gemini 4 Carbon goes wide, with a clock on its $2 pricing
 
-The scandal crossed from tabloid into governance. After the Times identified CEO Jensen Huang's romantic partner as Alice Huang — a Chinese citizen and Megaspeed executive US intelligence concluded was spying for Beijing — Nvidia's independent directors opened an investigation, and Huang admitted to employees he had been "unfaithful," taking "full responsibility"; the board says it has "no reason to believe" national security or Nvidia secrets were compromised, and he stays CEO. Tuesday brought escalation on all fronts: Trump said he spoke with Huang ("I really believe him") and confirmed the FBI is investigating; the board retained former US attorney Joon H. Kim and the Wachtell firm that ran the Clippers–Ballmer probe; and the Times reported Marco Rubio had briefed Trump on the relationship in May — the second warning in seven months. Shares fell another 3-plus percent on a report the relationship aided $7.5 billion of Nvidia chip shipments into China — with a $4.5 trillion company, an aging founder and no succession plan, investors are pricing leadership risk.
+Two weeks after opening it to cybersecurity defenders via Fairwind, Google made Gemini 4 Carbon available Wednesday UTC to all paying developers and enterprises and to AI Ultra subscribers in Antigravity, the Gemini app and AI Mode — introductory $2 per million input tokens and $10 output (Argon's entry price) until November 30, then $4/$20. Carbon is Google's ceiling-breaker, spending more tokens than Argon on exploration and verification for long-horizon agentic work, complex multi-step coding and open-ended research. Benchmarks: #1 on CursorBench 4.0, Perplexity's WANDR and Zapier's AutomationBench at over 2x lower cost per task than the next best external model, #2 on the new Multimodal Knowledge Agent benchmark at over 6x lower. Antigravity's /swarm preview turns one prompt into a tracked agent team — Carbon on architecture and auditing, lighter models on parallel workspaces, adversarial verifiers checking every change.
 
-- [Nvidia board statement](https://nvidianews.nvidia.com/news/statement-from-the-independent-members-of-the-nvidia-board)
-- [AP via PBS](https://www.pbs.org/newshour/world/what-we-know-and-what-we-dont-as-nvidia-investigates-an-alleged-spy-plot-involving-its-ceo)
-- [The Verge on the Wachtell hire](https://www.theverge.com/ai-artificial-intelligence/1031190/nvidia-huang-investigation)
+- [Google blog](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/)
 
-## AMD ships 256-core Epyc SP7 "Venice" as agentic AI turns server CPUs into the battleground
+## Gemini Decision 1: a model that answers instead of writing text
 
-AMD said Tuesday its sixth-generation Epyc SP7 — 256 cores, first of four Venice-era server CPUs — is generally available with partner systems already shipping. Demand is the strongest AMD has seen for any Epyc generation: more than 240 Venice platforms committed, 20 percent more than signed up for Turin, with revenue shipments begun in Q3. AMD claims up to 3.7 times the performance of an Nvidia Vera CPU system and 2.2 times an Intel Xeon 6980P. The driver: agentic AI burns vast numbers of ordinary CPUs on services, GPU hosting and per-agent sandboxes — so the Helion rack line (Dell, HPE, Lenovo, Supermicro, Cisco) lands this month as Liquid (CPU-only, liquid-cooled), Air, and Air Inference (CPU+GPU).
+Google also shipped a new API shape Wednesday UTC: the Decisions API and Gemini Decision 1, which scores up to 1,000 typed questions against one shared multimodal input (text, images, audio, video, PDFs — up to 256K tokens) in a single forward pass, no token-by-token generation, no prose parsing. Three question types return calibrated probabilities with confidence scores — yes/no, multiple choice (2–255 options), rubric scoring — so code branches, routes and grades directly and falls back to a human on low confidence. Median latency is 50–100 ms, nearly flat from 1 to 100 questions, at $0.10 per million input tokens with zero output billed — nearly 5x cheaper than Gemini 3.5 Flash-Lite for this workload, with OpenRouter, LangChain and LiteLLM integrations live and Google-internal use routing Notebook queries and guarding Search's MCP tools. For classification and routing pipelines, it's a different primitive than a chat model.
 
-- [Data Center Knowledge](https://www.datacenterknowledge.com/data-center-chips/amd-launches-epyc-sp7-helion-as-ai-rack-demand-rises)
+- [Google blog](https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/)
 
-## PSI closes the 18-year-old Aaronson–Ambainis conjecture with pre-release Fable 5.2
+## AlphaGenome 2 predicts how DNA reads out — cell type by cell type
 
-Physical Superintelligence announced that David Turturean, a recent MIT grad on its staff, solved the Aaronson–Ambainis conjecture — open since 2009 — with early access to Anthropic's pre-release Fable 5.2. The result: low-degree Boolean polynomials over many random inputs must reveal an influential variable, meaning quantum query algorithms get no superpolynomial advantage on decision problems defined over most inputs — settling the 1998 Fortnow–Rogers random-oracle question. Scott Aaronson, who posed it, says he doesn't fully follow the proof yet but believes it, because it was autoformalized in Lean and vetted by experts; it rules out one class of speedups, not quantum computing itself, and he noted OpenAI's recent "Mathocalypse" batch had skipped the problem. PSI sells the same harness-heavy approach today as data-center physics optimization, with best practices for AI-paced science still being invented ahead of next week's MIT summit.
+DeepMind's new genome model answers what the first AlphaGenome blurred: not what a variant does on average, but what it does in this cell. AlphaGenome 2 conditions on cell type or state and was trained on more than 107 million single-cell profiles across 68 tissues from human and mouse samples. On TenK10K, covering 28 immune cell types, it identified 30 percent of causal variants per DeepMind, nearly double the 16 percent of the original model fine-tuned on single-cell data, and it scores unseen cell states from a snapshot of gene activity without retraining — variants hiding in tissue-level averages stop hiding. Inputs approach a million DNA letters; free via the AlphaGenome API for non-commercial research.
 
-- [TechCrunch](https://techcrunch.com/2026/11/10/psi-is-trying-to-make-a-business-out-of-ai-driven-scientific-discovery/)
+- [DeepMind blog](https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/)
 
-## Anthropic turns Claude into an office suite — Meetings, Whiteboards, Sheets
+## DeepMind's agents formally verified the code behind Signal — 6.5 million lines of Lean
 
-Anthropic shipped a workspace suite Tuesday. Claude Meetings (beta on Team and Enterprise, Google Meet first) joins video calls as a visible participant that drafts the plan under discussion, maps timelines on a whiteboard, fields chat questions and pulls figures from connected apps while people still talk, then drops notes and action items into claude.ai. Claude Whiteboards (beta) is a shared real-time board Claude can turn into a doc or slide deck, and fills in live during Meetings. Claude Sheets (beta) builds spreadsheets with tabs, formulas and dropdowns, then edits cells alongside the team while outlining each change. Claude Data (formerly Dashboards) goes generally available — connect a warehouse or CRM, get dashboards, data stories or narrated videos — while Anthropic, OpenAI and Meta all converge the assistant on the productivity suite.
+Formal verification of a deployed crypto implementation has cost teams person-decades; DeepMind's new AlphaProof Code framework did Signal's in about four weeks with five researchers. The targets were real AArch64 machine-code artifacts of libsignal v0.105.4, proving one-to-one session security both symbolically and computationally. Gemini 4 Carbon prover agents generated about 6.5 million lines of machine-checked Lean on roughly 26,000 lines of trusted specification; humans reviewed about 1 percent of the codebase because Lean's kernel checks the rest. Two previously fixed libsignal bugs were reintroduced, and the machine-checked proofs flagged them. DeepMind calls it the first formal verification of a widely deployed protocol implementation at this depth and is open-sourcing the artifacts; the proofs establish the code meets the specs, assuming the cryptography itself is perfect.
 
-- [TechCrunch](https://techcrunch.com/2026/11/10/anthropic-launches-claude-meetings-to-turn-workplace-discussions-into-plans-and-tasks/)
+- [DeepMind blog](https://deepmind.google/blog/introducing-alphaproof-code/)
 
-## OpenAI opens ChatGPT to business profiles and verified Business Agents
+## Baidu's ERNIE 5.5 Flash Preview: 280B total / 14B active, 1M context, Apache 2.0 soon
 
-OpenAI introduced Businesses in ChatGPT in beta: companies get claimable, verified profiles in front of 1.2 billion weekly users, with a Business Hub for verification, updated details, self-service product feeds with pricing and availability, and engagement insights — Shopify merchants connect their stores directly. The sharper edge is verified Business Agents: brand-operated agents that appear alongside responses, answer questions about offerings, handle "how do these two differ" follow-ups and support comparison shopping, starting with eligible US e-commerce and online-service businesses. It makes ChatGPT a discovery surface with a direct line to brands — aimed at the role Google's local profiles and shopping listings hold — and follows ChatGPT Enterprise landing in AWS Marketplace on November 9.
+Baidu posted ERNIE 5.5 Flash Preview Wednesday UTC — the first post-trained model on its ERNIE 5.5 Flash Base: 280 billion total parameters, 14 billion active, a 1 million-token context, API live on Qianfan and free on OpenRouter, Apache 2.0 weights "soon." The demos are odd-job-agentic: a complete Unreal Engine 5.8 wuxia game written in C++ in one 11-hour session — the text-only model converts playtest complaints like a hovering character into code test cases because it can't see the screen — plus ~100 mobile mini-games from design docs, Blender-built scenes through the Python API (an airport, a full Hōryū-ji temple), FreeCAD models, and end-to-end science videos.
 
-- [OpenAI announcement](https://openai.com/index/introducing-businesses-chatgpt/)
+- [Baidu ERNIE release](https://ernie.baidu.com/release/ernie-5-5-flash-preview/)
 
-## Infrathon: 24-hour benchmarks reorder the model leaderboard
+## MiniMax open-weights an image model that edits and generates from one checkpoint
 
-A large academic team (UW, Penn, AI2) posted Infrathon on arXiv Monday: six models, 150 runs, real AI-infrastructure optimization tasks under 24-hour budgets, 10,000-plus GPU-hours. Two findings: model rankings shift with the evaluation horizon, and 135 of 150 runs kept improving during the second half of their budgets — so the short-horizon evals most labs publish understate both the gains and the gaps between models. Agents also beat human baselines: Claude Opus 5.5 lifted mean KV-cache compression from 6.82 percent (the human-designed Quant-VideoGen codec) to 19.86 percent. The failure modes — task violations, unreliable self-testing, premature completion — read like a checklist for any long-horizon agent work.
+MiniMax published MiniMax-H3-Image Wednesday UTC — open weights, one checkpoint (a 33.1B-parameter DiT, 68.65 GB in BF16) that generates bare and edits when handed references, up to 16 of them. It's CFG-distilled — six fixed sampling steps at guidance 1, nothing to tune, no negative prompt — and emits native ~16-megapixel images (4096×4096 up to 6272×2688) with no upscaler. It derives from the H3 video model and shares that model's Qwen3-VL text encoder; MiniMax claims 4K images in under 10 seconds and API pricing at 50–70 percent of comparable services. ComfyUI supports it natively and it serves through SGLang on one GPU; the license is a community agreement, not a fully open license.
 
-- [arXiv:2611.11995](https://arxiv.org/abs/2611.11995)
+- [Hugging Face model card](https://huggingface.co/MiniMaxAI/MiniMax-H3-Image)
 
-## Glasswing's seven-month ledger: AI-found CVEs pile up faster than they get fixed
+## Google open-sources XSE, the C++ server that took Python out of 6M-QPS inference
 
-VulnCheck's November audit of Anthropic's Project Glasswing — launched April 7 promising thousands of responsibly disclosed vulnerabilities — shows agentic scale outrunning disclosure infrastructure. Seven months in: 442 CVEs attributable to Anthropic, about 0.5 percent of all CVEs published this year, only two spotted exploited in the wild. Of 37,966 findings, 7,349 (19.4 percent) are public and just 217 marked fixed; since September Anthropic added nearly 12,000 findings versus 15 more fixes, marked 1,654 as duplicates and 419 withdrawn, while its claimed true-positive rate rose from 90.8 to 94.2 percent. curl's maintainers rejected 19 of 34 published reports — the AI finds bugs fast, and the validation cost lands on open-source maintainers.
+Google open-sourced XSE (XLA Serving Engine) Wednesday UTC under OpenXLA: a C++ serving runtime that removes the Python interpreter from the inference path. Models are authored in JAX, packaged with weights into a StableHLO "XLA SavedModel," and compiled to native code for the target hardware at serve time. Internally XSE handles more than 6 million queries per second across YouTube Shorts, Google Ads, Search and parts of Gemini Omni, and short-request tests showed 2–5x the throughput of its best optimized Python servers at a quarter of the memory. The target is the high-QPS task-model tier — classifiers, retrieval, moderation — rather than conversational LLMs; a PyTorch path arrives via TorchTPU.
 
-- [VulnCheck](https://www.vulncheck.com/blog/anthropic-glasswing-november-update)
+- [Google open-source blog](https://opensource.googleblog.com/2026/11/supercharging-xla-inference-xla-serving-engine.html)
+
+## Nvidia's board is reportedly preparing to oust Jensen Huang
+
+Wednesday evening the Nvidia scandal escalated hard. Hours after the Times reported Huang had an affair with an Nvidia executive who reports to him — separate from the affair with Alice Huang, the US-intelligence-linked Megaspeed executive he admitted to Sunday — the Journal reported the board is preparing to remove the only CEO the 33-year-old company has known, meeting to decide his future as soon as Wednesday. Shares fell more than 8 percent after hours to $159.51; market value had already shed over $450 billion since the probe was announced November 8. The governance math is blunt: ~60 direct reports, no designated successor, no board chair — with "stay, with less" the likelier outcome if the board blinks.
+
+- [CNN Business](https://edition.cnn.com/2026/11/11/investing/nvidia-stock-jensen-huang)
+- [TechCrunch](https://techcrunch.com/2026/11/11/nvidias-stock-drops-as-board-reportedly-preps-to-oust-ceo-jensen-huang)
 
 ## Also in tech
 
-- **ByteDance rolls out Seedream 5.5 in limited release** — image generation with multi-turn editing and native transparent-background output. ([No Code MBA](https://www.nocode.mba/ai-release-tracker))
-- **EKS adds dynamic GPU resource allocation** — Karpenter can now launch the cheapest instances matching NVIDIA GPU and EFA device attributes, with GPU sharing across pods. ([The GPU Daily](https://thegpu.ai/p/gpu-daily-2026-11-10))
+- **Tether's QVAC BotPsy-0.8B** — open-weight on-device 0.8B agent model that doubles its Qwen3.5-0.8B-Think base on tool-use tests (τ-bench 23.2→51.5) and beats models up to 2.5x its size. ([Tether](https://tether.io/news/tethers-800m-ai-agent-beats-models-2-5x-its-size-on-everyday-phone-tasks/))
+- **Fish Audio's Live 3 is full-duplex** — the voice model keeps listening while it speaks, with learned backchannels and company-reported latency as low as 186 ms; a platform ships alongside for action-taking voice agents. ([Fish Audio](https://fish.audio/))
+- **Fireworks AI's breach got worse** — a November 9 update to the October intrusion says billing data and subsets of customer model weights and datasets were reached, after the first bulletin ruled those out. ([The Register](https://www.theregister.com/cyber-crime/2026/11/10/fireworks-ai-gets-burned-twice-as-customer-data-exposure-widens/5308722))
 
 ## Business roundup
 
-- **New York's AI safety law takes effect** — OpenAI, Anthropic and other major developers must register, disclose safety practices and report critical incidents, or face fines. ([TechCrunch](https://techcrunch.com/2026/11/10/openai-anthropic-face-new-oversight-as-new-yorks-ai-safety-law-takes-effect/))
-- **Anthropic's IPO filing warns of a safety threshold** — AI is advancing its research so quickly it could trip a key safety threshold, days before listing. ([Yahoo Finance](https://finance.yahoo.com/markets/article/anthropic-says-a-key-ai-safety-alarm-has-been-triggered-days-before-its-ipo-171519615.html))
-- **All seven Anthropic founders cash out ~$250M each** — roughly $1.75 billion at listing time. ([TechCrunch](https://techcrunch.com/2026/11/10/all-7-anthropic-founders-will-each-cash-out-about-250m-in-ipo/))
-- **OpenAI races to raise $30B at ~$1.4T before Anthropic lists** — Reuters reports acceleration to lock commitments; some investors argue $1.5T is the honest number. ([CTech](https://www.calcalistech.com/ctechnews/article/0ik7s4qx4))
-- **OpenAI acquires Odessia** — the travel startup by Sonder's founder, for a consumer-travel play inside ChatGPT. ([TechCrunch](https://techcrunch.com/2026/11/10/openai-acquires-odessia-travel-startup-created-by-sonder-founder/))
+- **OpenAI's Q3 revenue crossed $10 billion** — up ~50 percent sequentially to a ~$50B run rate with a $10.9B adjusted operating loss and ~100M paying ChatGPT subscribers; Anthropic booked $17B the same quarter, with a small operating profit before its IPO. ([WSJ](https://www.wsj.com/business/earnings/openai-continues-to-suffer-heavy-losses-as-revenue-rises-to-10-billion-d2a96bbb), [AI Chat Daily](https://aichatdaily.com/ai-business/openai-quarterly-revenue-tops-10b-operating-loss-widens))
+- **Anthropic's IPO is oversubscribed multiple times** — roadshow opened Tuesday at $70–78, ~$1.4T target, $ANT pricing November 18, Nasdaq trading November 19. ([Quartz](https://qz.com/anthropic-ipo-oversubscribed-roadshow-demand-111126))
+- **TSMC puts up to $1B into Anthropic and OpenAI** — $500M in Anthropic common at the IPO price, $500M in OpenAI preferred, plus a $500M strategic-investment vehicle. ([Focus Taiwan](https://focustaiwan.tw/business/202611110009))
+- **CoreWeave's "breakout quarter" snapped the selloff** — Q3 revenue $3.66B (+168 percent), guidance raised to $13–13.3B, backlog $132.5B, ~$9B of prepayments expected in three months; the stock jumped 25 percent with AI infra. ([CNBC](https://cnbc.com/2026/11/11/coreweave-crwv-outlook-earnings-ai.html))
+- **ChinaTalk finds US data vendors selling ~$500M to Chinese labs** — nine firms including Mercor, Surge AI, Turing and AfterQuery sold training data and RL environments, some of the same products sold to OpenAI and Anthropic, largely outside export controls. ([ChinaTalk](https://www.chinatalk.media/p/the-us-is-selling-rl-environments))
+- **United Airlines blocks agentic bookings** — third-party AI agents may browse but can't buy, over credential-exposure, fraud and federal-rule risks; CEO Scott Kirby: "I don't want to create another middleman." ([Bloomberg via Seattle Times](https://www.seattletimes.com/business/united-blocks-ai-agents-from-booking-flights-ahead-of-holidays))
 
 ## Also noted
 
-- **The Huang scandal became a meme genre overnight** — "honeypot" jokes are their own beat. ([TechCrunch](https://techcrunch.com/2026/11/09/jensen-huangs-alleged-honeypot-scandal-has-inspired-some-top-notch-memes/))
+- **A blacklisted Chinese university bought H200s anyway** — procurement records show military-linked Northwestern Polytechnical bought two Nvidia H200s (874,700 yuan) through a reseller in October and rented A100 and A800 servers this year. ([Quartz/Reuters](https://qz.com/military-linked-university-nvidia-h200-chips-blacklist-111126))
+- **Gemini's voice mode lands on Apple CarPlay** — global iOS rollout, in-car chats syncing to the iPhone's Gemini history. ([Quartz](https://qz.com/google-gemini-voice-ai-apple-carplay-111126))
